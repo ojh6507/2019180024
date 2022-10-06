@@ -10,15 +10,15 @@ def handle_events():
             running = False
 
 bframe = 0
-gframe = 8
+gframe = 0
 rframe = 0
-grframe = 0
+grframe = 1
 
 rrframe = 0
 raction = 0
 graction = 0
 
-mbos = load_image('jr_coopa.png')
+mbos = load_image('jr_koopa.png')
 goomba = load_image('Goomba.png')
 rkoopa = load_image('red_koopa.png')
 rrkoopa = load_image('red_koopa_wake.png')
@@ -28,8 +28,8 @@ grkoopa = load_image('green_koopa.png')
 while running:
     clear_canvas()
     # jump: character.clip_draw(frame * 50,  action , 50, 75, x, 110)
-    mbos.clip_draw(bframe * 50,  60 , 50, 70, 500, 90)
-    goomba.clip_draw(0,  gframe * 50 , 42, 50, 600, 90)
+    mbos.clip_draw(bframe * 50,  60 , 50, 70, 900, 200)
+    goomba.clip_draw(gframe * 28, 0, 28, 30, 1200, 200)
     rkoopa.clip_draw(rframe * 25, 50 * raction, 25, 50, 950, 200)
     rrkoopa.clip_draw(rrframe * 45, 0, 45, 44, 900, 200)
 
@@ -39,7 +39,8 @@ while running:
     handle_events()
 
     bframe = (bframe + 1) % 19
-    gframe = (gframe - 1) % 8
+    gframe = (gframe + 1) % 9+1
+
     rframe =(rframe + 1) % 18
     rrframe =(rframe + 1) % 5
     
