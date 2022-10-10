@@ -11,6 +11,41 @@ class jr_boss:
     def update(self):
         self.frame = (self.frame + 1) % 19
 
+class GOOMBA:
+    def __init__(self):
+        self.image = load_image('Goomba.png')
+        self.frame  = 1
+        self.action = 0
+    def draw(self):
+        self.image.clip_draw(self.frame * 28, 0, 28, 30, 1200, 200)
+    
+    def update(self):
+        self.frame = (self.frame + 1) % 9+1 #방향 전환 프레임: 1
+        delay(0.05)
+
+class RedKoopa:
+    def __init__(self):
+        self.image = load_image('red_koopa.png')
+        self.frame  = 1
+        self.action = 0
+    def draw(self):
+        self.image.clip_draw(self.frame * 25, 50 * self.action, 25, 50, 950, 200)
+    
+    def update(self):
+        self.frame = (self.frame + 1) % 17+1 #방향 전환 frame: 1
+        delay(0.02)
+
+class GreenKoopa:
+    def __init__(self):
+        self.image = load_image('green_koopa.png')
+        self.frame  = 1
+        self.action = 0
+    def draw(self):
+        self.image.clip_draw(self.frame * 25, 50 * self.action, 25, 50, 850, 200)
+
+    def update(self):
+        self.frame = (self.frame + 1) % 17+1 #방향 전환 frame: 1
+        delay(0.02)
 
 def handle_events():
 
@@ -21,51 +56,48 @@ def handle_events():
             running = False
 
 
+
 gframe = 0
 rframe = 0
 grframe = 1
 
 rrframe = 0
 raction = 0
-graction = 0
 
-goomba = load_image('Goomba.png')
-rkoopa = load_image('red_koopa.png')
+
 rrkoopa = load_image('red_koopa_wake.png')
-grkoopa = load_image('green_koopa.png')
-
+redkoopa =RedKoopa()
+greenkoopa = GreenKoopa()
+goomba = GOOMBA()
 boss = jr_boss()
 while running:
     clear_canvas()
     # jump: character.clip_draw(frame * 50,  action , 50, 75, x, 110)
-    goomba.clip_draw(gframe * 28, 0, 28, 30, 1200, 200)
-    rkoopa.clip_draw(rframe * 25, 50 * raction, 25, 50, 950, 200)
-    rrkoopa.clip_draw(rrframe * 45, 0, 45, 44, 900, 200)
 
-    grkoopa.clip_draw(grframe * 25, 50 * graction, 25, 50, 990, 200)
+    # rrkoopa.clip_draw(rrframe * 45, 0, 45, 44, 900, 200)
+
     boss.draw()
-    boss.update()
+    goomba.draw()
+    redkoopa.draw()
+    greenkoopa.draw()
+
+    boss.update() 
+    goomba.update()
+    redkoopa.update()
+    greenkoopa.update()
+
     update_canvas()
     handle_events()
 
-    gframe = (gframe + 1) % 9+1
+   
 
-    rframe =(rframe + 1) % 18
-    rrframe =(rframe + 1) % 5
-    
-    grframe =(grframe + 1) % 18
+    # rrframe =(rframe + 1) % 5
+    # grframe =(grframe + 1) % 18
     
     if rframe == 0:
         if raction == 0:
             raction = 1
         else:
             raction = 0
-   
-    if grframe == 0:
-        if graction == 0:
-            graction = 1
-        else:
-            graction = 0
-   
-    delay(0.1)
+
 close_canvas()
