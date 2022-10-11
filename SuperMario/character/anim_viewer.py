@@ -15,6 +15,7 @@ class mario:
         self.y_dir = 0
         self.ch_size = 50
         self.run = False
+        self.die = True
     def update(self):
         self.x+= self.x_dir * 3
         if self.y < 200:
@@ -22,6 +23,15 @@ class mario:
             
         self.frame= (self.frame + 1) % self.clip
         delay(self.t)
+    def check_gameOver(self):
+        if self.die:
+            self.image =load_image('gameover_mario.png')
+            self.clip = 13
+            self.action = 0
+            self.height = 60
+            self.ch_size = 50  
+            self.t = 0.02
+                
     def draw(self):
         self.image.clip_draw(self.frame * self.ch_size, 1* self.action, self.ch_size ,self.height,self.x,self.y)
      
@@ -108,5 +118,6 @@ while running:
     player.draw()
     player.mario_handle()
     player.update()
+    player.check_gameOver()
     update_canvas()
 close_canvas()
