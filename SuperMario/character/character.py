@@ -6,8 +6,10 @@ class mario:
         self.frame = 0
         self.action = 0
         self.clip = 79
+
         self.x = 100
-        self.y = 100
+        self.y = 110
+
         self.height = 65
         self.x_dir = 0
         self.y_dir = 0
@@ -21,10 +23,10 @@ class mario:
         self. mass = 10
         self.t =0.01
   
-  
+
     def update(self):
         if self.x >= 0 and self.x <= 800:
-            self.x += self.x_dir * 1
+            self.x += self.x_dir * 4
 
         elif self.x < 0:
             self.x = 0

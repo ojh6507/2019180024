@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="20ead478-7b7b-4e4a-8801-26974aaefeb6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/background.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/background1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/character/anim_viewer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/character/fall_mario.png" beforeDir="false" afterPath="$PROJECT_DIR$/character/fall_mario.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/character/landing_mario.png" beforeDir="false" afterPath="$PROJECT_DIR$/character/landing_mario.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character/character.py" beforeDir="false" afterPath="$PROJECT_DIR$/character/character.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/play_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/play_state.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

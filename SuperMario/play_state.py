@@ -13,15 +13,20 @@ class background:
         self.image.draw(self.background_x, 500)
     def update(self):
         global  player
-        if self.background_x - player.x_dir < 3760 and self.background_x > -2970:
-            if player.x > WIDTH//2:
-                self.background_x -= player.x_dir*3
+        # 키 눌렀을 때 변화율 만큼 움직이기
+        if self.background_x < (-2950):
+            if player.x - 400 < 0:
+                self.background_x -= (player.x - 400)
+                player.x = 400
+            pass
+        elif  player.x - 400 > 0:
+                self.background_x -= (player.x - 400)
+                player.x = 400
+        elif player.x - 400 < 0:
+            if  self.background_x - (player.x - 400) < 3750:
+                self.background_x -= (player.x - 400)
+                player.x = 400
 
-
-
-
-        elif self.background_x - player.x_dir > 3760:
-            self.background_x = 3760 + player.x_dir
     def handle_event(self):
         global running
         events = get_events()
