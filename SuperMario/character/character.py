@@ -30,6 +30,8 @@ class mario:
         self. jump_height = 15
         self.Y_gravity = 1
         self.Y_velocity = self.jump_height
+
+        self.count_jump = 0
     def update(self):
         if self.x >= 0 and self.x <= 800:
             self.x += self.x_dir * 5
@@ -38,13 +40,22 @@ class mario:
         elif self.x > 800:
             self.x = 800
 
-        self.frame = (self.frame + 1) % self.clip
 
         if self.jump:
+            if self.idle:
+                self.x_dir = 0
+            elif self.right:
+                self.x_dir = 3
+            elif self.left:
+                self.x_dir = -3
+
             self.y += self.Y_velocity
             self.Y_velocity -= self. Y_gravity
-            if self.Y_velocity < 0:
-                self.frame = 17
+            self.count_jump += 1.8
+
+            if self.count_jump >= 3:
+                self.frame = (self.frame + 1) % self.clip
+                self.count_jump = 0
 
             if self.curr_direct == 'Right':
                 self.jump_right()
@@ -53,7 +64,7 @@ class mario:
 
             if self.Y_velocity < -self.jump_height:
                 self.jump = False
-
+                self.frame = 0
 
                 if self.idle:
                     if self.curr_direct == 'Right':
@@ -61,11 +72,17 @@ class mario:
                     elif self.curr_direct == 'Left':
                         self.idle_left_mario()
 
-                elif self.right:
+                elif self.right and not self.run:
                     self.right_mario()
-                elif self.left:
+                elif self.right and self.run:
+                    self.run_right_mario()
+                elif self.left and not self.run:
                     self.left_mario()
+                elif self.left and self.run:
+                    self.run_left_mario()
                 self.Y_velocity = self.jump_height
+        else:
+            self.frame = (self.frame + 1) % self.clip
 
     def fall_mario(self):
         if self.fall:
@@ -94,6 +111,7 @@ class mario:
         self.action = 5
         self.clip = 79
         self.ch_size = 50
+
     def right_mario(self):
         self.image = load_image('mario_walk.png')
         self.curr_direct = 'Right'
@@ -123,6 +141,35 @@ class mario:
 
         self.clip = 25
         self.t = 0.01
+    def run_right_mario(self):
+
+        self.idle = False
+        self.left = False
+        self.right = True
+
+        self.image = load_image('run_fast.png')
+        self.x_dir = 4
+        self.action = 0
+        self.height = 60
+        self.ch_size = 50
+        self.t = 0.01
+        self.clip = 18
+
+    def run_left_mario(self):
+
+            self.idle = False
+            self.left = True
+            self.right = False
+
+            self.image = load_image('runfast_left.png')
+            self.x_dir = -4
+            self.action = 0
+            self.height = 60
+            self.ch_size = 50
+            self.clip = 18
+
+
+
 
     def check_gameOver(self):
         if self.die:
@@ -157,42 +204,32 @@ class mario:
                 self.right_mario()
 
                 if self.run:
-                     self.image = load_image('run_fast.png')
-                     self.x_dir = 4
-                     self.action = 0
-                     self.height = 60
-                     self.ch_size = 50
-                     self.t = 0.01
-                     self.clip = 18
-
+                    self.run_right_mario()
              elif event.key == SDLK_LEFT:
                 self.left_mario()
-
                 if self.run:
-                     self.image = load_image('runfast_left.png')
-                     self.x_dir = -4
-                     self.action = 0
-                     self.height = 60
-                     self.ch_size = 50
-                     self.t = 0.01
-                     self.clip = 18
-
+                     self.run_left_mario()
              elif event.key == SDLK_LSHIFT:
                 self.run = True
              elif event.key == SDLK_SPACE:
                 self.jump = True
+                self.frame = 0
 
-
-         elif event.type ==SDL_KEYUP:
+         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 self.idle_right_mario()
                 self.x_dir = 0
                 self.right = False
                 self.idle = True
+
             elif event.key == SDLK_LEFT:
                 self.idle_left_mario()
                 self.x_dir = 0
                 self.left = False
-                self.idle = False
+                self.idle = True
             elif event.key == SDLK_LSHIFT:
                 self.run = False
+                if self.left and self.curr_direct == "Left":
+                    self.left_mario()
+                elif self.right and self.curr_direct == "Right":
+                    self.right_mario()

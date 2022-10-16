@@ -17,7 +17,7 @@ class COIN:
         self.image.clip_draw(self.frame * 25 ,0 ,25 ,25 ,400,90)
     def update(self):
         self.frame = (self.frame + 1) % 4
-        delay(0.03)
+
 
 class Bricks:
     def __init__(self):

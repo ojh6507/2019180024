@@ -53,6 +53,6 @@ while(running):
     player.update()
     update_canvas()
     delay_time = 1000/60 - (SDL_GetTicks() - startTick)
-    if delay_time > 0: delay(delay_time)
+    if delay_time > 0: delay(0.03)
 
 close_canvas()
