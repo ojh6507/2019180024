@@ -18,20 +18,18 @@ class background:
         self.image.draw(self.background_x, 500)
     def update(self):
         global  player
-        # 키 눌렀을 때 변화율 만큼 움직이기
         if self.background_x < (-2950):
             if player.x - 400 < 0:
                 self.background_x -= (player.x - 400)
                 player.x = 400
             pass
-        elif  player.x - 400 > 0:
-                self.background_x -= (player.x - 400)
-                player.x = 400
+        elif player.x - 400 > 0:
+            self.background_x -= (player.x - 400)
+            player.x = 400
         elif player.x - 400 < 0:
-            if  self.background_x - (player.x - 400) < 3750:
+            if self.background_x - (player.x - 400) < 3750:
                 self.background_x -= (player.x - 400)
                 player.x = 400
-
     def handle_event(self):
         global running
         events = get_events()
@@ -43,15 +41,18 @@ class background:
 world = background()
 running = True
 while(running):
-
+    startTick = SDL_GetTicks()
     clear_canvas()
     world.draw()
     world.update()
 
     coin.draw()
+    coin.update()
     player.draw()
     player.handle_event()
     player.update()
     update_canvas()
+    delay_time = 1000/60 - (SDL_GetTicks() - startTick)
+    if delay_time > 0: delay(delay_time)
 
 close_canvas()
