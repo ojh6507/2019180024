@@ -1,9 +1,14 @@
 from pico2d import *
 from character import character
-
+from block import block
 WIDTH, HEIGHT = 800,600
 open_canvas(800,600)
 player = character.mario()
+
+brick_block = block.Bricks()
+coin = block.COIN()
+item = block.item_block()
+
 class background:
     def __init__ (self):
         self.image = load_image('background_2.png')
@@ -43,6 +48,7 @@ while(running):
     world.draw()
     world.update()
 
+    coin.draw()
     player.draw()
     player.handle_event()
     player.update()
