@@ -6,10 +6,19 @@ class item_block:
     def __init__(self):
         self.image = load_image('block_1.png')
         self.frame = 0
+        self.x = 0
+        self.y = 200
+        self.count_anim = 0
     def draw(self):
-        self.image.clip_draw(self.frame * 30, 0, 30, 40, 330, 90)
+        self.image.clip_draw(self.frame * 30, 0, 30, 40, self.x, self.y)
     def update(self):
-        self.frame = (self.frame+1)%4
+        self.count_anim += 1
+        if self.count_anim == 4:
+            self.frame = (self.frame+1)%4
+            self.count_anim = 0
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
 
 class COIN:
     def __init__(self):
@@ -33,11 +42,21 @@ class Bricks:
     def __init__(self):
         self.image = load_image('block_2.png')
         self.frame = 0
+        self.count_anim = 0
+        self.x = 0
+        self.y = 0
 
     def draw(self):
-        self.image.clip_draw(self.frame * 30, 0, 30, 40, 370, 90)
+        self.image.clip_draw(self.frame * 30, 0, 30, 40,self.x,self.y)
 
     def update(self):
-        self.frame = (self.frame + 1) % 4
+        self.count_anim +=1
+        if self.count_anim == 4:
+            self.frame = (self.frame + 1) % 4
+            self.count_anim = 0
+
+    def set_pos(self, x, y):
+        self.x = x
+        self.y = y
 
 

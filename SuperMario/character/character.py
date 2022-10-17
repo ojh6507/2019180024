@@ -1,10 +1,43 @@
 from pico2d import *
-
+import math
 running = True
+class fire:
+    def __init__(self,x,y, v ,deg, maprect):
+        # 총알 위치, 속도, 각도, 중력가속도
+        self.image = load_image('fire_ball.png')
+        self.x = x
+        self.y = y
+        self.v = v
+        self.deg = deg - 90
+        self.g = 1
+        self.map = maprect
+        # 착탄여부
+        self.impact = False
+        self.frame = 0
+    def draw(self):
+        self.image.clip_draw(self.frame *15, 15, 15, 13, self.x, self.y)
+    def update(self):
+        self.frame = (self.frame + 1) % 4
+    def threadFunc(self):
+        t = 0
+        rad = self.deg * math.pi / 180
+        while True:
+            # 포물선 방정식
+            vx = self.v * math.cos(rad)
+            vy = self.v * math.sin(rad) + self.g * t
+            self.x =  self.x + vx * t
+            self.y = self.y + (vy * t - 0.5 * self.g * t * t)
+            t += 0.01
+            if 60 > self.y:
+                break
+        self.impact = True
 class mario:
     def __init__(self):
         self.image = load_image('smario_idle.png')
 
+        self.gen_fire = False
+
+        self.fire_frame = 0
 
         self.mario_size = 'Small'
         self.frame = 0
@@ -13,6 +46,7 @@ class mario:
 
         self.x = 100
         self.y = 100 -10
+        self.flower = False
 
         #self.height = 65
         self.height = 35
@@ -41,6 +75,7 @@ class mario:
         self.Y_velocity = self.jump_height
         self.count_grow = 0
         self.count_jump = 0
+
     def update(self):
         if self.x >= 0 and self.x <= 800:
             self.x += self.x_dir * 5
@@ -56,6 +91,8 @@ class mario:
             self.mario_up()
         else:
             self.frame = (self.frame + 1) % self.clip
+        if self.gen_fire:
+            pass
 
     def jump_mario(self):
         if self.idle:
@@ -101,14 +138,14 @@ class mario:
             elif self.left and self.run:
                 self.run_left_mario()
             self.Y_velocity = self.jump_height
-    def fall_mario(self):
-        if self.fall:
-            self.y -= self.y_dir *20
-            self.image =load_image('fall_mario.png')
-            self.height = 60
-            self.ch_size = 35
-            self.clip = 1
-            self.action = 0
+    # def fall_mario(self):
+    #     if self.fall:
+    #         self.y -= self.y_dir *20
+    #         self.image = load_image('fall_mario.png')
+    #         self.height = 60
+    #         self.ch_size = 35
+    #         self.clip = 1
+    #         self.action = 0
     def idle_right_mario(self):
                 if self.mario_size =='Small':
                     self.image = load_image('smario_idle.png')
@@ -119,7 +156,10 @@ class mario:
                     self.height = 35
 
                 elif self.mario_size == 'Normal':
-                    self.image =load_image('idle_right.png')
+                    if not self.flower:
+                        self.image =load_image('idle_right.png')
+                    else:
+                        self.image = load_image('flower_idle_right.png')
                     self.action = 5
                     self.clip = 79
                     self.ch_size = 50
@@ -135,7 +175,10 @@ class mario:
             self.height = 35
 
         elif self.mario_size == 'Normal':
-            self.image = load_image('idle_left.png')
+            if not self.flower:
+                self.image = load_image('idle_left.png')
+            else:
+                self.image = load_image('flower_idle_left.png')
             self.action = 5
             self.clip = 79
             self.ch_size = 50
@@ -156,7 +199,10 @@ class mario:
             self.clip = 27
 
         elif self.mario_size == 'Normal':
-            self.image = load_image('mario_walk.png')
+            if not self.flower:
+                self.image = load_image('mario_walk.png')
+            else:
+                self.image = load_image('flower_mario_walk.png')
             self.curr_direct = 'Right'
             self.right = True
             self.left = False
@@ -184,7 +230,10 @@ class mario:
             self.clip = 27
 
         elif self.mario_size == 'Normal':
-            self.image = load_image('mario_walk.png')
+            if not self.flower:
+                self.image = load_image('mario_walk.png')
+            else:
+                self.image = load_image('flower_mario_walk.png')
 
             self.action = 5
             self.x_dir = -1.5
@@ -210,7 +259,11 @@ class mario:
             self.ch_size = 45
             self.clip = 13
         elif self.mario_size == 'Normal':
-            self.image = load_image('run_fast.png')
+            if not self.flower:
+                self.image = load_image('run_fast.png')
+            else:
+                self.image = load_image('flower_run_fast.png')
+
             self.x_dir = 2
             self.action = 0
             self.height = 60
@@ -230,7 +283,11 @@ class mario:
                 self.ch_size = 45
                 self.clip = 13
             elif self.mario_size == 'Normal':
-                self.image = load_image('runfast_left.png')
+                if not self.flower:
+                    self.image = load_image('runfast_left.png')
+                else:
+                    self.image = load_image('flower_runfast_left.png')
+
                 self.x_dir = -2
                 self.action = 0
                 self.height = 60
@@ -256,7 +313,11 @@ class mario:
             self.height = 45
             self.clip = 30
         elif self.mario_size == 'Normal':
-            self.image = load_image('jump_right.png')
+            if not self.flower:
+                self.image = load_image('jump_right.png')
+            else:
+                self.image = load_image('flower_jump_right.png')
+
             self.action = 0
             self.ch_size = 40
             self.height = 66
@@ -271,7 +332,10 @@ class mario:
             self.clip = 30
 
         elif self.mario_size == 'Normal':
-            self.image = load_image('jump_left.png')
+            if not self.flower:
+                self.image = load_image('jump_left.png')
+            else:
+                self.image = load_image('flower_jump_left.png')
             self.action = 0
             self.ch_size = 40
             self.height = 66
@@ -285,7 +349,7 @@ class mario:
         self.clip = 7
 
         self.count_grow+=1
-        if self.count_grow >= 4:
+        if self.count_grow == 4:
             self.frame = (self.frame + 1) % self.clip
             self.count_grow = 0
         if self.frame == 6:
@@ -304,7 +368,6 @@ class mario:
          if event.type == SDL_KEYDOWN:
              if event.key == SDLK_RIGHT:
                 self.right_mario()
-
                 if self.run:
                     self.run_right_mario()
              elif event.key == SDLK_LEFT:
@@ -316,9 +379,27 @@ class mario:
              elif event.key == SDLK_SPACE:
                 self.jump = True
                 self.frame = 0
+             elif event.key == SDLK_z:
+                 f =fire(self.x,self.y, 10,30.,100)
+                 f.threadFunc()
              elif event.key == SDLK_1:
-                self.y += 17
-                self.growup = True
+                if self.mario_size == 'Small':
+                    self.grow_count = 0
+                    self.y += 17
+                    self.growup = True
+             elif event.key == SDLK_2:
+                if self.mario_size == 'Small':
+                    self.grow_count = 0
+                    self.y += 17
+                    self.growup = True
+                self.flower = True
+             elif event.key == SDLK_0:
+                 self.flower = False
+                 if self.mario_size == 'Normal':
+                    self.y-=17
+                    self.mario_size = 'Small'
+                    self.idle_right_mario()
+                    self.grow_count = 0
 
 
          elif event.type == SDL_KEYUP:
