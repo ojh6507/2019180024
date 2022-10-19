@@ -9,29 +9,52 @@ class fire_ball:
         self.y = 0
         self.w = 15
         self.h = 13
-
+        self.height = 5
+        self.Y_velocity = 5
+        self.Y_gravity = 1
         self.frame = 0
         self.anim_count = 0
         self.direction = None
+        self.temp_y = 10
+        self.count = 0
     def set_pos(self,x,y):
         self.x = x
         self.y = y
+        self.temp_y = y -5
+
     def set_dir(self,dir):
         self.direction = dir
     def update(self):
         self.anim_count += 1
+
         if self.anim_count == 3:
             self.frame = (self.frame + 1) % 4
             self.anim_count = 0
         if self.direction  == 'Right':
             self.x += 10
+
         elif self.direction == 'Left':
             self.x -= 10
+
+        self.y += self.Y_velocity
+        self.Y_velocity -= self.Y_gravity
+        if self.y < 90:
+            self.Y_velocity = 5
+            self.count+= 1
+        if self.count == 3:
+           self.count = 0
+           destroy_fire()
+
+
+
+
     def draw(self):
         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x,self.y)
 
 
 fire = []
+def destroy_fire():
+    del fire[0]
 class mario:
     def __init__(self):
         self.image = load_image('smario_idle.png')
@@ -110,11 +133,7 @@ class mario:
                 self.x_dir -= .5
         self.y += self.Y_velocity
         self.Y_velocity -= self.Y_gravity
-        self.count_jump += 3
-
-        if self.count_jump >= 3:
-            self.frame = (self.frame + 1) % self.clip
-            self.count_jump = 0
+        self.frame = (self.frame + 1) % self.clip
 
         if self.curr_direct == 'Right':
             self.jump_right()
@@ -379,12 +398,12 @@ class mario:
              elif event.key == SDLK_LSHIFT:
                 self.run = True
              elif event.key == SDLK_SPACE:
-                self.jump = True
-                self.frame = 0
+                    self.jump = True
+                    self.frame = 0
              elif event.key == SDLK_z:
                  if self.flower:
                     fire.append(fire_ball())
-                    fire[len(fire)-1].set_pos(self.x, self.y+ 5)
+                    fire[len(fire)-1].set_pos(self.x, self.y)
                     fire[len(fire)-1].set_dir(self.curr_direct)
 
 
