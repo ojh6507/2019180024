@@ -1,44 +1,40 @@
 from pico2d import *
 import math
 running = True
-class fire:
-    def __init__(self,x,y, v ,deg, maprect):
-        # 총알 위치, 속도, 각도, 중력가속도
+
+class fire_ball:
+    def __init__(self):
         self.image = load_image('fire_ball.png')
+        self.x = 0
+        self.y = 0
+        self.w = 15
+        self.h = 13
+
+        self.frame = 0
+        self.anim_count = 0
+        self.direction = None
+    def set_pos(self,x,y):
         self.x = x
         self.y = y
-        self.v = v
-        self.deg = deg - 90
-        self.g = 1
-        self.map = maprect
-        # 착탄여부
-        self.impact = False
-        self.frame = 0
-    def draw(self):
-        self.image.clip_draw(self.frame *15, 15, 15, 13, self.x, self.y)
+    def set_dir(self,dir):
+        self.direction = dir
     def update(self):
-        self.frame = (self.frame + 1) % 4
-    def threadFunc(self):
-        t = 0
-        rad = self.deg * math.pi / 180
-        while True:
-            # 포물선 방정식
-            vx = self.v * math.cos(rad)
-            vy = self.v * math.sin(rad) + self.g * t
-            self.x =  self.x + vx * t
-            self.y = self.y + (vy * t - 0.5 * self.g * t * t)
-            t += 0.01
-            if 60 > self.y:
-                break
-        self.impact = True
+        self.anim_count += 1
+        if self.anim_count == 3:
+            self.frame = (self.frame + 1) % 4
+            self.anim_count = 0
+        if self.direction  == 'Right':
+            self.x += 10
+        elif self.direction == 'Left':
+            self.x -= 10
+    def draw(self):
+        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x,self.y)
+
+
+fire = []
 class mario:
     def __init__(self):
         self.image = load_image('smario_idle.png')
-
-        self.gen_fire = False
-
-        self.fire_frame = 0
-
         self.mario_size = 'Small'
         self.frame = 0
         self.action = 0
@@ -76,7 +72,15 @@ class mario:
         self.count_grow = 0
         self.count_jump = 0
 
+        self.positionRect = SDL_Rect(self.x, self.y, self.ch_size, self.height)
+
+    def Intersect(self, other):
+        if self.positionRect.x + self.positionRect.w < other.positionRect.x or self.positionRect.x > other.positionRect.x + other.positionRect.w \
+                or self.positionRect.y + self.positionRect.h < other.positionRect.y or self.positionRect.y > other.positionRect.y + other.positionRect.h:
+            pass
     def update(self):
+        for i in fire:
+            i.update()
         if self.x >= 0 and self.x <= 800:
             self.x += self.x_dir * 5
         if self.x < 0:
@@ -84,15 +88,13 @@ class mario:
         elif self.x > 800:
             self.x = 800
 
-
         if self.jump:
            self.jump_mario()
         elif self.growup:
             self.mario_up()
         else:
             self.frame = (self.frame + 1) % self.clip
-        if self.gen_fire:
-            pass
+        self.positionRect = SDL_Rect(int(self.x), int(self.y), int(self.ch_size), int(self.height))
 
     def jump_mario(self):
         if self.idle:
@@ -294,9 +296,6 @@ class mario:
                 self.ch_size = 50
                 self.clip = 18
 
-
-
-
     def check_gameOver(self):
         if self.die:
             self.image =load_image('gameover_mario.png')
@@ -358,6 +357,8 @@ class mario:
 
     def draw(self):
         self.image.clip_draw(self.frame * self.ch_size, 1* self.action, self.ch_size ,self.height,self.x,self.y)
+        for i in fire:
+            i.draw()
      
     def handle_event(self):
        events = get_events()
@@ -365,6 +366,7 @@ class mario:
        for event in events:
          if event.type == SDL_QUIT:
              running = False
+
          if event.type == SDL_KEYDOWN:
              if event.key == SDLK_RIGHT:
                 self.right_mario()
@@ -380,8 +382,12 @@ class mario:
                 self.jump = True
                 self.frame = 0
              elif event.key == SDLK_z:
-                 f =fire(self.x,self.y, 10,30.,100)
-                 f.threadFunc()
+                 if self.flower:
+                    fire.append(fire_ball())
+                    fire[len(fire)-1].set_pos(self.x, self.y+ 5)
+                    fire[len(fire)-1].set_dir(self.curr_direct)
+
+
              elif event.key == SDLK_1:
                 if self.mario_size == 'Small':
                     self.grow_count = 0

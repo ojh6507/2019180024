@@ -1,5 +1,4 @@
 import random
-
 from pico2d import *
 from character import character
 from block import block
@@ -8,7 +7,7 @@ from monster import monster
 WIDTH, HEIGHT = 800,600
 open_canvas(800,600)
 player = character.mario()
-
+fire = character.fire
 brick_block = block.Bricks()
 coin = [block.COIN() for n in range(0, 20)]
 
@@ -49,6 +48,9 @@ class background:
                     it.x -= player.x - 400
                 for br in brick:
                     br.x -= player.x - 400
+                for f in fire:
+                    f.x -= player.x - 400
+
                 player.x = 400
 
 
@@ -64,6 +66,9 @@ class background:
                 it.x -= player.x - 400
             for br in brick:
                 br.x -= player.x - 400
+            #for f in fire:
+             #   f.x -=player.x - 400
+
             player.x = 400
 
 
@@ -79,6 +84,9 @@ class background:
                     it.x -= player.x - 400
                 for br in brick:
                     br.x -= player.x - 400
+                #for f in fire:
+                 #   f.x -= player.x - 400
+
                 player.x = 400
 
 

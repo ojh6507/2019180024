@@ -20,6 +20,7 @@ class item_block:
         self.x = x
         self.y = y
 
+
 class COIN:
     def __init__(self):
         self.image =load_image('coin.png')
