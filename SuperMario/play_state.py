@@ -3,20 +3,8 @@ from pico2d import *
 from character import character
 from block import block
 from monster import monster
-
+import game_framework
 WIDTH, HEIGHT = 800,600
-open_canvas(800,600)
-player = character.mario()
-fire = character.fire
-brick_block = block.Bricks()
-coin = [block.COIN() for n in range(0, 20)]
-
-item = [block.item_block() for n in range(0, 10)]
-brick = [block.Bricks() for n in range(0, 15)]
-
-goomba = monster.GOOMBA()
-green = monster.GreenKoopa()
-red = monster.RedKoopa()
 
 def setPos_coin():
     global coin
@@ -90,43 +78,101 @@ class background:
                 player.x = 400
 
 
-world = background()
+world = None
+player = None
+fire = None
+brick_block = None
+coin = []
+item = []
+brick = []
+goomba = None
+green = None
+red = None
+
 
 def draw_world():
     world.draw()
-    world.update()
+    player.draw()
 
-setPos_coin()
+def enter():
+    global world, player,fire,brick_block,coin,item,brick,goomba,green,red
+    world = background()
+    player = character.mario()
+    fire = character.fire
+    brick_block = block.Bricks()
+    coin = [block.COIN() for n in range(0, 20)]
+    item = [block.item_block() for n in range(0, 10)]
+    brick = [block.Bricks() for n in range(0, 15)]
+    goomba = monster.GOOMBA()
+    green = monster.GreenKoopa()
+    red = monster.RedKoopa()
+    setPos_coin()
 
-while(character.running):
+def exit():
+    global world, player, fire, brick_block, coin, item, brick, goomba, green, red
+    del world
+    del player
+    for one_fire in fire:
+        del one_fire
+    for one_coin in coin:
+        del one_coin
+    for one_item in item:
+        del one_item
+    for one_brick in brick:
+        del one_brick
 
+    del goomba
+    del green
+    del red
+def update():
     startTick = SDL_GetTicks()
+
+    world.update()
+    player.update()
+    for c in coin:
+        c.update()
+    for it in item:
+        it.update()
+    for br in brick:
+        br.update()
+    red.update()
+    green.update()
+    goomba.update()
+
+    delay_time = 1000 / 60 - (SDL_GetTicks() - startTick)
+    if delay_time > 0:
+        delay(0.02)
+
+
+def draw():
     clear_canvas()
     draw_world()
     for c in coin:
         c.draw()
-        c.update()
     for it in item:
         it.draw()
-        it.update()
     for br in brick:
         br.draw()
-        br.update()
-
-    player.draw()
-    player.handle_event()
-    player.update()
-
     red.draw()
-    red.update()
     green.draw()
-    green.update()
     goomba.draw()
-    goomba.update()
-
     update_canvas()
-    delay_time = 1000/60 - (SDL_GetTicks() - startTick)
-    if delay_time > 0:
-        delay(0.02)
 
-close_canvas()
+def handle_events():
+    player.handle_event()
+
+def pause():
+    pass
+def resume():
+    pass
+
+def test_self():
+    import sys
+    this_module = sys.modules['__main__']
+    pico2d.open_canvas()
+    game_framework.run(this_module)
+    pico2d.close_canvas()
+
+
+if __name__ == '__main__': # 단독 실행이면
+    test_self()

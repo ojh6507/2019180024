@@ -1,6 +1,8 @@
 from pico2d import *
 import math
-running = True
+
+import game_framework
+
 
 class fire_ball:
     def __init__(self):
@@ -381,11 +383,9 @@ class mario:
      
     def handle_event(self):
        events = get_events()
-       global running
        for event in events:
          if event.type == SDL_QUIT:
-             running = False
-
+             game_framework.quit()
          if event.type == SDL_KEYDOWN:
              if event.key == SDLK_RIGHT:
                 self.right_mario()
