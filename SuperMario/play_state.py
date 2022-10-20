@@ -40,8 +40,6 @@ class background:
                     f.x -= player.x - 400
 
                 player.x = 400
-
-
             pass
         elif player.x - 400 > 0:
             self.background_x -= (player.x - 400)

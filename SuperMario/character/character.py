@@ -3,6 +3,28 @@ import math
 
 import game_framework
 
+class explosion:
+    def __init__(self):
+        self.image = load_image('explosion.png')
+        self.frame = 0
+        self.x = 10
+        self.y = 10
+        self.w = 30
+        self.h = 29
+        self.anim_count = 0
+
+    def update(self):
+        self.anim_count += 1
+        if self.anim_count == 4:
+            self.frame = (self.frame+1)
+            self.anim_count = 0
+        if self.frame >= 5:
+            destroy_exp()
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
+    def draw(self):
+        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
 class fire_ball:
     def __init__(self):
@@ -46,17 +68,18 @@ class fire_ball:
         if self.count == 3:
            self.count = 0
            destroy_fire()
-
-
-
-
     def draw(self):
         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x,self.y)
 
 
 fire = []
+exp = []
 def destroy_fire():
+    exp.append(explosion())
+    exp[len(exp)-1].set_pos(fire[0].x, fire[0].y)
     del fire[0]
+def destroy_exp():
+    del exp[0]
 class mario:
     def __init__(self):
         self.image = load_image('smario_idle.png')
@@ -106,6 +129,8 @@ class mario:
     def update(self):
         for i in fire:
             i.update()
+        for ex in exp:
+            ex.update()
         if self.x >= 0 and self.x <= 800:
             self.x += self.x_dir * 5
         if self.x < 0:
@@ -380,6 +405,8 @@ class mario:
         self.image.clip_draw(self.frame * self.ch_size, 1* self.action, self.ch_size ,self.height,self.x,self.y)
         for i in fire:
             i.draw()
+        for ex in exp:
+            ex.draw()
      
     def handle_event(self):
        events = get_events()
@@ -405,7 +432,6 @@ class mario:
                     fire.append(fire_ball())
                     fire[len(fire)-1].set_pos(self.x, self.y)
                     fire[len(fire)-1].set_dir(self.curr_direct)
-
 
              elif event.key == SDLK_1:
                 if self.mario_size == 'Small':
