@@ -1,9 +1,11 @@
 import random
 from pico2d import *
+
 from character import character
 from block import block
 from monster import monster
 import game_framework
+
 WIDTH, HEIGHT = 800,600
 
 def setPos_coin():
@@ -36,8 +38,8 @@ class background:
                     it.x -= player.x - 400
                 for br in brick:
                     br.x -= player.x - 400
-                for f in fire:
-                    f.x -= player.x - 400
+                for ex in exp:
+                   ex.x -= player.x - 400
 
                 player.x = 400
             pass
@@ -52,8 +54,8 @@ class background:
                 it.x -= player.x - 400
             for br in brick:
                 br.x -= player.x - 400
-            #for f in fire:
-             #   f.x -=player.x - 400
+            for ex in exp:
+                ex.x -= player.x - 400
 
             player.x = 400
 
@@ -70,8 +72,8 @@ class background:
                     it.x -= player.x - 400
                 for br in brick:
                     br.x -= player.x - 400
-                #for f in fire:
-                 #   f.x -= player.x - 400
+                for ex in exp:
+                   ex.x -= player.x - 400
 
                 player.x = 400
 
@@ -79,6 +81,7 @@ class background:
 world = None
 player = None
 fire = None
+exp = None
 brick_block = None
 coin = []
 item = []
@@ -86,17 +89,20 @@ brick = []
 goomba = None
 green = None
 red = None
-
+music = None
 
 def draw_world():
     world.draw()
     player.draw()
 
 def enter():
-    global world, player,fire,brick_block,coin,item,brick,goomba,green,red
+    global world, player,fire,brick_block,\
+        coin,item,brick,goomba,green,red,exp,music
     world = background()
     player = character.mario()
     fire = character.fire
+    exp = character.exp
+
     brick_block = block.Bricks()
     coin = [block.COIN() for n in range(0, 20)]
     item = [block.item_block() for n in range(0, 10)]
@@ -105,9 +111,14 @@ def enter():
     green = monster.GreenKoopa()
     red = monster.RedKoopa()
     setPos_coin()
+    music = load_music('stage1.mp3')
+    #music.set_volume(10)
+    music.play()
+
 
 def exit():
-    global world, player, fire, brick_block, coin, item, brick, goomba, green, red
+    global world, player, fire, brick_block, coin,\
+        item, brick, goomba, green, red
     del world
     del player
     for one_fire in fire:

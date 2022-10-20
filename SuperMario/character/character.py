@@ -77,6 +77,7 @@ exp = []
 def destroy_fire():
     exp.append(explosion())
     exp[len(exp)-1].set_pos(fire[0].x, fire[0].y)
+
     del fire[0]
 def destroy_exp():
     del exp[0]
