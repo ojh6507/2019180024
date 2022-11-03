@@ -1,12 +1,14 @@
 import random
 from pico2d import *
 
-from character import character
+from player import character
+from player import *
 from block import block
 from monster import monster
 import game_framework
 
 WIDTH, HEIGHT = 800,600
+
 
 def setPos_coin():
     global coin
@@ -111,9 +113,9 @@ def enter():
     green = monster.GreenKoopa()
     red = monster.RedKoopa()
     setPos_coin()
-    music = load_music('stage1.mp3')
+    #music = load_music('stage1.mp3')
     #music.set_volume(10)
-    music.play()
+    #music.play()
 
 
 def exit():
@@ -134,7 +136,6 @@ def exit():
     del green
     del red
 def update():
-    startTick = SDL_GetTicks()
 
     world.update()
     player.update()
@@ -147,10 +148,6 @@ def update():
     red.update()
     green.update()
     goomba.update()
-
-    delay_time = 1000 / 60 - (SDL_GetTicks() - startTick)
-    if delay_time > 0:
-        delay(0.02)
 
 
 def draw():
@@ -168,7 +165,14 @@ def draw():
     update_canvas()
 
 def handle_events():
-    player.handle_event()
+    events = get_events()
+    for event in events:
+        if event.type == SDL_QUIT:
+            game_framework.quit()
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
+            game_framework.quit()
+        else:
+            player.handle_event(event)
 
 def pause():
     pass
