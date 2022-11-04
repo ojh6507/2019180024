@@ -1,14 +1,14 @@
 import random
+import game_framework
+import game_world
+import round1
 from pico2d import *
-
 from player import character
 from player import *
 from block import block
 from monster import monster
-import game_framework
 
 WIDTH, HEIGHT = 800,600
-
 
 def setPos_coin():
     global coin
@@ -19,150 +19,86 @@ def setPos_coin():
     for br in brick:
         br.set_pos(random.randint(400, 10000), random.randint(200, 300))
 
-class background:
-    def __init__ (self):
-        self.image = load_image('background_2.png')
-        self.background_x = 3750
-        self.dir = 0
-    def draw (self):
-        self.image.draw(self.background_x, 500)
-    def update(self):
-        global  player
-        if self.background_x < (-2950):
-            if player.x - 400 < 0:
-                self.background_x -= (player.x - 400)
-                goomba.x -= player.x - 400
-                green.x -= player.x - 400
-                red.x -= player.x - 400
-                for c in coin:
-                    c.x -= player.x - 400
-                for it in item:
-                    it.x -= player.x - 400
-                for br in brick:
-                    br.x -= player.x - 400
-                for ex in exp:
-                   ex.x -= player.x - 400
-
-                player.x = 400
-            pass
-        elif player.x - 400 > 0:
-            self.background_x -= (player.x - 400)
-            goomba.x -= player.x - 400
-            green.x -= player.x - 400
-            red.x -= player.x - 400
-            for c in coin:
-                c.x -=player.x - 400
-            for it in item:
-                it.x -= player.x - 400
-            for br in brick:
-                br.x -= player.x - 400
-            for ex in exp:
-                ex.x -= player.x - 400
-
-            player.x = 400
-
-
-        elif player.x - 400 < 0:
-            if self.background_x - (player.x - 400) < 3750:
-                self.background_x -= (player.x - 400)
-                goomba.x -= player.x - 400
-                green.x -= player.x - 400
-                red.x -= player.x - 400
-                for c in coin:
-                    c.x -= player.x - 400
-                for it in item:
-                    it.x -= player.x - 400
-                for br in brick:
-                    br.x -= player.x - 400
-                for ex in exp:
-                   ex.x -= player.x - 400
-
-                player.x = 400
-
 
 world = None
 player = None
 fire = None
 exp = None
 brick_block = None
-coin = []
-item = []
-brick = []
+coin = None
+item = None
+brick = None
 goomba = None
 green = None
 red = None
 music = None
 
-def draw_world():
-    world.draw()
-    player.draw()
+def set():
+    global world, player
+    if world.x < (-2950):
+        if player.x - 400 < 0:
+            for game_object in game_world.all_objects():
+                game_object.x -= (player.x - 400)
+
+    elif player.x - 400 > 0:
+        for game_object in game_world.all_objects():
+            game_object.x -= (player.x - 400)
+            print("right -> left", player.x)
+
+
+    elif player.x - 400 < 0 :
+        if world.x - (player.x - 400) < 3750:
+            for game_object in game_world.all_objects():
+                game_object.x -= (player.x - 400)
+            print("right -> left")
+
 
 def enter():
     global world, player,fire,brick_block,\
         coin,item,brick,goomba,green,red,exp,music
-    world = background()
+    world = round1.BACKGROUND()
     player = character.mario()
-    fire = character.fire
-    exp = character.exp
 
     brick_block = block.Bricks()
     coin = [block.COIN() for n in range(0, 20)]
     item = [block.item_block() for n in range(0, 10)]
     brick = [block.Bricks() for n in range(0, 15)]
+
     goomba = monster.GOOMBA()
     green = monster.GreenKoopa()
     red = monster.RedKoopa()
     setPos_coin()
+
+    game_world.add_object(world, 0)
+    game_world.add_object(player, 1)
+    game_world.add_object(goomba, 1)
+    game_world.add_object(green, 1)
+    game_world.add_object(green, 1)
+    game_world.add_objects(coin, 1)
+    game_world.add_objects(item, 1)
+    game_world.add_objects(brick, 1)
+
     #music = load_music('stage1.mp3')
     #music.set_volume(10)
     #music.play()
 
 
 def exit():
-    global world, player, fire, brick_block, coin,\
-        item, brick, goomba, green, red
-    del world
-    del player
-    for one_fire in fire:
-        del one_fire
-    for one_coin in coin:
-        del one_coin
-    for one_item in item:
-        del one_item
-    for one_brick in brick:
-        del one_brick
-
-    del goomba
-    del green
-    del red
+    game_world.clear()
 def update():
+    set()
+    for game_object in game_world.all_objects():
+        game_object.update()
 
-    world.update()
-    player.update()
-    for c in coin:
-        c.update()
-    for it in item:
-        it.update()
-    for br in brick:
-        br.update()
-    red.update()
-    green.update()
-    goomba.update()
-
+def draw_world():
+    for game_object in game_world.all_objects():
+        game_object.draw()
 
 def draw():
     clear_canvas()
     draw_world()
-    for c in coin:
-        c.draw()
-    for it in item:
-        it.draw()
-    for br in brick:
-        br.draw()
-    red.draw()
-    green.draw()
-    goomba.draw()
     update_canvas()
+
 
 def handle_events():
     events = get_events()
