@@ -12,8 +12,10 @@ class jr_boss:
         self.frame = (self.frame + 1) % 19
 
 class GOOMBA:
+    image = None
     def __init__(self):
-        self.image = load_image('Goomba.png')
+        if GOOMBA.image == None:
+            GOOMBA.image = load_image('Goomba.png')
         self.frame  = 1
         self.action = 1
         self.x = random.randint(0, 800)
@@ -26,12 +28,10 @@ class GOOMBA:
     
     def update(self):
         self.count_anim += 1
-
         if self.count_anim == 3:
             self.frame = (self.frame + 1) % 9 + 1 #방향 전환 프레임: 1
             self.count_anim = 0
         self.x += self.x_dir * 1
-
         self.Goomba_right()
 
     def Goomba_right(self):
@@ -45,7 +45,7 @@ class GOOMBA:
 class RedKoopa:
     def __init__(self):
         self.image = load_image('red_koopa.png')
-        self.frame  = 1
+        self.frame = 1
         self.x = random.randint(400, 3000)
         self.x_dir = -1
         self.action = 1
@@ -58,8 +58,7 @@ class RedKoopa:
         if self.count_anim == 3:
             self.frame = (self.frame + 1) % 17 + 1  # 방향 전환 frame: 1
             self.count_anim = 0
-        self.x += self.x_dir * 1.2
-
+        self.x += self.x_dir
 
 class GreenKoopa:
     def __init__(self):
@@ -79,7 +78,7 @@ class GreenKoopa:
         if self.count_anim == 3:
             self.frame = (self.frame + 1) % 17+1 #방향 전환 frame: 1
             self.count_anim = 0
-        self.x += self.x_dir * 1.2
+        self.x += self.x_dir
 
 
 def handle_events():
