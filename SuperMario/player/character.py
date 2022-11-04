@@ -16,18 +16,14 @@ key_event_table = {
 
 class IDLE:
     def enter(self, event):
-        print('Enter IDLE')
         self.x_dir = 0
         self.Run = False
         pass
 
     def exit(self, event):
-        print('Exit IDLE')
         pass
 
     def do(self):
-        print('Do IDLE')
-
         if not self.jump:
             if self.mario_size == 'Small':
                 self.image = load_image('smario_idle.png')
@@ -76,7 +72,6 @@ class IDLE:
         self.frame = (self.frame + 1) % self.clip
 
     def draw(self):
-        print('Draw IDLE')
         if self.jump:
             if self.face_dir == 1 and self.mario_size == 'Small':
                 self.image.clip_draw(self.frame * 35, 0, 35, 45, self.x, self.y)
@@ -97,7 +92,6 @@ class IDLE:
 
 class WALK:
     def enter(self, event):
-        print('Enter Run')
         if event == RD:
             self.x_dir += 1
             self.face_dir = 1
@@ -109,13 +103,11 @@ class WALK:
         elif event == LU:
             self.x_dir += 1
     def exit(self,event):
-        print('Exit Run')
         if event == SHIFTD:
             self.Run = True
         else:
             self.Run = False
     def do(self):
-        print('Do Run')
         if not self.jump:
             if self.Run:
                 self.velocity = 2
@@ -184,7 +176,6 @@ class WALK:
         self.x += self.x_dir* 2 * self.velocity
 
     def draw(self):
-        print('Draw Run')
         if self.jump:
             if self.face_dir == 1 and self.mario_size == 'Small':
                 self.image.clip_draw(self.frame * 35, 0, 35, 45, self.x, self.y)
@@ -245,94 +236,35 @@ next_state = {
     WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SPACE: WALK}
 
 }
-class explosion:
-    def __init__(self):
-        self.image = load_image('explosion.png')
-        self.frame = 0
-        self.x = 10
-        self.y = 10
-        self.w = 30
-        self.h = 29
-        self.anim_count = 0
-
-    def update(self):
-        self.anim_count += 1
-        if self.anim_count == 4:
-            self.frame = (self.frame+1)
-            self.anim_count = 0
-        if self.frame >= 5:
-            destroy_exp()
-    def set_pos(self,x,y):
-        self.x = x
-        self.y = y
-    def draw(self):
-        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
-
-class fire_ball:
-    def __init__(self):
-        self.image = load_image('fire_ball.png')
-        self.x = 0
-        self.y = 0
-        self.w = 15
-        self.h = 13
-        self.height = 5
-        self.Y_velocity = 5
-        self.Y_gravity = 1
-        self.frame = 0
-        self.anim_count = 0
-        self.direction = None
-        self.temp_y = 10
-        self.count = 0
-    def set_pos(self,x,y):
-        self.x = x
-        self.y = y
-        self.temp_y = y -5
-
-    def set_dir(self,dir):
-        self.direction = dir
-    def update(self):
-        self.anim_count += 1
-
-        if self.anim_count == 3:
-            self.frame = (self.frame + 1) % 4
-            self.anim_count = 0
-        if self.direction  == 'Right':
-            self.x += 10
-
-        elif self.direction == 'Left':
-            self.x -= 10
-
-        self.y += self.Y_velocity
-        self.Y_velocity -= self.Y_gravity
-        if self.y < 90:
-            self.Y_velocity = 5
-            self.count+= 1
-        if self.count == 3:
-           self.count = 0
-           destroy_fire()
-    def draw(self):
-        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x,self.y)
-
-
-fire = []
-exp = []
-def destroy_fire():
-    exp.append(explosion())
-    exp[len(exp)-1].set_pos(fire[0].x, fire[0].y)
-
-    del fire[0]
-def destroy_exp():
-    del exp[0]
-
+# class explosion:
+#     def __init__(self):
+#         self.image = load_image('explosion.png')
+#         self.frame = 0
+#         self.x = 10
+#         self.y = 10
+#         self.w = 30
+#         self.h = 29
+#         self.anim_count = 0
+#
+#     def update(self):
+#         self.anim_count += 1
+#         if self.anim_count == 4:
+#             self.frame = (self.frame+1)
+#             self.anim_count = 0
+#         if self.frame >= 5:
+#             destroy_exp()
+#     def set_pos(self,x,y):
+#         self.x = x
+#         self.y = y
+#     def draw(self):
+#         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
 class mario:
     def __init__(self):
         self.image = load_image('smario_idle.png')
         self.mario_size = 'Small'
-
         self.frame = 0
         self.clip = 76
-
         self.x = 100
         self.y = 100 -10
         self.flower = False
@@ -371,6 +303,7 @@ class mario:
             except KeyError:
                 print('Error: ', self.cur_state.__name__,' ', event_name[event])
             self.cur_state.enter(self, event)
+        self.x = clamp(0,self.x,800)
 
     def check_gameOver(self):
         if self.die:
