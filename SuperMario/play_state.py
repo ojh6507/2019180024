@@ -6,7 +6,8 @@ from pico2d import *
 from player import character
 from player import *
 from block import block
-from monster import monster
+from monster import Goomba
+from monster import Koopa
 
 WIDTH, HEIGHT = 800,600
 
@@ -64,9 +65,9 @@ def enter():
     item = [block.item_block() for n in range(0, 10)]
     brick = [block.Bricks() for n in range(0, 15)]
 
-    goomba = monster.GOOMBA()
-    green = monster.GreenKoopa()
-    red = monster.RedKoopa()
+    goomba = Goomba.GOOMBA()
+    green = Koopa.GreenKoopa()
+    red = Koopa.RedKoopa()
     setPos_coin()
 
     game_world.add_object(world, 0)
