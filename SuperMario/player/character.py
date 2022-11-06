@@ -107,6 +107,8 @@ class WALK:
             self.Run = True
         else:
             self.Run = False
+
+        self.face_dir = self.x_dir
     def do(self):
         if not self.jump:
             if self.Run:

@@ -34,6 +34,20 @@ green = None
 red = None
 music = None
 
+def check_collide(a, b):
+
+    top_a, bottom_a, left_a, right_a = a.get_rect()
+    top_b, bottom_b, left_b, right_b = b.get_rect()
+
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+
+    return True
+
+
 def set():
     global world, player
     if world.x < (-2950):
