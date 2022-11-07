@@ -2,6 +2,9 @@ from pico2d import *
 class FIRE:
     image = None
 
+    def get_name(self):
+        return 'fire_ball'
+
     def __init__(self,x = 800,y = 300, velocity = 1):
         if FIRE.image == None:
             FIRE.image = load_image('fire_ball.png')

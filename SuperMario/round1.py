@@ -1,6 +1,8 @@
 from pico2d import*
 
 class BACKGROUND:
+    def get_name(self):
+        return 'background'
     def __init__ (self):
         self.image = load_image('background_2.png')
         self.x = 3750

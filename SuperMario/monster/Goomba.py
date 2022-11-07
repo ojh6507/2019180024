@@ -25,6 +25,10 @@ class WALK:
 
 class GOOMBA:
     image = None
+
+    def get_name(self):
+        return 'monster'
+
     def __init__(self):
         if GOOMBA.image == None:
             GOOMBA.image = load_image('Goomba.png')

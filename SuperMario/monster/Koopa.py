@@ -21,6 +21,9 @@ class WALK:
 
 class RedKoopa:
     image = None
+
+    def get_name(self):
+        return 'monster'
     def __init__(self):
         if RedKoopa.image == None:
             RedKoopa.image = load_image('red_koopa.png')
@@ -45,6 +48,10 @@ class RedKoopa:
 
 class GreenKoopa:
     image = None
+
+    def get_name(self):
+        return 'monster'
+
     def __init__(self):
         if GreenKoopa.image == None:
             GreenKoopa.image = load_image('green_koopa.png')
