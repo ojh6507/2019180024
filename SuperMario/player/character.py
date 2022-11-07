@@ -275,15 +275,15 @@ class mario:
         self.face_dir = 1
         self.y_dir = 0
 
-        self. veocity = 2
+        self.velocity = 2
 
         self.Run = False
         self.growup = False
         self.jump = False
 
         self. mass = 10
-        self. jump_height = 14
-        self.Y_gravity = 1
+        self. jump_height = 11
+        self.Y_gravity = 0.5
         self.Y_velocity = self.jump_height
         self.count_grow = 0
         self.count_jump = 0
