@@ -53,19 +53,29 @@ def set():
     if world.x < (-2950):
         if player.x - 400 < 0:
             for game_object in game_world.all_objects():
-                game_object.x -= (player.x - 400)
+                if game_object.get_name() != 'player':
+                    game_object.x -= (player.x - 400)
+
 
     elif player.x - 400 > 0:
         for game_object in game_world.all_objects():
-            game_object.x -= (player.x - 400)
-            print("right -> left", player.x)
+            if game_object.get_name() != 'player':
+                game_object.x -= (player.x - 400)
+        player.x = 400
+
+
+
 
 
     elif player.x - 400 < 0 :
         if world.x - (player.x - 400) < 3750:
             for game_object in game_world.all_objects():
-                game_object.x -= (player.x - 400)
-            print("right -> left")
+                if game_object.get_name() != 'player':
+                    game_object.x -= (player.x - 400)
+
+            player.x = 400
+
+
 
 
 def enter():
