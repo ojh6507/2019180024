@@ -2,7 +2,7 @@ from pico2d import *
 import math
 import game_framework
 
-RD, LD, RU, LU, SPACE, ATTACK, SHIFTD, SPACE = range(8)
+RD, LD, RU, LU, SPACE, ATTACK, SHIFTD, SHIFTU, SPACE = range(9)
 event_name = ['RD', 'LD', 'RU', 'LU', 'JUMP', 'ATTACK']
 key_event_table = {
 (SDL_KEYDOWN, SDLK_SPACE): SPACE,
@@ -11,8 +11,16 @@ key_event_table = {
 (SDL_KEYDOWN, SDLK_LEFT): LD,
 (SDL_KEYDOWN, SDLK_z): ATTACK,
 (SDL_KEYUP, SDLK_RIGHT): RU,
-(SDL_KEYUP, SDLK_LEFT): LU
+(SDL_KEYUP, SDLK_LEFT): LU,
+(SDL_KEYUP, SDLK_LSHIFT): SHIFTU
+
 }
+
+PIXEL_PER_METER = (10.0/0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class IDLE:
     def enter(self, event):
@@ -71,6 +79,7 @@ class IDLE:
 
         self.frame = (self.frame + 1) % self.clip
 
+
     def draw(self):
         if self.jump:
             if self.face_dir == 1 and self.mario_size == 'Small':
@@ -103,16 +112,12 @@ class WALK:
         elif event == LU:
             self.x_dir += 1
     def exit(self,event):
-        if event == SHIFTD:
-            self.Run = True
-        else:
-            self.Run = False
-
         self.face_dir = self.x_dir
+
     def do(self):
         if not self.jump:
             if self.Run:
-                self.velocity = 2
+                self.velocity = 3
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_run.png')
                     self.clip = 13
@@ -122,13 +127,15 @@ class WALK:
                     else:
                         self.image = load_image('flower_runfast_left.png')
                     self.clip = 18
+
                 elif self.x_dir == 1 and self.mario_size == 'Normal':
                     if not self.flower:
                         self.image = load_image('run_fast.png')
                     else:
                         self.image = load_image('flower_run_fast.png')
                     self.clip = 18
-            else:
+
+            if not self.Run:
                 self.velocity = 1
                 if self.mario_size == 'Small':
                         self.image = load_image('smario_walk.png')
@@ -175,7 +182,8 @@ class WALK:
                 self.Y_velocity = self.jump_height
 
         self.frame = (self.frame + 1) % self.clip
-        self.x += self.x_dir* 2 * self.velocity
+        self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time *self.velocity
+        self.x = clamp(25, self.x, 800)
 
     def draw(self):
         if self.jump:
@@ -186,12 +194,14 @@ class WALK:
             elif self.mario_size == 'Normal':
                 self.image.clip_draw(self.frame * 40, 0, 40, 66, self.x, self.y)
         elif self.Run:
-            if self.mario_size == 'Normal':
+            if self.mario_size == 'Small':
                 self.image.clip_draw(self.frame * 50, 0, 50, 60, self.x, self.y)
-            elif self.x_dir == 1 and self.mario_size == 'Small':
-                self.image.clip_draw(self.frame * 45, 0, 45, 40, self.x, self.y)
-            elif self.x_dir == -1 and self.mario_size == 'Small':
-                self.image.clip_draw(self.frame * 45, 40, 45, 40, self.x, self.y)
+            elif self.mario_size == 'Small':
+                self.image.clip_draw(self.frame * 50, 0, 50, 60, self.x, self.y)
+        #     elif self.x_dir == 1 and self.mario_size == 'Small':
+        #         self.image.clip_draw(self.frame * 45, 0, 45, 40, self.x, self.y)
+        #     elif self.x_dir == -1 and self.mario_size == 'Small':
+        #         self.image.clip_draw(self.frame * 45, 40, 45, 40, self.x, self.y)
         else:
             if self.x_dir == -1 and self.mario_size == 'Normal':
                 self.image.clip_draw(self.frame * 50, 1 * 5, 50, 60, self.x, self.y)
@@ -234,8 +244,8 @@ class DIE:
         pass
 
 next_state = {
-    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SPACE: IDLE},
-    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SPACE: WALK}
+    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE,SPACE: IDLE},
+    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK}
 
 }
 # class explosion:
@@ -262,6 +272,8 @@ next_state = {
 #         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
 class mario:
+    def get_name(self):
+        return 'player'
     def __init__(self):
         self.image = load_image('smario_idle.png')
         self.mario_size = 'Small'
@@ -299,6 +311,11 @@ class mario:
             event = self.event_que.pop()
             if event == SPACE:
                 self.jump = True
+            elif event == SHIFTD:
+                self.Run = True
+            if event == SHIFTU:
+                self.Run = False
+
             self.cur_state.exit(self,event)
             try:
                 self.cur_state = next_state[self.cur_state][event]
