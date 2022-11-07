@@ -3,6 +3,9 @@ import random
 from pico2d import *
 
 class item_block:
+    def get_name(self):
+        return 'item_block'
+
     def __init__(self):
         self.image = load_image('block_1.png')
         self.frame = 0
@@ -22,6 +25,9 @@ class item_block:
 
 
 class COIN:
+    def get_name(self):
+        return 'coin'
+
     def __init__(self):
         self.image =load_image('coin.png')
         self.frame = random.randint(0,3)
@@ -40,6 +46,9 @@ class COIN:
         self.x = x
         self.y = y
 class Bricks:
+    def get_name(self):
+        return 'brick'
+
     def __init__(self):
         self.image = load_image('block_2.png')
         self.frame = 0
