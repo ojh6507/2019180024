@@ -8,7 +8,6 @@ from player import *
 from block import block
 from monster import Goomba
 from monster import Koopa
-
 WIDTH, HEIGHT = 800,600
 
 def setPos_coin():
@@ -143,7 +142,7 @@ def resume():
 def test_self():
     import sys
     this_module = sys.modules['__main__']
-    pico2d.open_canvas()
+    pico2d.open_canvas(800,600)
     game_framework.run(this_module)
     pico2d.close_canvas()
 

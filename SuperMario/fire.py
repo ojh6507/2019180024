@@ -1,42 +1,30 @@
 from pico2d import *
-class FIRE:
+import game_world
+
+class Ball:
     image = None
 
     def get_name(self):
         return 'fire_ball'
 
-    def __init__(self,x = 800,y = 300, velocity = 1):
-        if FIRE.image == None:
-            FIRE.image = load_image('fire_ball.png')
+    def __init__(self, x=800, y=300, velocity=1):
+        if Ball.image == None:
+            Ball.image = load_image('fire_ball.png')
 
-            self.x, self.y = x,y
-            self.w = 15
-            self.h = 13
-            self.height = 5
-            self.Y_velocity = 5
-            self.Y_gravity = 1
-            self.frame, self.anim_count, self.count = 0
-            self.direction = None
-            self.temp_y = 10
+        self.x, self.y, self.velocity = x, y, velocity
 
-    def set_pos(self, x, y):
-        self.x = x
-        self.y = y
+
+        self.height = 5
+        self.Y_velocity = 5
+        self.Y_gravity = 1
+        self.frame = 0
+        self.count = 0
+
         self.temp_y = y - 5
 
-    def set_dir(self, dir):
-        self.direction = dir
-
     def update(self):
-        self.anim_count += 1
-        if self.anim_count == 3:
-            self.frame = (self.frame + 1) % 4
-            self.anim_count = 0
-        if self.direction == 'Right':
-            self.x += 10
-
-        elif self.direction == 'Left':
-            self.x -= 10
+        self.frame = (self.frame + 1) % 4
+        self.x += self.velocity
 
         self.y += self.Y_velocity
         self.Y_velocity -= self.Y_gravity
@@ -44,10 +32,11 @@ class FIRE:
             self.Y_velocity = 5
             self.count += 1
         if self.count == 3:
-            self.count = 0
+            pass
+            #game_world.remove_object(self)
 
     def draw(self):
-        self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
+        self.image.clip_draw(self.frame * 15, 0, 15, 13, self.x, self.y)
 
 
 
