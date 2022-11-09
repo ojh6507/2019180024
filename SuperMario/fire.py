@@ -31,9 +31,8 @@ class Ball:
         if self.y < 90:
             self.Y_velocity = 5
             self.count += 1
-        if self.count == 3:
-            pass
-            #game_world.remove_object(self)
+        if self.count == 5:
+            game_world.remove_object(self)
 
     def draw(self):
         self.image.clip_draw(self.frame * 15, 0, 15, 13, self.x, self.y)
