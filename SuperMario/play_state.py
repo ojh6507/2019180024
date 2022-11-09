@@ -81,6 +81,7 @@ def enter():
     global world, player,fire,brick_block,\
         coin,item,brick,goomba,green,red,exp,music
     world = round1.BACKGROUND()
+    round1.set_world()
     player = character.mario()
 
     brick_block = block.Bricks()
