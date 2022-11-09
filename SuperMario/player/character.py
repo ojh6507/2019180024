@@ -342,7 +342,6 @@ class mario:
         self.clip = 76
         self.x = 100
         self.y = 100 -10
-        self.flower = False
 
         self.x_dir = 0
         self.face_dir = 1
@@ -350,12 +349,13 @@ class mario:
 
         self.velocity = 2
 
+        self.flower = False
         self.Run = False
         self.growup = False
         self.jump = False
 
-        self. mass = 10
-        self. jump_height = 11
+        self.mass = 10
+        self.jump_height = 11
         self.Y_gravity = 0.5
         self.Y_velocity = self.jump_height
         self.count_grow = 0
@@ -420,5 +420,6 @@ class mario:
            key_event = key_event_table[(event.type, event.key)]
            self.add_event(key_event)
     def Fire_Ball(self):
-        ball = Ball(self.x,self.y, self.face_dir * 3)
-        game_world.add_object(ball,1)
+        if self.flower:
+            ball = Ball(self.x, self.y, self.face_dir * 3)
+            game_world.add_object(ball, 1)
