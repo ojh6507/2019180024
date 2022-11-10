@@ -47,8 +47,7 @@ class IDLE:
                 else:
                     self.image = load_image('flower_idle_right.png')
         else:
-            self.y += self.Y_velocity
-            self.Y_velocity -= self.Y_gravity
+            self.jump_func()
 
             if self.face_dir == 1:
                 if self.mario_size == 'Small':
@@ -78,6 +77,7 @@ class IDLE:
 
             if self.Y_velocity < -self.jump_height:
                 self.jump = False
+                self.possible_jump = True
                 self.Y_velocity = self.jump_height
 
         self.frame = (self.frame + 1) % self.clip
@@ -177,9 +177,7 @@ class WALK:
                     else:
                         self.image = load_image('flower_mario_walk.png')
         else:
-            self.y += self.Y_velocity
-            self.Y_velocity -= self.Y_gravity
-
+            self.jump_func()
             if self.face_dir == 1:
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_jump.png')
@@ -208,6 +206,7 @@ class WALK:
 
             if self.Y_velocity < -self.jump_height:
                 self.jump = False
+                self.possible_jump = True
                 self.Y_velocity = self.jump_height
 
         self.frame = (self.frame + 1) % self.clip
@@ -353,6 +352,7 @@ class mario:
         self.Run = False
         self.growup = False
         self.jump = False
+        self.possible_jump = True
 
         self.mass = 10
         self.jump_height = 11
@@ -360,10 +360,26 @@ class mario:
         self.Y_velocity = self.jump_height
         self.count_grow = 0
         self.count_jump = 0
+        self.fall = False
 
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
+
+    def jump_func(self):
+
+        self.y += self.Y_velocity
+        self.Y_velocity -= self.Y_gravity
+    def fall_func(self):
+        if self.Y_velocity < 0:
+            self.y += self.Y_velocity
+        self.Y_velocity -= self.Y_gravity
+        if self.Y_velocity < -self.jump_height:
+            self.fall = False
+            self.jump = False
+            self.Y_velocity = self.jump_height
+
+
 
 
     def update(self):
@@ -386,6 +402,8 @@ class mario:
                 print('Error: ', self.cur_state.__name__,' ', event_name[event])
             self.cur_state.enter(self, event)
         self.x = clamp(0,self.x,800)
+        if self.fall:
+            self.fall_func()
 
     def check_gameOver(self):
         if self.die:
@@ -413,6 +431,8 @@ class mario:
 
     def draw(self):
         self.cur_state.draw(self)
+        draw_rectangle(*self.get_bb())
+
     def add_event(self,event):
         self.event_que.insert(0, event)
     def handle_event(self, event):
@@ -423,3 +443,17 @@ class mario:
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir * 3)
             game_world.add_object(ball, 1)
+
+    def get_bb(self):
+        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+
+    def handle_collision(self, other, group):
+        if group == 'player:coin':
+            print('coin + 1')
+        elif group == 'player:item_block':
+            self.fall = True
+            print('Collision ',group)
+        elif group == 'player:bricks':
+            self.fall = True
+            print('Collision ', group)
+

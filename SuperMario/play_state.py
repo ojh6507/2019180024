@@ -15,9 +15,9 @@ def setPos_coin():
     for c in coin:
         c.set_pos(random.randint(400, 10000),random.randint(75, 200))
     for it in item:
-        it.set_pos(random.randint(400, 10000),random.randint(200, 300))
+        it.set_pos(random.randint(400, 10000),random.randint(100, 200))
     for br in brick:
-        br.set_pos(random.randint(400, 10000), random.randint(200, 300))
+        br.set_pos(random.randint(400, 10000), random.randint(100, 200))
 
 
 world = None
@@ -33,19 +33,15 @@ green = None
 red = None
 music = None
 
-def check_collide(a, b):
-
-    top_a, bottom_a, left_a, right_a = a.get_rect()
-    top_b, bottom_b, left_b, right_b = b.get_rect()
-
-    if top_a < bottom_b: return False
-    if bottom_a > top_b: return False
-
-    if left_a > right_b: return False
-    if right_a < left_b: return False
-
+def collide(a,b):
+    la, ba, ra, ta = a.get_bb()
+    lb, bb, rb, tb = b.get_bb()
+    if la > rb: return False
+    if ra < lb: return False
+    if ta < bb: return False
+    if ba > tb: return False
+    # 충돌 없는 것부터 처리
     return True
-
 
 def set():
     global world, player
@@ -103,6 +99,11 @@ def enter():
     game_world.add_objects(item, 1)
     game_world.add_objects(brick, 1)
 
+    game_world.add_collision_group(player, coin, 'player:coin')
+    game_world.add_collision_group(player, item, 'player:item_block')
+    game_world.add_collision_group(player, brick, 'player:bricks')
+
+
     #music = load_music('stage1.mp3')
     #music.set_volume(10)
     #music.play()
@@ -114,6 +115,12 @@ def update():
     set()
     for game_object in game_world.all_objects():
         game_object.update()
+
+    for a, b, group in game_world.all_collision_paris():
+        if collide(a, b):
+            print('Collision by ', group)
+            a.handle_collision(b, group)
+            b.handle_collision(a, group)
 
 def draw_world():
     for game_object in game_world.all_objects():
