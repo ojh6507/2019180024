@@ -233,28 +233,42 @@ class WALK:
 
 class TRANS_SIZE:
     def enter(self, event):
-        self.image = load_image('mario_up.png')
         print('enter trans size')
+        self.TIME_PER_ACTION= 2
+        self.frame = 0
         pass
-    def exit(self):
-        print('exit trans size')
-        self.mario_size = 'Normal'
-        self.y += 20
-        self.event_que.clear()
-        #이전 상태가 walk면 walk로, idle이면 idle로
-        if self.x_dir != 0:
-            self.cur_state = WALK
-        else:
-            self.cur_state = IDLE
+    def exit(self, event):
         pass
     def do(self):
         print('do transsize')
+        self.image = load_image('mario_up.png')
+        self.clip = 7
+        self.perframe = 40
+        self.height = 82
 
-        TRANS_SIZE.exit(self)
-        pass
+        self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
+
+        if self.face_dir == 1:
+            self.reflect = ' '
+        else:
+            self.reflect = 'h'
+        print('reflect',self.reflect)
+        print('x_dir', self.x_dir)
+
+        if int(self.frame) == 6:
+            self.mario_size = 'Normal'
+            self.y += 18
+            self.event_que.clear()
+            # 이전 상태가 walk면 walk로, idle이면 idle로
+
+            if self.x_dir != 0:
+                self.cur_state = WALK
+            else:
+                self.cur_state = IDLE
+
     def draw(self):
-        print('draw trans_size')
-        pass
+        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect,
+                                       self.x, self.y+20, self.perframe, self.height)
 class TRANS_MARIO:
     def enter(self, event):
         pass
@@ -368,6 +382,7 @@ class mario:
         self.cur_state.do(self)
         if self.event_que:
             event = self.event_que.pop()
+
             if event == SPACE:
                 self.frame = 0
                 self.jump = True
@@ -378,6 +393,7 @@ class mario:
                 self.Run = False
 
             self.cur_state.exit(self,event)
+
             try:
                 self.cur_state = next_state[self.cur_state][event]
             except KeyError:
@@ -396,22 +412,6 @@ class mario:
             self.height = 60
             self.ch_size = 50
 
-    def mario_up(self):
-        self.image = load_image('mario_up.png')
-        self.mario_size = 'Normal'
-        self.action = 0
-        self.ch_size = 40
-        self.height = 80
-        self.clip = 7
-
-        self.count_grow += 1
-        if self.count_grow == 4:
-            self.frame = (self.frame + 1) % self.clip
-            self.count_grow = 0
-        if self.frame == 6:
-            self.growup = False
-            self.idle_right_mario()
-
     def draw(self):
         self.cur_state.draw(self)
         draw_rectangle(*self.get_bb())
@@ -428,7 +428,10 @@ class mario:
             game_world.add_object(ball, 1)
 
     def get_bb(self):
-        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+        if self.mario_size == 'Small':
+            return self.x - 10, self.y - 14, self.x + 10, self.y + 14
+        if self.mario_size == 'Normal':
+            return self.x - 10, self.y - 28, self.x + 10, self.y + 28
 
     def handle_collision(self, other, group):
         if group == 'player:coin':
