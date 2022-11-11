@@ -1,5 +1,8 @@
 from pico2d import *
 import game_world
+import game_framework
+
+
 
 class Ball:
     image = None
@@ -7,11 +10,12 @@ class Ball:
     def get_name(self):
         return 'fire_ball'
 
-    def __init__(self, x=800, y=300, velocity=1):
+    def __init__(self, x=800, y=300, dir = 1, velocity = 10):
         if Ball.image == None:
             Ball.image = load_image('fire_ball.png')
+        self.RUN_SPEED_PPS = velocity * 2
 
-        self.x, self.y, self.velocity = x, y, velocity
+        self.x, self.y, self.dir = x, y, dir
 
 
         self.height = 5
@@ -24,11 +28,11 @@ class Ball:
 
     def update(self):
         self.frame = (self.frame + 1) % 4
-        self.x += self.velocity
+        self.x += self.dir * self.RUN_SPEED_PPS * game_framework.frame_time
 
         self.y += self.Y_velocity
         self.Y_velocity -= self.Y_gravity
-        if self.y < 90:
+        if self.y < 55: #타일과 충돌로 변경 예쩡
             self.Y_velocity = 5
             self.count += 1
         if self.count == 5:
