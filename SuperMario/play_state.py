@@ -13,11 +13,13 @@ WIDTH, HEIGHT = 800,600
 def setPos_coin():
     global coin
     for c in coin:
-        c.set_pos(random.randint(400, 10000),random.randint(75, 200))
+        c.set_pos(random.randint(400, 5000),random.randint(75, 200))
+
     for it in item:
-        it.set_pos(random.randint(400, 10000),random.randint(100, 200))
+        it.set_pos(random.randint(400, 5000),random.randint(200, 200))
+
     for br in brick:
-        br.set_pos(random.randint(400, 10000), random.randint(100, 200))
+        br.set_pos(random.randint(400, 5000), random.randint(200, 200))
 
 
 world = None
@@ -45,11 +47,11 @@ def collide(a,b):
 
 def set():
     global world, player
-    if world.x < (-2950):
-        if player.x - 400 < 0:
-            for game_object in game_world.all_objects():
-                if game_object.get_name() != 'player':
-                    game_object.x -= (player.x - 400)
+
+    if world.x < (-2950) and player.x - 400 < 0:
+        for game_object in game_world.all_objects():
+            if game_object.get_name() != 'player':
+                game_object.x -= (player.x - 400)
 
 
     elif player.x - 400 > 0:
@@ -59,16 +61,11 @@ def set():
         player.x = 400
 
 
-
-
-
-    elif player.x - 400 < 0 :
-        if world.x - (player.x - 400) < 3750:
-            for game_object in game_world.all_objects():
-                if game_object.get_name() != 'player':
-                    game_object.x -= (player.x - 400)
-
-            player.x = 400
+    elif player.x - 400 < 0 and world.x - (player.x - 400) < 3750:
+        for game_object in game_world.all_objects():
+            if game_object.get_name() != 'player':
+                game_object.x -= (player.x - 400)
+        player.x = 400
 
 
 
@@ -94,7 +91,6 @@ def enter():
     game_world.add_object(player, 1)
     game_world.add_object(goomba, 1)
     game_world.add_object(green, 1)
-    game_world.add_object(green, 1)
     game_world.add_objects(coin, 1)
     game_world.add_objects(item, 1)
     game_world.add_objects(brick, 1)
@@ -118,7 +114,6 @@ def update():
 
     for a, b, group in game_world.all_collision_paris():
         if collide(a, b):
-            print('Collision by ', group)
             a.handle_collision(b, group)
             b.handle_collision(a, group)
 
