@@ -29,13 +29,12 @@ class WALK:
 
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
-        self.image.clip_composite_draw(int(self.frame) * 28, 30 *self.action , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
+        self.image.clip_composite_draw(int(self.frame) * 28, 30 * self.action , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
 
         pass
 
 class GOOMBA:
     image = None
-
     def get_name(self):
         return 'monster'
 

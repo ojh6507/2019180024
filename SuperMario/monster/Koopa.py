@@ -50,14 +50,15 @@ class RedKoopa:
         self.cur_state = WALK
         self.cur_state.enter(self, None)
 
-
     def draw(self):
         self.cur_state.draw(self)
-
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.cur_state.do(self)
 
+    def get_bb(self):
+        return self.x - 10, self.y - 23, self.x + 10, self.y + 21
 
 
 class GreenKoopa:
@@ -82,7 +83,7 @@ class GreenKoopa:
 
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-        print(self.ACTION_PER_TIME)
+
 
     def draw(self):
         self.cur_state.draw(self)
