@@ -40,16 +40,15 @@ class Floor_Tile:
         self.x, self.y = row * self.tilesize, col * self.tilesize
         self.rect_x, self.rect_y = self.x, self.y
 
-
-    def get_rect(self):
-        #self.x - self.size = left
-        #self.x + self.size = right
-        pass
+    def get_bb(self):
+        return self.x - 15, self.y - 15, self.x + 15, self.y + 15
         # return self.y + self.size//2, self.y - self.size//2, self.x - self.size//2, self.x + self.size//2
     def update(self):
         pass
     def draw(self):
         self.image.draw(self.x, self.y)
+        draw_rectangle(*self.get_bb())
+
         pass
 
 class Empty_Tile:
