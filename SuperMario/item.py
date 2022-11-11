@@ -30,3 +30,28 @@ class MUSHROOM:
         if group == 'player:mushroom':
             game_world.remove_object(self)
 
+class FLOWER:
+    image = None
+
+    def get_name(self):
+        return 'flower'
+
+    def __init__(self, x, y):
+        if FLOWER.image == None:
+            FLOWER.image = load_image('flower.png')
+        self.x, self.y = x, y
+
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 50, 57, 0, ' ', self.x, self.y - 13, 25, 25 + 7)
+        # self.image.draw(self.x,self.y)
+        draw_rectangle(*self.get_bb())
+
+    def update(self):
+      pass
+    def get_bb(self):
+        return self.x - 12, self.y - 24, self.x + 12, self.y
+
+    def handle_collision(self, other, group):
+        if group == 'player:flower':
+            game_world.remove_object(self)
+
