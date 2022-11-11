@@ -9,6 +9,8 @@ from block import block
 from monster import Goomba
 from monster import Koopa
 from item import MUSHROOM
+from item import FLOWER
+
 WIDTH, HEIGHT = 800,600
 
 def setPos_coin():
@@ -36,6 +38,8 @@ green = None
 red = None
 music = None
 mushroom = None
+flower = None
+
 def collide(a,b):
     la, ba, ra, ta = a.get_bb()
     lb, bb, rb, tb = b.get_bb()
@@ -68,42 +72,72 @@ def set():
                 game_object.x -= (player.x - 400)
         player.x = 400
 
+empty = []
+ground = []
+underground = []
+def set_world():
+    global empty,ground,underground
+    for col in range(len(round1.INFO)):
+        for row in range(len(round1.INFO[col])):
 
+            if round1.INFO[col][row] == 0:
+                empty.append( round1.Empty_Tile(col, row))
+                # game_world.add_object(empty,2)
+
+            elif round1.INFO[col][row] == 1:
+                ground.append( round1.Floor_Tile(col, row))
+
+                # game_world.add_object(ground,3)
+
+            elif round1.INFO[col][row] == 2:
+                underground.append(round1.under_Tile(col, row))
+
+                # game_world.add_object(underground,3)
 
 
 def enter():
     global world, player,fire,brick_block,\
-        coin,item,brick,goomba,green,red,exp,music, mushroom
+        coin,item,brick,goomba,green,red,exp,music, mushroom,flower,ground,underground,empty
 
     world = round1.BACKGROUND()
-    round1.set_world()
+    set_world()
     player = character.mario()
 
     brick_block = block.Bricks()
     coin = [block.COIN() for n in range(0, 20)]
-    item = [block.item_block() for n in range(0, 10)]
-    brick = [block.Bricks() for n in range(0, 15)]
-    mushroom = MUSHROOM(500,100)
+    item = [block.item_block() for n in range(0, 1)]
+    brick = [block.Bricks() for n in range(0, 1)]
+    mushroom = MUSHROOM(500,65)
 
-    goomba = Goomba.GOOMBA()
-    green = Koopa.GreenKoopa()
-    red = Koopa.RedKoopa()
+    goomba = [Goomba.GOOMBA() for i in range(1)]
+    green = [Koopa.GreenKoopa() for i in range(1)]
+    red = [Koopa.RedKoopa() for i in range(1)]
+    flower = FLOWER(1000, 65)
 
     setPos_coin()
 
     game_world.add_object(world, 0)
     game_world.add_object(player, 1)
     game_world.add_object(mushroom, 1)
-    game_world.add_object(goomba, 1)
-    game_world.add_object(green, 1)
+    game_world.add_object(flower, 1)
+
+    game_world.add_objects(goomba, 1)
+    game_world.add_objects(green, 1)
+
+    game_world.add_objects(red, 1)
     game_world.add_objects(coin, 1)
     game_world.add_objects(item, 1)
     game_world.add_objects(brick, 1)
+    game_world.add_objects(ground,3)
+    game_world.add_objects(underground,3)
+    game_world.add_objects(empty,3)
 
     game_world.add_collision_group(player, coin, 'player:coin')
     game_world.add_collision_group(player, item, 'player:item_block')
     game_world.add_collision_group(player, brick, 'player:bricks')
     game_world.add_collision_group(player, mushroom, 'player:mushroom')
+    game_world.add_collision_group(player, flower, 'player:flower')
+    game_world.add_collision_group(player, ground, 'player:ground')
 
 
     #music = load_music('stage1.mp3')
