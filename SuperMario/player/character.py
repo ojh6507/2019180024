@@ -19,7 +19,7 @@ key_event_table = {
 }
 
 PIXEL_PER_METER = (10.0/0.3)
-RUN_SPEED_KMPH = 20.0
+RUN_SPEED_KMPH = 15.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -27,8 +27,9 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 class IDLE:
     def enter(self, event):
         self.x_dir = 0
+        self.frame = 0
         self.Run = False
-        pass
+        self.TIME_PER_ACTION = 1
 
     def exit(self, event):
         if event == ATTACK:
@@ -48,7 +49,6 @@ class IDLE:
                     self.image = load_image('flower_idle_right.png')
         else:
             self.jump_func()
-
             if self.face_dir == 1:
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_jump.png')
@@ -80,7 +80,7 @@ class IDLE:
                 self.possible_jump = True
                 self.Y_velocity = self.jump_height
 
-        self.frame = (self.frame + 1) % self.clip
+        self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
 
 
     def draw(self):
@@ -98,7 +98,6 @@ class IDLE:
                 self.height = 45
 
             elif self.mario_size == 'Normal':
-                self.image.clip_draw(self.frame * 40, 0, 40, 66, self.x, self.y)
 
                 self.perframe = 40
                 self.action = 0
@@ -128,11 +127,13 @@ class IDLE:
                 self.perframe = 50
                 self.action = 5
                 self.height = 65
-        self.image.clip_draw(self.frame * self.perframe, self.action, self.perframe, self.height, self.x, self.y)
+
+        self.image.clip_draw(int(self.frame) * self.perframe, self.action, self.perframe, self.height, self.x, self.y)
 
 
 class WALK:
     def enter(self, event):
+        self.frame = 0
         if event == RD:
             self.x_dir += 1
             self.face_dir = 1
@@ -143,12 +144,15 @@ class WALK:
             self.x_dir -= 1
         elif event == LU:
             self.x_dir += 1
+        self.TIME_PER_ACTION = 1
+
     def exit(self,event):
         self.face_dir = self.x_dir
 
     def do(self):
         if not self.jump:
             if self.Run:
+                self.TIME_PER_ACTION = 0.4
                 self.velocity = 3
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_run.png')
@@ -166,6 +170,7 @@ class WALK:
                         self.image = load_image('flower_run_fast.png')
                     self.clip = 18
             if not self.Run:
+                self.TIME_PER_ACTION = 1
                 self.velocity = 1
                 if self.mario_size == 'Small':
                         self.image = load_image('smario_walk.png')
@@ -177,6 +182,7 @@ class WALK:
                     else:
                         self.image = load_image('flower_mario_walk.png')
         else:
+            self.TIME_PER_ACTION = 1
             self.jump_func()
             if self.face_dir == 1:
                 if self.mario_size == 'Small':
@@ -192,9 +198,6 @@ class WALK:
             elif self.face_dir == -1:
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_jump.png')
-                    self.action = 45
-                    self.ch_size = 35
-                    self.height = 45
                     self.clip = 30
 
                 elif self.mario_size == 'Normal':
@@ -209,18 +212,30 @@ class WALK:
                 self.possible_jump = True
                 self.Y_velocity = self.jump_height
 
-        self.frame = (self.frame + 1) % self.clip
+        self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
         self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time *self.velocity
         self.x = clamp(25, self.x, 800)
 
     def draw(self):
         if self.jump:
             if self.face_dir == 1 and self.mario_size == 'Small':
-                self.image.clip_draw(self.frame * 35, 0, 35, 45, self.x, self.y)
+
+                self.perframe = 35
+                self.action = 0
+                self.height = 45
+
             elif self.face_dir != 1 and self.mario_size == 'Small':
-                self.image.clip_draw(self.frame * 35, 45, 35, 45, self.x, self.y)
+
+                self.perframe = 35
+                self.action = 45
+                self.height = 45
+
             elif self.mario_size == 'Normal':
-                self.image.clip_draw(self.frame * 40, 0, 40, 66, self.x, self.y)
+
+                self.perframe = 40
+                self.action = 0
+                self.height = 66
+
         else:
             if self.Run and self.mario_size == 'Normal':
 
@@ -264,7 +279,7 @@ class WALK:
                 self.action = 0
                 self.height = 40
 
-            self.image.clip_draw(self.frame * self.perframe, self.action , self.perframe, self.height, self.x, self.y)
+        self.image.clip_draw(int(self.frame) * self.perframe, self.action , self.perframe, self.height, self.x, self.y)
 
 
 class TRANS_SIZE:
@@ -330,6 +345,9 @@ class mario:
     def get_name(self):
         return 'player'
     def __init__(self):
+
+        self.TIME_PER_ACTION = 1
+        self.ACTION_PER_TIME = 1
         self.image = load_image('smario_idle.png')
         self.mario_size = 'Small'
         self.frame = 0
@@ -374,15 +392,13 @@ class mario:
         if self.Y_velocity < 0:
             self.y += self.Y_velocity
         self.Y_velocity -= self.Y_gravity
-        if self.Y_velocity < -self.jump_height:
+        if self.Y_velocity <= -self.jump_height:
             self.fall = False
             self.jump = False
             self.Y_velocity = self.jump_height
 
-
-
-
     def update(self):
+        self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.cur_state.do(self)
         if self.event_que:
             event = self.event_que.pop()
@@ -402,6 +418,7 @@ class mario:
                 print('Error: ', self.cur_state.__name__,' ', event_name[event])
             self.cur_state.enter(self, event)
         self.x = clamp(0,self.x,800)
+
         if self.fall:
             self.fall_func()
 
