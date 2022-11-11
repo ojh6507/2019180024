@@ -38,15 +38,18 @@ class IDLE:
 
     def do(self):
         if not self.jump:
+
             if self.mario_size == 'Small':
                 self.image = load_image('smario_idle.png')
                 self.clip = 76
+
             elif self.mario_size == 'Normal':
                 self.clip = 79
                 if not self.flower:
                     self.image = load_image('idle_right.png')
                 else:
                     self.image = load_image('flower_idle_right.png')
+
         else:
             self.jump_func()
             if self.face_dir == 1:
@@ -58,77 +61,53 @@ class IDLE:
                         self.image = load_image('jump_right.png')
                     else:
                         self.image = load_image('flower_jump_right.png')
+
                     self.clip = 18
 
-            elif self.face_dir == -1:
-                if self.mario_size == 'Small':
-                    self.image = load_image('smario_jump.png')
-                    self.action = 45
-                    self.ch_size = 35
-                    self.height = 45
-                    self.clip = 30
-
-                elif self.mario_size == 'Normal':
-                    if not self.flower:
-                        self.image = load_image('jump_left.png')
-                    else:
-                        self.image = load_image('flower_jump_left.png')
-                    self.clip = 18
 
             if self.Y_velocity < -self.jump_height:
                 self.jump = False
                 self.possible_jump = True
                 self.Y_velocity = self.jump_height
+                self.frame = 0
+
+        if self.face_dir == 1:
+            self.reflect = ' '
+        else:
+            self.reflect = 'h'
 
         self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
 
 
     def draw(self):
         if self.jump:
-            if self.face_dir == 1 and self.mario_size == 'Small':
+            if self.mario_size == 'Small':
 
                 self.perframe = 35
                 self.action = 0
                 self.height = 45
 
-            elif self.face_dir != 1 and self.mario_size == 'Small':
 
-                self.perframe = 35
-                self.action = 45
-                self.height = 45
-
-            elif self.mario_size == 'Normal':
+            if self.mario_size == 'Normal':
 
                 self.perframe = 40
                 self.action = 0
                 self.height = 66
 
-        else:
-            if self.face_dir == 1 and self.mario_size == 'Small':
+        if not self.jump:
+            if self.mario_size == 'Small':
 
                 self.perframe = 30
                 self.action = 0
                 self.height = 35
 
-            elif self.face_dir == 1 and self.mario_size == 'Normal':
+            elif self.mario_size == 'Normal':
 
                 self.perframe = 50
-                self.action = 5
-                self.height = 60
-
-            elif self.face_dir == -1 and self.mario_size == 'Small':
-
-                self.perframe = 30
-                self.action = 38
-                self.height = 35
-
-            elif self.face_dir == -1 and self.mario_size == 'Normal':
-
-                self.perframe = 50
-                self.action = 5
+                self.action = 0
                 self.height = 65
 
-        self.image.clip_draw(int(self.frame) * self.perframe, self.action, self.perframe, self.height, self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect, self.x, self.y, self.perframe, self.height)
 
 
 class WALK:
@@ -157,60 +136,53 @@ class WALK:
                 if self.mario_size == 'Small':
                     self.image = load_image('smario_run.png')
                     self.clip = 13
-                elif self.x_dir == -1 and self.mario_size == 'Normal':
-                    if not self.flower:
-                        self.image = load_image('runfast_left.png')
-                    else:
-                        self.image = load_image('flower_runfast_left.png')
-                    self.clip = 18
-                elif self.x_dir == 1 and self.mario_size == 'Normal':
+
+                if self.mario_size == 'Normal':
                     if not self.flower:
                         self.image = load_image('run_fast.png')
                     else:
-                        self.image = load_image('flower_run_fast.png')
+                        self.image = load_image('flower_runfast.png')
                     self.clip = 18
+
+
             if not self.Run:
                 self.TIME_PER_ACTION = 1
                 self.velocity = 1
                 if self.mario_size == 'Small':
-                        self.image = load_image('smario_walk.png')
-                        self.clip = 27
-                elif self.mario_size == 'Normal':
-                    self.clip = 25
+                    self.image = load_image('smario_walk.png')
+                    self.clip = 27
+
+                if self.mario_size == 'Normal':
                     if not self.flower:
                         self.image = load_image('mario_walk.png')
                     else:
                         self.image = load_image('flower_mario_walk.png')
+                    self.clip = 25
         else:
+            if self.mario_size == 'Small':
+                self.image = load_image('smario_jump.png')
+                self.clip = 30
+
+            elif self.mario_size == 'Normal':
+                if not self.flower:
+                    self.image = load_image('jump_right.png')
+                else:
+                    self.image = load_image('flower_jump_right.png')
+                self.clip = 18
+
             self.TIME_PER_ACTION = 1
             self.jump_func()
-            if self.face_dir == 1:
-                if self.mario_size == 'Small':
-                    self.image = load_image('smario_jump.png')
-                    self.clip = 30
-                elif self.mario_size == 'Normal':
-                    if not self.flower:
-                        self.image = load_image('jump_right.png')
-                    else:
-                        self.image = load_image('flower_jump_right.png')
-                    self.clip = 18
-
-            elif self.face_dir == -1:
-                if self.mario_size == 'Small':
-                    self.image = load_image('smario_jump.png')
-                    self.clip = 30
-
-                elif self.mario_size == 'Normal':
-                    if not self.flower:
-                        self.image = load_image('jump_left.png')
-                    else:
-                        self.image = load_image('flower_jump_left.png')
-                    self.clip = 18
 
             if self.Y_velocity < -self.jump_height:
                 self.jump = False
                 self.possible_jump = True
                 self.Y_velocity = self.jump_height
+
+        if self.x_dir == -1:
+            self.reflect = 'h'
+        else:
+            self.reflect = ' '
+
 
         self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
         self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time *self.velocity
@@ -218,19 +190,13 @@ class WALK:
 
     def draw(self):
         if self.jump:
-            if self.face_dir == 1 and self.mario_size == 'Small':
+            if self.mario_size == 'Small':
 
                 self.perframe = 35
                 self.action = 0
                 self.height = 45
 
-            elif self.face_dir != 1 and self.mario_size == 'Small':
-
-                self.perframe = 35
-                self.action = 45
-                self.height = 45
-
-            elif self.mario_size == 'Normal':
+            if self.mario_size == 'Normal':
 
                 self.perframe = 40
                 self.action = 0
@@ -243,53 +209,51 @@ class WALK:
                 self.action = 0
                 self.height = 60
 
-            elif self.Run and self.x_dir == 1 and self.mario_size == 'Small':
+            elif self.Run and self.mario_size == 'Small':
 
                 self.perframe = 45
                 self.action = 0
                 self.height = 40
 
-            elif self.Run and self.x_dir == -1 and self.mario_size == 'Small':
-
-                self.perframe = 45
-                self.action = 40
-                self.height = 40
-
-            if  not self.Run and self.x_dir == -1 and self.mario_size == 'Normal':
-
-                self.perframe = 50
-                self.action = 5
-                self.height = 60
-
-            elif not self.Run and self.x_dir == -1 and self.mario_size == 'Small':
+            elif not self.Run and self.mario_size == 'Small':
 
                 self.perframe = 30
-                self.action = 40
+                self.action = 0
                 self.height = 40
 
-            elif not self.Run and self.x_dir == 1 and self.mario_size == 'Normal':
+            elif not self.Run and self.mario_size == 'Normal':
 
                 self.perframe = 50
                 self.action = 70
-                self.height = 60
+                self.height = 65
 
-            elif not self.Run and self.x_dir == 1 and self.mario_size == 'Small':
 
-                self.perframe = 30
-                self.action = 0
-                self.height = 40
-
-        self.image.clip_draw(int(self.frame) * self.perframe, self.action , self.perframe, self.height, self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect,self.x, self.y, self.perframe,self.height)
 
 
 class TRANS_SIZE:
     def enter(self, event):
+        self.image = load_image('mario_up.png')
+        print('enter trans size')
         pass
     def exit(self):
+        print('exit trans size')
+        self.mario_size = 'Normal'
+        self.y += 20
+        self.event_que.clear()
+        #이전 상태가 walk면 walk로, idle이면 idle로
+        if self.x_dir != 0:
+            self.cur_state = WALK
+        else:
+            self.cur_state = IDLE
         pass
     def do(self):
+        print('do transsize')
+
+        TRANS_SIZE.exit(self)
         pass
     def draw(self):
+        print('draw trans_size')
         pass
 class TRANS_MARIO:
     def enter(self, event):
@@ -314,8 +278,9 @@ class DIE:
         pass
 
 next_state = {
-    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE,SPACE: IDLE},
-    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK}
+    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE, SPACE: IDLE},
+    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK},
+    TRANS_SIZE: {RU: TRANS_SIZE, LU: TRANS_SIZE, RD: TRANS_SIZE, LD: TRANS_SIZE, ATTACK: TRANS_SIZE, SHIFTD: TRANS_SIZE, SHIFTU: TRANS_SIZE, SPACE: TRANS_SIZE},
 
 }
 # class explosion:
@@ -355,6 +320,7 @@ class mario:
         self.height = 0
         self.action = 0
         self.perframe = 0
+        self.reflect = ' '
 
         self.clip = 76
         self.x = 100
@@ -473,4 +439,6 @@ class mario:
         elif group == 'player:bricks':
             self.fall = True
             print('Collision ', group)
+        elif group == 'player:mushroom':
+            self.cur_state = TRANS_SIZE
 

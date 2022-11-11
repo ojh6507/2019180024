@@ -28,7 +28,8 @@ class WALK:
         pass
 
     def draw(self):
-        self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
+        # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame) * 28, 30 *self.action , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
 
         pass
 
@@ -46,6 +47,7 @@ class GOOMBA:
         self.x = random.randint(0, 1000)
         self.x_dir = 0
         self.y = 85
+        self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
 

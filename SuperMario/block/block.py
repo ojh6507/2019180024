@@ -11,6 +11,7 @@ class item_block:
         self.x = 0
         self.y = 200
         self.count_anim = 0
+        self.moveup = False
     def draw(self):
         self.image.clip_draw(self.frame * 30, 0, 30, 40, self.x, self.y)
         draw_rectangle(*self.get_bb())
@@ -26,6 +27,8 @@ class item_block:
     def set_pos(self,x,y):
         self.x = x
         self.y = y
+    def returnY(self):
+        return self.y
 
     def handle_collision(self, other, group):
         # print('ball disappear')
@@ -58,6 +61,9 @@ class COIN:
         self.x = x
         self.y = y
 
+    def returnY(self):
+        return self.y
+
     def handle_collision(self, other, group):
         # print('ball disappear')
         if group == 'player:coin':
@@ -87,6 +93,9 @@ class Bricks:
     def set_pos(self, x, y):
         self.x = x
         self.y = y
+
+    def returnY(self):
+        return self.y
 
     def get_bb(self):
         return self.x - 10, self.y - 10, self.x + 10, self.y + 10

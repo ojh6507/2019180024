@@ -27,7 +27,9 @@ class WALK:
         self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time
 
     def draw(self):
-        self.image.clip_draw(int(self.frame) * 25, 50 * self.action, 25, 50, self.x, self.y)
+        # self.image.clip_draw(int(self.frame) * 25, 50 * self.action, 25, 50, self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame) * 25, 50 * self.action, 25, 50, 0, self.reflect, self.x, self.y, 25, 50)
+
 
 class RedKoopa:
     image = None
@@ -44,7 +46,7 @@ class RedKoopa:
         self.x_dir = -1
         self.action = 1
         self.clip = 17
-
+        self.reflect = ' '
         self.cur_state = WALK
         self.cur_state.enter(self, None)
 
@@ -72,6 +74,7 @@ class GreenKoopa:
         self.y = 100
         self.x_dir = -1
         self.action = 1
+        self.reflect= ' '
         self.clip = 17
 
         self.TIME_PER_ACTION = 1

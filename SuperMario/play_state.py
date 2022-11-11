@@ -8,6 +8,7 @@ from player import *
 from block import block
 from monster import Goomba
 from monster import Koopa
+from item import MUSHROOM
 WIDTH, HEIGHT = 800,600
 
 def setPos_coin():
@@ -34,7 +35,7 @@ goomba = None
 green = None
 red = None
 music = None
-
+mushroom = None
 def collide(a,b):
     la, ba, ra, ta = a.get_bb()
     lb, bb, rb, tb = b.get_bb()
@@ -72,7 +73,8 @@ def set():
 
 def enter():
     global world, player,fire,brick_block,\
-        coin,item,brick,goomba,green,red,exp,music
+        coin,item,brick,goomba,green,red,exp,music, mushroom
+
     world = round1.BACKGROUND()
     round1.set_world()
     player = character.mario()
@@ -81,14 +83,17 @@ def enter():
     coin = [block.COIN() for n in range(0, 20)]
     item = [block.item_block() for n in range(0, 10)]
     brick = [block.Bricks() for n in range(0, 15)]
+    mushroom = MUSHROOM(500,100)
 
     goomba = Goomba.GOOMBA()
     green = Koopa.GreenKoopa()
     red = Koopa.RedKoopa()
+
     setPos_coin()
 
     game_world.add_object(world, 0)
     game_world.add_object(player, 1)
+    game_world.add_object(mushroom, 1)
     game_world.add_object(goomba, 1)
     game_world.add_object(green, 1)
     game_world.add_objects(coin, 1)
@@ -98,6 +103,7 @@ def enter():
     game_world.add_collision_group(player, coin, 'player:coin')
     game_world.add_collision_group(player, item, 'player:item_block')
     game_world.add_collision_group(player, brick, 'player:bricks')
+    game_world.add_collision_group(player, mushroom, 'player:mushroom')
 
 
     #music = load_music('stage1.mp3')
