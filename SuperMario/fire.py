@@ -38,7 +38,7 @@ class Ball:
         if self.count >= 5:
             game_world.remove_object(self)
             del character.gen_fire[0]
-            print('del fire')
+            print('del fire', character.gen_fire)
             self.count = 0
 
 
