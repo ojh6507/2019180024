@@ -21,7 +21,9 @@ key_event_table = {
 (SDL_KEYUP, SDLK_LSHIFT): SHIFTU
 
 }
+
 gen_fire = []
+
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 15.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -135,15 +137,17 @@ class WALK:
     def enter(self, event):
         self.frame = 0
         if event == RD:
-            self.x_dir += 1
             self.face_dir = 1
+            self.x_dir = self.face_dir
         elif event == LD:
-            self.x_dir -= 1
             self.face_dir = -1
+            self.x_dir = self.face_dir
         elif event == RU:
-            self.x_dir -= 1
+            self.face_dir = -1
+            self.x_dir = self.face_dir
         elif event == LU:
-            self.x_dir += 1
+            self.face_dir = 1
+            self.x_dir = self.face_dir
         self.TIME_PER_ACTION = 1
 
     def exit(self,event):
@@ -185,7 +189,7 @@ class WALK:
             self.jump_func()
 
 
-        if self.x_dir == -1:
+        if self.face_dir == -1:
             self.reflect = 'h'
             self.face_dir = -1
 
@@ -402,6 +406,7 @@ class mario:
     def Fire_Ball(self):
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir,RUN_SPEED_PPS * self.velocity)
+            print("in character gen_Fire",gen_fire)
             gen_fire.append(ball)
             game_world.add_object(ball, 1)
 
@@ -418,16 +423,18 @@ class mario:
 
             if pos == 'bottom':
                 self.Onground = True
-                self.y = other.y + 50
+                if abs(self.x - other.x) <= 15:
+                    self.y = other.y + 50
+
             if pos == 'right':
                 print('right', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x-=2
+                self.x -= 5
 
             if pos == 'left':
                 print('left', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x+=2
+                self.x += 5
 
             if pos == 'top':
                 self.Onground = False
@@ -436,6 +443,27 @@ class mario:
                 print('top', self.y, pos, self.Onground)
 
         elif group == 'player:bricks':
+            if pos == 'bottom':
+                self.Onground = True
+                if abs(self.x - other.x) <= 15:
+                    self.y = other.y + 50
+
+            if pos == 'right':
+                print('right', self.y, pos, self.Onground)
+                self.x_dir = 0
+                self.x -= 5
+
+            if pos == 'left':
+                print('left', self.y, pos, self.Onground)
+                self.x_dir = 0
+                self.x += 5
+
+            if pos == 'top':
+                self.Onground = False
+                self.Y_velocity *= -1
+                self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                print('top', self.y, pos, self.Onground)
+
             pass
         elif group == 'player:mushroom':
             self.y+= 15
@@ -458,12 +486,12 @@ class mario:
                 print('right', self.y, pos, self.Onground)
                 self.Onground = True
                 self.x_dir = 0
-                self.x -= 2
+                self.x -= 5
 
             if pos == 'left':
                 print('left', self.y, pos, self.Onground)
                 self.Onground = True
                 self.x_dir = 0
-                self.x += 2
+                self.x += 5
 
 

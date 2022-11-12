@@ -19,7 +19,7 @@ def setPos():
         c.set_pos(random.randint(400, 500),random.randint(75, 200))
 
     for it in item:
-        it.set_pos(random.randint(400, 5000),random.randint(150, 200))
+        it.set_pos(random.randint(400, 5000),random.randint(90, 200))
 
     for br in brick:
         br.set_pos(random.randint(400, 5000), random.randint(200, 200))
@@ -57,7 +57,7 @@ def collide(a,b):
     if rb - la >= 2 and rb < ra:
         str = 'left'
 
-    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 40 and ta > tb):
+    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
         str = 'bottom'
 
     if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (ta - bb <= 10 and bb > ba):
@@ -122,12 +122,12 @@ def enter():
     brick_block = block.Bricks()
     coin = [block.COIN() for n in range(0, 20)]
     item = [block.item_block() for n in range(0, 5)]
-    brick = [block.Bricks() for n in range(0, 1)]
+    brick = [block.Bricks() for n in range(0, 4)]
     mushroom = MUSHROOM(500,65)
 
     goomba = [Goomba.GOOMBA() for i in range(1)]
-    green = [Koopa.GreenKoopa() for i in range(1)]
-    red = [Koopa.RedKoopa() for i in range(1)]
+    green = [Koopa.GreenKoopa() for i in range(3)]
+    red = [Koopa.RedKoopa() for i in range(3)]
     flower = FLOWER(1000, 65)
     cur_len = len(character.gen_fire)
     setPos()
