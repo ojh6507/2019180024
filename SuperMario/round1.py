@@ -71,7 +71,7 @@ class Floor_Tile(Empty_Tile):
     def draw(self):
         self.image.draw(self.x, self.y)
         draw_rectangle(*self.get_bb())
-    def handle_collision(self,other,group):
+    def handle_collision(self,other,group,pos):
         pass
 
 
@@ -97,5 +97,7 @@ class BACKGROUND:
     def update(self):
         pass
 
-
+class collision:
+    def __init__(self ,x1, y1,x2,y2):
+        self.leftx,self.rightx, self.midy = x1,x2,(y1+y2)//2
 

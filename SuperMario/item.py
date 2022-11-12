@@ -26,7 +26,7 @@ class MUSHROOM:
     def get_bb(self):
         return self.x-12, self.y-24, self.x+12, self.y
 
-    def handle_collision(self, other, group):
+    def handle_collision(self, other, group, pos):
         if group == 'player:mushroom':
             game_world.remove_object(self)
 
@@ -51,7 +51,29 @@ class FLOWER:
     def get_bb(self):
         return self.x - 12, self.y - 24, self.x + 12, self.y
 
-    def handle_collision(self, other, group):
+    def handle_collision(self, other, group, pos):
         if group == 'player:flower':
             game_world.remove_object(self)
 
+class STAR:
+    image = None
+    def get_name(self):
+        return 'star'
+    def __init__(self, x,y):
+        if STAR.image == None:
+            STAR.image = load_image('mushroom.png')
+        self.x, self.y =x, y
+        self.dir = -1
+
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 16, 16, 0, ' ', self.x, self.y-13, 16, 16)
+        # self.image.draw(self.x,self.y)
+        draw_rectangle(*self.get_bb())
+    def update(self):
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+    def get_bb(self):
+        return self.x-12, self.y-24, self.x+12, self.y
+
+    def handle_collision(self, other, group, pos):
+        if group == 'player:mushroom':
+            game_world.remove_object(self)

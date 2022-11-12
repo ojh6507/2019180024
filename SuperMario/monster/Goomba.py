@@ -45,7 +45,7 @@ class GOOMBA:
         self.action = 1
         self.x = random.randint(0, 1000)
         self.x_dir = 0
-        self.y = 85
+        self.y = 55
         self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
