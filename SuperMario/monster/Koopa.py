@@ -40,9 +40,9 @@ class RedKoopa:
         if RedKoopa.image == None:
             RedKoopa.image = load_image('red_koopa.png')
 
-        self.frame = 1
+        self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
-        self.y = 100
+        self.y = 62
         self.x_dir = -1
         self.action = 1
         self.clip = 17
@@ -69,10 +69,10 @@ class GreenKoopa:
     def __init__(self):
         if GreenKoopa.image == None:
             GreenKoopa.image = load_image('green_koopa.png')
-        self.frame = 1
+        self.frame = random.randint(0,15)
         self.action = 0
         self.x = random.randint(400, 3000)
-        self.y = 100
+        self.y = 62
         self.x_dir = -1
         self.action = 1
         self.reflect= ' '
