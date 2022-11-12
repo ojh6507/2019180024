@@ -1,8 +1,11 @@
 from pico2d import *
 import math
+
+import block.block
 import game_framework
 from fire import Ball
 import game_world
+from block import block
 
 
 RD, LD, RU, LU, SPACE, ATTACK, SHIFTD, SHIFTU, SPACE = range(9)
@@ -18,7 +21,7 @@ key_event_table = {
 (SDL_KEYUP, SDLK_LSHIFT): SHIFTU
 
 }
-
+gen_fire = []
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 15.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -37,6 +40,18 @@ class IDLE:
         self.frame = 0
         self.Run = False
         self.TIME_PER_ACTION = 1
+        if self.mario_size == 'Small':
+
+            self.perframe = 30
+            self.action = 0
+            self.height = 35
+
+        elif self.mario_size == 'Normal':
+
+            self.perframe = 50
+            self.action = 0
+            self.height = 65
+
     def exit(self, event):
         if event == ATTACK:
            self.Fire_Ball()
@@ -44,17 +59,27 @@ class IDLE:
     def do(self):
         if not self.jump:
             if self.mario_size == 'Small':
+                # self.image = load_image('smario_idle.png')
                 self.clip = 76
 
             elif self.mario_size == 'Normal':
                 self.clip = 79
+                # if not self.flower:
+                #     self.image = load_image('idle_right.png')
+                # else:
+                #     self.image = load_image('flower_idle_right.png')
         else:
             self.jump_func()
 
             if self.mario_size == 'Small':
+                # self.image = load_image('smario_jump.png')
                 self.clip = 30
                 self.TIME_PER_ACTION = 1
             elif self.mario_size == 'Normal':
+                # if not self.flower:
+                #     self.image = load_image('jump_right.png')
+                # else:
+                #     self.image = load_image('flower_jump_rig
                 self.clip = 18
                 self.TIME_PER_ACTION = 0.5
 
@@ -132,9 +157,14 @@ class WALK:
             self.TIME_PER_ACTION = 0.4
             self.velocity = 3
             if self.mario_size == 'Small':
+                # self.image = load_image('smario_run.png')
                 self.clip = 13
 
             if self.mario_size == 'Normal':
+                # if not self.flower:
+                #     self.image = load_image('run_fast.png')
+                # else:
+                #     self.image = load_image('flower_run_fast.png')
                 self.clip = 18
 
         if not self.Run:
@@ -299,7 +329,7 @@ class mario:
         self.Onground = True
 
         self.mass = 10
-        self.jump_height = 12
+        self.jump_height = 13
 
         self.Y_gravity = 0.5
         self.Y_velocity = self.jump_height
@@ -321,7 +351,6 @@ class mario:
 
 
     def update(self):
-
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.cur_state.do(self)
         if self.event_que:
@@ -349,6 +378,9 @@ class mario:
         if not self.jump:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * 20 * game_framework.frame_time
 
+        block.item_block.get_size(block,self.mario_size)
+
+
     def check_gameOver(self):
         if self.die:
             self.image =load_image('gameover_mario.png')
@@ -370,6 +402,7 @@ class mario:
     def Fire_Ball(self):
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir,RUN_SPEED_PPS * self.velocity)
+            gen_fire.append(ball)
             game_world.add_object(ball, 1)
 
     def get_bb(self):
@@ -385,13 +418,17 @@ class mario:
 
             if pos == 'bottom':
                 self.Onground = True
-                pass
+                self.y = other.y + 50
             if pos == 'right':
                 print('right', self.y, pos, self.Onground)
-                pass
+                self.x_dir = 0
+                self.x-=2
+
             if pos == 'left':
                 print('left', self.y, pos, self.Onground)
-                pass
+                self.x_dir = 0
+                self.x+=2
+
             if pos == 'top':
                 self.Onground = False
                 self.Y_velocity *= -1
@@ -421,7 +458,7 @@ class mario:
                 print('right', self.y, pos, self.Onground)
                 self.Onground = True
                 self.x_dir = 0
-                self.x-=2
+                self.x -= 2
 
             if pos == 'left':
                 print('left', self.y, pos, self.Onground)

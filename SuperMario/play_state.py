@@ -27,7 +27,7 @@ def setPos():
 
 world = None
 player = None
-fire = None
+fire = []
 exp = None
 brick_block = None
 coin = None
@@ -51,14 +51,14 @@ def collide(a,b):
     # 충돌 없는 것부터 처리
 
 
-    if (lb < ra or la < rb) and bb - ba >= - 80 and bb - ba < -4:
-        str= 'bottom'
-
-    if tb > ta and bb < ba and ra - lb >= 2 and la < lb:
+    if ra - lb >= 2 and la < lb:
         str = 'right'
 
-    if tb > ta and bb < ba and rb - la >= 2 and rb < ra:
+    if rb - la >= 2 and rb < ra:
         str = 'left'
+
+    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 40 and ta > tb):
+        str = 'bottom'
 
     if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (ta - bb <= 10 and bb > ba):
         str = 'top'
@@ -110,7 +110,7 @@ def set_world():
 
                 # game_world.add_object(underground,3)
 
-
+cur_len = None
 def enter():
     global world, player,fire,brick_block,\
         coin,item,brick,goomba,green,red,exp,music, mushroom,flower,ground,empty
@@ -129,14 +129,13 @@ def enter():
     green = [Koopa.GreenKoopa() for i in range(1)]
     red = [Koopa.RedKoopa() for i in range(1)]
     flower = FLOWER(1000, 65)
-
+    cur_len = len(character.gen_fire)
     setPos()
 
     game_world.add_object(world, 0)
     game_world.add_object(player, 1)
     game_world.add_object(mushroom, 1)
     game_world.add_object(flower, 1)
-
     game_world.add_objects(goomba, 1)
     game_world.add_objects(green, 1)
 
@@ -153,6 +152,7 @@ def enter():
     game_world.add_collision_group(player, mushroom, 'player:mushroom')
     game_world.add_collision_group(player, flower, 'player:flower')
     game_world.add_collision_group(player, ground, 'player:ground')
+
     print("bb:",ground[0].get_bb())
     print("bb:", player.get_bb())
 
@@ -165,6 +165,12 @@ def exit():
     game_world.clear()
 def update():
     set()
+    global fire,cur_len
+    fire = character.gen_fire
+    if cur_len != len(fire) :
+        game_world.add_collision_group(fire, ground, 'fire:ground')
+        cur_len = len(fire)
+
     for game_object in game_world.all_objects():
         game_object.update()
 
