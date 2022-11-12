@@ -22,6 +22,10 @@ INFO[2,20] = 1
 INFO[1,20] = 2
 INFO[0,20] = 2
 
+INFO[1,21] = 1
+INFO[0,21] = 1
+
+
 print(INFO)
 
 
