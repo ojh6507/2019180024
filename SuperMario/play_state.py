@@ -4,7 +4,6 @@ import game_world
 import round1
 from pico2d import *
 from player import character
-from player import *
 from block import block
 from monster import Goomba
 from monster import Koopa
@@ -14,11 +13,10 @@ import server
 WIDTH, HEIGHT = 800,600
 
 def setPos():
-
     for c in server.coin:
         c.set_pos(random.randint(400, 500),random.randint(75, 200))
 
-    for it in server.itemBox:
+    for it in server.item:
         it.set_pos(random.randint(400, 5000),random.randint(90, 200))
 
     for br in brick:
@@ -33,6 +31,8 @@ brick = None
 green = None
 red = None
 music = None
+
+
 def collide(a,b):
     str = ' '
     la, ba, ra, ta = a.get_bb()
@@ -50,7 +50,7 @@ def collide(a,b):
     if rb - la >= 2 and rb < ra:
         str = 'left'
 
-    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 80 and ta > tb):
+    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
         str = 'bottom'
 
     if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (ta - bb <= 10 and bb > ba):
@@ -105,18 +105,19 @@ def set_world():
 
 cur_len = None
 def enter():
-    global world,fire,brick_block, brick,green,red,exp,music,ground,empty, cur_len
+    global world, fire, brick_block,brick ,green,red,exp,music,ground,empty
+
     world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
 
     brick_block = block.Bricks()
     server.coin = [block.COIN() for n in range(0, 20)]
-    server.itemBox = [block.item_block() for n in range(0, 5)]
+    server.item = [block.item_block() for n in range(0, 5)]
     brick = [block.Bricks() for n in range(0, 4)]
     server.mushroom = MUSHROOM(500,65)
 
-    server.Goomba = [Goomba.GOOMBA() for i in range(1)]
+    server.goomba = [Goomba.GOOMBA() for i in range(1)]
     green = [Koopa.GreenKoopa() for i in range(3)]
     red = [Koopa.RedKoopa() for i in range(3)]
     server.flower = FLOWER(1000, 65)
@@ -127,25 +128,26 @@ def enter():
     game_world.add_object(server.player, 1)
     game_world.add_object(server.mushroom, 1)
     game_world.add_object(server.flower, 1)
-    game_world.add_objects(server.Goomba, 1)
+    game_world.add_objects(server.goomba, 1)
     game_world.add_objects(green, 1)
 
     game_world.add_objects(red, 1)
     game_world.add_objects(server.coin, 1)
-    game_world.add_objects(server.itemBox, 1)
+    game_world.add_objects(server.item, 1)
     game_world.add_objects(brick, 1)
     game_world.add_objects(ground,3)
     game_world.add_objects(empty,3)
 
     game_world.add_collision_group(server.player, server.coin, 'player:coin')
-    game_world.add_collision_group(server.player, server.itemBox, 'player:item_block')
+    game_world.add_collision_group(server.player, server.item, 'player:item_block')
     game_world.add_collision_group(server.player, brick, 'player:bricks')
     game_world.add_collision_group(server.player, server.mushroom, 'player:mushroom')
     game_world.add_collision_group(server.player, server.flower, 'player:flower')
     game_world.add_collision_group(server.player, ground, 'player:ground')
-    # music = load_music('stage1.mp3')
-    # music.set_volume(10)
-    # music.play()
+
+    #music = load_music('stage1.mp3')
+    #music.set_volume(10)
+    #music.play()
 
 
 def exit():
