@@ -3,4 +3,7 @@ coin = None
 itmeBox = None
 goomba = None
 mushroom = None
+red = None
+green = None
 flower = None
+ground = []

@@ -24,12 +24,9 @@ def setPos():
 
 
 world = None
-fire = []
 exp = None
 brick_block = None
 brick = None
-green = None
-red = None
 music = None
 
 
@@ -82,10 +79,9 @@ def set():
         server.player.x = 400
 
 empty = []
-ground = []
 underground = []
 def set_world():
-    global empty,ground,underground
+    global empty, underground
     for col in range(len(round1.INFO)):
         for row in range(len(round1.INFO[col])):
 
@@ -94,18 +90,18 @@ def set_world():
                 # game_world.add_object(empty,2)
 
             elif round1.INFO[col][row] == 1:
-                ground.append(round1.Floor_Tile(col, row))
+                server.ground.append(round1.Floor_Tile(col, row))
 
                 # game_world.add_object(ground,3)
 
             elif round1.INFO[col][row] == 2:
-                ground.append(round1.under_Tile(col, row))
+                server.ground.append(round1.under_Tile(col, row))
 
                 # game_world.add_object(underground,3)
 
 cur_len = None
 def enter():
-    global world, fire, brick_block,brick ,green,red,exp,music,ground,empty
+    global world, brick_block,brick, exp,music,empty
 
     world = round1.BACKGROUND()
     set_world()
@@ -118,10 +114,9 @@ def enter():
     server.mushroom = MUSHROOM(500,65)
 
     server.goomba = [Goomba.GOOMBA() for i in range(1)]
-    green = [Koopa.GreenKoopa() for i in range(3)]
-    red = [Koopa.RedKoopa() for i in range(3)]
+    server.green = [Koopa.GreenKoopa() for i in range(3)]
+    server.red = [Koopa.RedKoopa() for i in range(3)]
     server.flower = FLOWER(1000, 65)
-    cur_len = len(server.player.gen_fire)
     setPos()
 
     game_world.add_object(world, 0)
@@ -129,13 +124,13 @@ def enter():
     game_world.add_object(server.mushroom, 1)
     game_world.add_object(server.flower, 1)
     game_world.add_objects(server.goomba, 1)
-    game_world.add_objects(green, 1)
+    game_world.add_objects(server.green, 1)
 
-    game_world.add_objects(red, 1)
+    game_world.add_objects(server.red, 1)
     game_world.add_objects(server.coin, 1)
     game_world.add_objects(server.item, 1)
     game_world.add_objects(brick, 1)
-    game_world.add_objects(ground,3)
+    game_world.add_objects(server.ground,3)
     game_world.add_objects(empty,3)
 
     game_world.add_collision_group(server.player, server.coin, 'player:coin')
@@ -143,7 +138,10 @@ def enter():
     game_world.add_collision_group(server.player, brick, 'player:bricks')
     game_world.add_collision_group(server.player, server.mushroom, 'player:mushroom')
     game_world.add_collision_group(server.player, server.flower, 'player:flower')
-    game_world.add_collision_group(server.player, ground, 'player:ground')
+    game_world.add_collision_group(server.player, server.ground, 'player:ground')
+    game_world.add_collision_group(server.player, server.goomba, 'player:goomba')
+    game_world.add_collision_group(server.player, server.red, 'player:red')
+    game_world.add_collision_group(server.player, server.green, 'player:green')
 
     #music = load_music('stage1.mp3')
     #music.set_volume(10)
