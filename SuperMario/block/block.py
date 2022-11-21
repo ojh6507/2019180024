@@ -2,7 +2,7 @@ import random
 from pico2d import *
 import game_framework
 import game_world
-
+import server
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
@@ -31,15 +31,11 @@ class item_block:
         self.y = y
     def returnY(self):
         return self.y
-    def get_size(self, size):
-        self.mario_size = size
-
     def handle_collision(self, other, group, p):
-        global PLAYER
         # print('ball disappear')
         if group == 'player:item_block':
             if p == 'top':
-                if self.mario_size == 'Small':
+                if server.player.mario_size == 'Small':
                     print('gen mushroom!!')
                 else:
                     print('gen flower!!')
