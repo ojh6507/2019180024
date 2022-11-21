@@ -68,7 +68,7 @@ def set():
                 game_object.x -= (server.player.x - 400)
 
 
-    elif server.player.x - 400 > 0:
+    elif world.x > (-2950) and server.player.x - 400 > 0:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
                 game_object.x -= (server.player.x - 400)
@@ -121,7 +121,7 @@ def enter():
     green = [Koopa.GreenKoopa() for i in range(3)]
     red = [Koopa.RedKoopa() for i in range(3)]
     server.flower = FLOWER(1000, 65)
-    cur_len = len(character.gen_fire)
+    cur_len = len(server.player.gen_fire)
     setPos()
 
     game_world.add_object(world, 0)
@@ -154,11 +154,12 @@ def exit():
     game_world.clear()
 def update():
     set()
-    global fire,cur_len
-    fire = character.gen_fire
-    if cur_len != len(fire) :
-        game_world.add_collision_group(fire, ground, 'fire:ground')
-        cur_len = len(fire)
+    # global fire,cur_len
+    # fire = server.player.gen_fire
+    # if cur_len != len(fire):
+    #     game_world.add_collision_group(fire, ground, 'fire:ground')
+    #     cur_len = len(fire)
+    #     if cur_len > 0: cur_len-=1
 
     for game_object in game_world.all_objects():
         game_object.update()
