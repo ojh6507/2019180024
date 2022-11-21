@@ -37,7 +37,7 @@ def clear():
 
 def add_collision_group(a, b, group):
     if group not in collision_group:
-        print('new group made')
+        # print('new group made')
         collision_group[group] = [ [], []]
     if a:
         if type(a) == list:
