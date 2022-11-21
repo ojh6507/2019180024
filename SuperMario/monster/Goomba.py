@@ -1,6 +1,9 @@
 import random
+import math
+import BehaviorTree
 from pico2d import *
 import game_framework
+import game_world
 TIME_PER_ACTION = 1
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
@@ -9,6 +12,43 @@ RUN_SPEED_KMPH = 5.0
 RUN_SPEED_MPM = RUN_SPEED_KMPH * 1000.0/ 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPM/ 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
+
+def wander(self):
+    self.speed = RUN_SPEED_PPS
+    if self.timer <= 0:
+        self.timer = 1.0
+        self.dir = random.random() *2 *math.pi
+        return BehaviorTree.SUCCESS
+    else:
+        return BehaviorTree.RUNNING
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class WALK:
@@ -63,5 +103,13 @@ class GOOMBA:
 
     def get_bb(self):
         return self.x - 10, self.y - 11, self.x + 10, self.y + 11
+
+    def handle_collision(self, other, group, pos):
+        if group == 'fire:goomba':
+            try:
+                game_world.remove_object(self)
+                game_world.remove_object(other)
+            except:
+                pass
 
 

@@ -1,6 +1,6 @@
 from pico2d import *
 import math
-
+import server
 import block.block
 import game_framework
 from fire import Ball
@@ -21,8 +21,6 @@ key_event_table = {
 (SDL_KEYUP, SDLK_LSHIFT): SHIFTU
 
 }
-
-gen_fire = []
 
 PIXEL_PER_METER = (10.0/0.3)
 RUN_SPEED_KMPH = 15.0
@@ -130,7 +128,11 @@ class IDLE:
                 self.action = 0
                 self.height = 65
 
-        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect, self.x, self.y, self.perframe, self.height)
+        if self.mario_size == 'Small':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect, self.x, self.y, self.perframe, self.height)
+        elif self.mario_size == 'Normal':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                           self.reflect, self.x, self.y, 50, 50)
 
 
 class WALK:
@@ -253,8 +255,12 @@ class WALK:
                 self.action = 70
                 self.height = 65
 
-
-        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect,self.x, self.y, self.perframe,self.height)
+        if self.mario_size == 'Small':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                           self.reflect, self.x, self.y, self.perframe, self.height)
+        elif self.mario_size == 'Normal':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                           self.reflect, self.x, self.y, 50, 50)
 
 
 
@@ -344,6 +350,7 @@ class mario:
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
 
+
     def jump_func(self):
         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
@@ -355,15 +362,17 @@ class mario:
 
 
     def update(self):
+        self.x_dir = self.face_dir
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.cur_state.do(self)
         if self.event_que:
             event = self.event_que.pop()
 
             if event == SPACE:
-                self.frame = 0
-                self.jump = True
-                self.Onground =False
+                if self.Onground:
+                    self.frame = 0
+                    self.jump = True
+                    self.Onground =False
             elif event == SHIFTD:
                 self.frame = 0
                 self.Run = True
@@ -402,15 +411,19 @@ class mario:
            self.add_event(key_event)
     def Fire_Ball(self):
         if self.flower:
-            ball = Ball(self.x, self.y, self.face_dir,RUN_SPEED_PPS * self.velocity)
-            gen_fire.append(ball)
+            ball = Ball(self.x, self.y, self.face_dir)
+            game_world.add_collision_group(ball,server.ground, 'fire:ground')
+            game_world.add_collision_group(ball,server.goomba,'fire:goomba')
+            game_world.add_collision_group(ball, server.red, 'fire:red')
+            game_world.add_collision_group(ball, server.green, 'fire:green')
+
             game_world.add_object(ball, 1)
 
     def get_bb(self):
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 20, self.x + 10, self.y + 16
         if self.mario_size == 'Normal':
-            return self.x - 10, self.y - 29, self.x + 10, self.y+27
+            return self.x - 10, self.y - 20, self.x + 10, self.y+16
 
     def handle_collision(self, other, group, pos):
         if group == 'player:coin':
@@ -420,15 +433,13 @@ class mario:
             if pos == 'bottom':
                 self.Onground = True
                 if abs(self.x - other.x) <= 15:
-                    self.y = other.y + 50
+                    self.y = other.y + 40
 
             if pos == 'right':
-                self.x_dir = 0
-                self.x -= 10
+                self.x -= 15
 
             if pos == 'left':
-                self.x_dir = 0
-                self.x += 10
+                self.x += 15
 
             if pos == 'top':
                 self.Onground = False
@@ -439,7 +450,7 @@ class mario:
             if pos == 'bottom':
                 self.Onground = True
                 if abs(self.x - other.x) <= 15:
-                    self.y = other.y + 50
+                    self.y = other.y + 40
 
             if pos == 'right':
                 self.x_dir = 0
@@ -454,7 +465,7 @@ class mario:
                 self.Y_velocity *= -1
                 self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         elif group == 'player:mushroom':
-            self.y+= 15
+            self.y += 5
             self.mario_size = 'Normal'
         elif group == 'player:flower':
             self.mario_size = 'Normal'
@@ -468,7 +479,7 @@ class mario:
                 if self.mario_size == 'Small':
                     self.y = other.y + 61
                 else:
-                    self.y = other.y + 70
+                    self.y = other.y + 61
 
             if pos == 'right':
                 self.Onground = True
@@ -479,5 +490,31 @@ class mario:
                 self.Onground = True
                 self.x_dir = 0
                 self.x += 10
+        elif group == 'player:red':
+            if pos =='bottom':
+                self.jump = True
+                self.Y_velocity = self.jump_height
+                self.jump_func()
+            elif pos == 'right':
+                self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+            elif pos == 'left':
+                self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+
+        elif group == 'player:green':
+            if pos == 'bottom':
+                self.jump = True
+                self.Y_velocity = self.jump_height
+                self.jump_func()
+            elif pos == 'right':
+                self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
+
+            elif pos == 'left':
+                self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4* self.velocity
+
+        elif group == 'player:goomba':
+            if pos == 'top':
+                self.jump = True
+                self.Y_velocity = self.jump_height
+                self.jump_func()
 
 

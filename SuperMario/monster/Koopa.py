@@ -2,6 +2,8 @@ import random
 import game_framework
 from pico2d import *
 
+import game_world
+
 PIXEL_PER_METER = 10.0 / 0.3
 RUN_SPEED_KMPH = 5.0
 RUN_SPEED_MPM = RUN_SPEED_KMPH * 1000.0 / 60.0
@@ -60,6 +62,29 @@ class RedKoopa:
     def get_bb(self):
         return self.x - 10, self.y - 23, self.x + 10, self.y + 21
 
+    def handle_collision(self, other, group, pos):
+        if group == 'fire:red':
+            try:
+                game_world.remove_object(self)
+                game_world.remove_object(other)
+            except:
+                pass
+        if group == 'player:red':
+            if pos == 'bottom':
+                try:
+                    game_world.remove_object(self)
+                except:
+                    pass
+            elif pos == 'right':
+                self.x_dir = 1
+                self.reflect = 'h'
+            elif pos == 'left':
+                self.x_dir = -1
+                self.reflect = ' '
+
+
+
+
 
 class GreenKoopa:
     image = None
@@ -93,7 +118,27 @@ class GreenKoopa:
         self.cur_state.do(self)
 
     def get_bb(self):
-        return self.x - 10, self.y - 23, self.x + 10, self.y + 21
+        return self.x - 10, self.y - 20, self.x + 10, self.y + 21
+
+    def handle_collision(self, other, group, pos):
+        if group == 'fire:green':
+            try:
+                game_world.remove_object(self)
+                game_world.remove_object(other)
+            except:
+                pass
+        if group == 'player:green':
+            if pos == 'bottom':
+                try:
+                    game_world.remove_object(self)
+                except:
+                    pass
+            elif pos == 'right':
+                self.x_dir = 1
+                self.reflect = 'h'
+            elif pos == 'left':
+                self.x_dir = -1
+                self.reflect = ' '
 
 
 
