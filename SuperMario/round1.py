@@ -25,10 +25,6 @@ INFO[0,20] = 2
 INFO[1,21] = 1
 INFO[0,21] = 1
 
-
-print(INFO)
-
-
 # def set_world():
 #
 #     for col in range(len(INFO)):

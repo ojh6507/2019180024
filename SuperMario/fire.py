@@ -37,11 +37,7 @@ class Ball:
 
         if self.count >= 5:
             game_world.remove_object(self)
-            del character.gen_fire[0]
-            print('del fire', character.gen_fire)
-            self.count = 0
-
-
+            character.gen_fire.pop()
     def draw(self):
         self.image.clip_draw(self.frame * 15, 0, 15, 13, self.x, self.y)
         draw_rectangle(*self.get_bb())

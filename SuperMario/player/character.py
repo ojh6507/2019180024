@@ -335,7 +335,7 @@ class mario:
         self.mass = 10
         self.jump_height = 13
 
-        self.Y_gravity = 0.5
+        self.Y_gravity = 0.25
         self.Y_velocity = self.jump_height
         self.count_grow = 0
         self.count_jump = 0
@@ -382,9 +382,6 @@ class mario:
         if not self.jump:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * 20 * game_framework.frame_time
 
-        block.item_block.get_size(block,self.mario_size)
-
-
     def check_gameOver(self):
         if self.die:
             self.image =load_image('gameover_mario.png')
@@ -406,7 +403,6 @@ class mario:
     def Fire_Ball(self):
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir,RUN_SPEED_PPS * self.velocity)
-            print("in character gen_Fire",gen_fire)
             gen_fire.append(ball)
             game_world.add_object(ball, 1)
 
@@ -418,7 +414,7 @@ class mario:
 
     def handle_collision(self, other, group, pos):
         if group == 'player:coin':
-            print('coin + 1')
+                pass
         elif group == 'player:item_block':
 
             if pos == 'bottom':
@@ -427,20 +423,17 @@ class mario:
                     self.y = other.y + 50
 
             if pos == 'right':
-                print('right', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x -= 5
+                self.x -= 10
 
             if pos == 'left':
-                print('left', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x += 5
+                self.x += 10
 
             if pos == 'top':
                 self.Onground = False
                 self.Y_velocity *= -1
                 self.y+= self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
-                print('top', self.y, pos, self.Onground)
 
         elif group == 'player:bricks':
             if pos == 'bottom':
@@ -449,22 +442,17 @@ class mario:
                     self.y = other.y + 50
 
             if pos == 'right':
-                print('right', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x -= 5
+                self.x -= 10
 
             if pos == 'left':
-                print('left', self.y, pos, self.Onground)
                 self.x_dir = 0
-                self.x += 5
+                self.x += 10
 
             if pos == 'top':
                 self.Onground = False
                 self.Y_velocity *= -1
                 self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
-                print('top', self.y, pos, self.Onground)
-
-            pass
         elif group == 'player:mushroom':
             self.y+= 15
             self.mario_size = 'Normal'
@@ -483,15 +471,13 @@ class mario:
                     self.y = other.y + 70
 
             if pos == 'right':
-                print('right', self.y, pos, self.Onground)
                 self.Onground = True
                 self.x_dir = 0
-                self.x -= 5
+                self.x -= 10
 
             if pos == 'left':
-                print('left', self.y, pos, self.Onground)
                 self.Onground = True
                 self.x_dir = 0
-                self.x += 5
+                self.x += 10
 
 
