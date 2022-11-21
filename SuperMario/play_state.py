@@ -10,15 +10,15 @@ from monster import Goomba
 from monster import Koopa
 from item import MUSHROOM
 from item import FLOWER
-
+import server
 WIDTH, HEIGHT = 800,600
 
 def setPos():
-    global coin
-    for c in coin:
+
+    for c in server.coin:
         c.set_pos(random.randint(400, 500),random.randint(75, 200))
 
-    for it in item:
+    for it in server.itemBox:
         it.set_pos(random.randint(400, 5000),random.randint(90, 200))
 
     for br in brick:
@@ -26,20 +26,13 @@ def setPos():
 
 
 world = None
-player = None
 fire = []
 exp = None
 brick_block = None
-coin = None
-item = None
 brick = None
-goomba = None
 green = None
 red = None
 music = None
-mushroom = None
-flower = None
-
 def collide(a,b):
     str = ' '
     la, ba, ra, ta = a.get_bb()
@@ -57,7 +50,7 @@ def collide(a,b):
     if rb - la >= 2 and rb < ra:
         str = 'left'
 
-    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
+    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 80 and ta > tb):
         str = 'bottom'
 
     if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (ta - bb <= 10 and bb > ba):
@@ -67,26 +60,26 @@ def collide(a,b):
 
 
 def set():
-    global world, player
+    global world
 
-    if world.x < (-2950) and player.x - 400 < 0:
+    if world.x < (-2950) and server.player.x - 400 < 0:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (player.x - 400)
+                game_object.x -= (server.player.x - 400)
 
 
-    elif player.x - 400 > 0:
+    elif server.player.x - 400 > 0:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (player.x - 400)
-        player.x = 400
+                game_object.x -= (server.player.x - 400)
+        server.player.x = 400
 
 
-    elif player.x - 400 < 0 and world.x - (player.x - 400) < 3750:
+    elif server.player.x - 400 < 0 and world.x - (server.player.x - 400) < 3750:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (player.x - 400)
-        player.x = 400
+                game_object.x -= (server.player.x - 400)
+        server.player.x = 400
 
 empty = []
 ground = []
@@ -112,53 +105,47 @@ def set_world():
 
 cur_len = None
 def enter():
-    global world, player,fire,brick_block,\
-        coin,item,brick,goomba,green,red,exp,music, mushroom,flower,ground,empty
-
+    global world,fire,brick_block, brick,green,red,exp,music,ground,empty, cur_len
     world = round1.BACKGROUND()
     set_world()
-    player = character.mario()
+    server.player = character.mario()
 
     brick_block = block.Bricks()
-    coin = [block.COIN() for n in range(0, 20)]
-    item = [block.item_block() for n in range(0, 5)]
+    server.coin = [block.COIN() for n in range(0, 20)]
+    server.itemBox = [block.item_block() for n in range(0, 5)]
     brick = [block.Bricks() for n in range(0, 4)]
-    mushroom = MUSHROOM(500,65)
+    server.mushroom = MUSHROOM(500,65)
 
-    goomba = [Goomba.GOOMBA() for i in range(1)]
+    server.Goomba = [Goomba.GOOMBA() for i in range(1)]
     green = [Koopa.GreenKoopa() for i in range(3)]
     red = [Koopa.RedKoopa() for i in range(3)]
-    flower = FLOWER(1000, 65)
+    server.flower = FLOWER(1000, 65)
     cur_len = len(character.gen_fire)
     setPos()
 
     game_world.add_object(world, 0)
-    game_world.add_object(player, 1)
-    game_world.add_object(mushroom, 1)
-    game_world.add_object(flower, 1)
-    game_world.add_objects(goomba, 1)
+    game_world.add_object(server.player, 1)
+    game_world.add_object(server.mushroom, 1)
+    game_world.add_object(server.flower, 1)
+    game_world.add_objects(server.Goomba, 1)
     game_world.add_objects(green, 1)
 
     game_world.add_objects(red, 1)
-    game_world.add_objects(coin, 1)
-    game_world.add_objects(item, 1)
+    game_world.add_objects(server.coin, 1)
+    game_world.add_objects(server.itemBox, 1)
     game_world.add_objects(brick, 1)
     game_world.add_objects(ground,3)
     game_world.add_objects(empty,3)
 
-    game_world.add_collision_group(player, coin, 'player:coin')
-    game_world.add_collision_group(player, item, 'player:item_block')
-    game_world.add_collision_group(player, brick, 'player:bricks')
-    game_world.add_collision_group(player, mushroom, 'player:mushroom')
-    game_world.add_collision_group(player, flower, 'player:flower')
-    game_world.add_collision_group(player, ground, 'player:ground')
-
-    print("bb:",ground[0].get_bb())
-    print("bb:", player.get_bb())
-
-    #music = load_music('stage1.mp3')
-    #music.set_volume(10)
-    #music.play()
+    game_world.add_collision_group(server.player, server.coin, 'player:coin')
+    game_world.add_collision_group(server.player, server.itemBox, 'player:item_block')
+    game_world.add_collision_group(server.player, brick, 'player:bricks')
+    game_world.add_collision_group(server.player, server.mushroom, 'player:mushroom')
+    game_world.add_collision_group(server.player, server.flower, 'player:flower')
+    game_world.add_collision_group(server.player, ground, 'player:ground')
+    # music = load_music('stage1.mp3')
+    # music.set_volume(10)
+    # music.play()
 
 
 def exit():
@@ -198,7 +185,7 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.quit()
         else:
-            player.handle_event(event)
+            server.player.handle_event(event)
 
 def pause():
     pass
