@@ -17,31 +17,50 @@ class item_block:
         self.image = load_image('block_1.png')
         self.frame = 0
         self.x = 0
-        self.y = 100
-        self.moveup = False
+        self.y = 0
+        self.Y_gravity = 15
+        self.temp = 0
         self.mario_size = ' '
+        self.up = False
+        self.Y_velocity = 0
+        self.jump_height = 0
+        self.type =' '
     def draw(self):
         self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
         draw_rectangle(*self.get_bb())
-
+    def up_box(self):
+        self.y += self.Y_velocity * game_framework.frame_time
+        self.Y_velocity -= self.Y_gravity
+        if self.y <= self.temp:
+            self.up = False
+            self.y = self.temp
+            self.Y_velocity = self.jump_height
     def get_bb(self):
         return self.x - 16, self.y - 16, self.x + 16, self.y + 16
 
     def update(self):
         self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
-    def set_pos(self,x,y):
+        if self.up:
+            self.up_box()
+    def set_pos(self,x,y, type = 'coin'):
         self.x = x
         self.y = y
+        self.temp = y
+        self.jump_height = y + 10
+        self.Y_velocity =self.jump_height
+        self.type = type
     def returnY(self):
         return self.y
+    def gen_item(self):
+        if self.type =='item':
+            if server.player.mario_size == 'Small':
+                print('gen mushroom!!')
+            else:
+                print('gen flower!!')
     def handle_collision(self, other, group, p):
-        # print('ball disappear')
         if group == 'player:item_block':
             if p == 'top':
-                if server.player.mario_size == 'Small':
-                    print('gen mushroom!!')
-                else:
-                    print('gen flower!!')
+                self.up = True
 
 
 
@@ -53,7 +72,6 @@ class COIN:
 
     def edit_x(self, x):
         self.x -= x
-
 
     def __init__(self):
         self.image =load_image('coin.png')
