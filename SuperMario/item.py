@@ -7,6 +7,7 @@ RUN_SPEED_MPM = RUN_SPEED_KMPH * 1000.0/ 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPM/ 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
+
 class MUSHROOM:
     image = None
     def get_name(self):
@@ -18,6 +19,7 @@ class MUSHROOM:
         if MUSHROOM.image == None:
             MUSHROOM.image = load_image('mushroom.png')
         self.x, self.y =x, y
+        self.Y_gravity = 10
         self.dir = -1
 
     def draw(self):
@@ -26,12 +28,29 @@ class MUSHROOM:
         draw_rectangle(*self.get_bb())
     def update(self):
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.y -= self.Y_gravity * 20 * game_framework.frame_time
+
     def get_bb(self):
         return self.x-12, self.y-24, self.x+12, self.y
 
     def handle_collision(self, other, group, pos):
         if group == 'player:mushroom':
             game_world.remove_object(self)
+        elif group == 'mushroom:ground':
+            if pos == 'bottom':
+                self.Onground = True
+                self.y = other.y + 61
+
+            if pos == 'right':
+                self.Onground = True
+                self.dir = 0
+                self.x -= 10
+
+            if pos == 'left':
+                self.Onground = True
+                self.dir = 0
+                self.x += 10
+
 
 class FLOWER:
     image = None
