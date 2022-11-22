@@ -127,16 +127,31 @@ class IDLE:
                 self.perframe = 50
                 self.action = 0
                 self.height = 65
+        if self.delay > 1:
+            if self.mario_size == 'Small':
+                self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect, self.x, self.y, self.perframe, self.height)
+            elif self.mario_size == 'Normal':
+                if self.jump:
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                                   self.reflect, self.x, self.y, 40, 40)
+                else:
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                               self.reflect, self.x, self.y, 50, 50)
+        else:
+            if self.delay_draw % 2 == 0:
+                if self.mario_size == 'Small':
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                                   self.reflect, self.x, self.y, self.perframe, self.height)
+                elif self.mario_size == 'Normal':
+                    if self.jump:
+                        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height,
+                                                       0,
+                                                       self.reflect, self.x, self.y, 40, 40)
+                    else:
+                        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height,
+                                                       0,
+                                                       self.reflect, self.x, self.y, 50, 50)
 
-        if self.mario_size == 'Small':
-            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0, self.reflect, self.x, self.y, self.perframe, self.height)
-        elif self.mario_size == 'Normal':
-            if self.jump:
-                self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
-                                               self.reflect, self.x, self.y, 40, 40)
-            else:
-                self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
-                                           self.reflect, self.x, self.y, 50, 50)
 
 
 class WALK:
@@ -162,7 +177,6 @@ class WALK:
         self.velocity = 1
 
     def do(self):
-
         if self.Run:
             self.TIME_PER_ACTION = 0.4
             self.velocity = 3
@@ -259,17 +273,31 @@ class WALK:
                 self.perframe = 50
                 self.action = 70
                 self.height = 65
-
-        if self.mario_size == 'Small':
-            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
-                                           self.reflect, self.x, self.y, self.perframe, self.height)
-        elif self.mario_size == 'Normal':
-            if self.jump:
+        if self.delay > 1:
+            if self.mario_size == 'Small':
                 self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
-                                               self.reflect, self.x, self.y, 40, 40)
-            else:
-                self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
-                                           self.reflect, self.x, self.y, 50, 50)
+                                               self.reflect, self.x, self.y, self.perframe, self.height)
+            elif self.mario_size == 'Normal':
+                if self.jump:
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                                   self.reflect, self.x, self.y, 40, 40)
+                else:
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                               self.reflect, self.x, self.y, 50, 50)
+        else:
+            if self.delay_draw % 2 == 0:
+                if self.mario_size == 'Small':
+                    self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                                   self.reflect, self.x, self.y, self.perframe, self.height)
+                elif self.mario_size == 'Normal':
+                    if self.jump:
+                        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height,
+                                                       0,
+                                                       self.reflect, self.x, self.y, 40, 40)
+                    else:
+                        self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height,
+                                                       0,
+                                                       self.reflect, self.x, self.y, 50, 50)
 
 
 
@@ -277,7 +305,6 @@ class WALK:
 
 class DIE:
     def enter(self, event):
-
         pass
 
     def exit(self, event):
@@ -292,7 +319,6 @@ class DIE:
         self.jump_func()
         self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
 
-        pass
 
     def draw(self):
         if self.mario_size == 'Small':
@@ -332,6 +358,8 @@ next_state = {
 #     def draw(self):
 #         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
 
+
+
 class mario:
     def get_name(self):
         return 'player'
@@ -347,10 +375,10 @@ class mario:
         self.action = 0
         self.perframe = 0
         self.reflect = ' '
-
+        self.delay_draw = 0
         self.clip = 76
         self.x = 100
-        self.y = 1000
+        self.y = 100
 
         self.x_dir = 0
         self.face_dir = 1
@@ -365,7 +393,7 @@ class mario:
         self.Onground = True
 
         self.mass = 10
-        self.jump_height = 13
+        self.jump_height = 10
 
         self.Y_gravity = 0.25
         self.Y_velocity = self.jump_height
@@ -376,8 +404,9 @@ class mario:
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
         self.timer = 1
+        self.delay = 1
         self.invincibility = False
-        self.dieEffect = False
+
 
     def jump_func(self):
         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
@@ -386,15 +415,11 @@ class mario:
             self.jump = False
             self.Y_velocity = self.jump_height
 
-
-
-
-
-
     def update(self):
-
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.cur_state.do(self)
+        self.delay += game_framework.frame_time
+        self.delay_draw += 1
         if self.event_que:
             event = self.event_que.pop()
 
@@ -427,7 +452,9 @@ class mario:
             if self.timer <= 0:
                 self.invincibility = False
                 self.timer = 1.0
+
         if self.die:
+            self.delay = 1.1
             self.jump = True
             self.Run = False
             self.cur_state = DIE
@@ -451,15 +478,18 @@ class mario:
             game_world.add_collision_group(ball, server.green, 'fire:green')
             game_world.add_object(ball, 1)
     def check_state(self):
+        self.delay = -1
         if not self.invincibility:
             if self.mario_size == 'Small':
-                self.dieEffect = True
                 self.die = True
             elif self.mario_size == 'Normal':
                 if self.flower == True:
                     self.flower = False
                 else:
                     self.mario_size = 'Small'
+                self.jump_height = 10
+                self.Y_velocity = self.jump_height
+                self.Onground = True
     def get_bb(self):
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 17, self.x + 10, self.y + 16
@@ -493,17 +523,20 @@ class mario:
 
                 if pos == 'top':
                     self.Onground = False
-                    self.Y_velocity *= -1
-                    self.y+= self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    if self.Y_velocity > 0:
+                        self.Y_velocity *= -1
+                        self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
             elif group == 'player:bricks':
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
                         if self.mario_size =='Small':
-                            self.y = other.y + 35
+                            if self.y > other.y:
+                                self.y = other.y + 35
                         else:
-                            self.y = other.y + 40
+                            if self.y > other.y:
+                                self.y = other.y + 40
 
                 if pos == 'right':
                     self.x_dir = 0
@@ -515,29 +548,40 @@ class mario:
 
                 if pos == 'top':
                     self.Onground = False
-                    self.Y_velocity *= -1
-                    self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    if self.Y_velocity > 0:
+                        self.Y_velocity *= -1
+                        self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
             elif group == 'player:mushroom':
-                self.y += 5
                 self.mario_size = 'Normal'
+                self.jump_height = 13
+                self.Y_velocity = self.jump_height
+                self.Onground = True
+
             elif group == 'player:flower':
                 self.mario_size = 'Normal'
+                self.jump_height = 13
+                self.Y_velocity = self.jump_height
                 self.flower = True
+                self.Onground = True
 
             elif group == 'player:ground':
+
                 if pos == 'bottom':
                     self.Onground =True
                     # if abs(other.y + 70) < 140:
                     if self.mario_size == 'Small':
-                        self.y = other.y + 58
+                        if self.y > other.y:
+                            self.y = other.y + 58
                     else:
-                        self.y = other.y + 61
+                        if self.y > other.y:
+                            self.y = other.y + 61
 
                 if pos == 'right':
                     self.Onground = True
                     self.x_dir = 0
                     self.x -= 10
+                    self.y = other.y + 61
 
                 if pos == 'left':
                     self.Onground = True
@@ -549,12 +593,12 @@ class mario:
                     self.jump = True
                     self.Y_velocity = self.jump_height
                     self.jump_func()
-                elif pos == 'right':
+                elif pos == 'right' and not self.invincibility:
                     self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
                     self.invincibility = True
 
-                elif pos == 'left':
+                elif pos == 'left' and not self.invincibility:
                     self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
                     self.invincibility = True
@@ -564,25 +608,27 @@ class mario:
                     self.jump = True
                     self.Y_velocity = self.jump_height
                     self.jump_func()
-                elif pos == 'right':
-                    self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
+                elif pos == 'right' and not self.invincibility:
+                    self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
                     self.check_state()
+                    self.invincibility = True
 
-                elif pos == 'left':
-                    self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4* self.velocity
+                elif pos == 'left' and not self.invincibility:
+                    self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4* self.velocity
                     self.check_state()
+                    self.invincibility = True
 
 
             elif group == 'player:goomba':
-                if pos == 'bottom':
+                if pos == 'top' or pos == 'bottom':
                     self.jump = True
                     self.Y_velocity = self.jump_height
                     self.jump_func()
-                elif pos == 'right':
+                elif pos == 'right' and not self.invincibility:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
 
-                elif pos == 'left':
+                elif pos == 'left' and not self.invincibility:
                     self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
 
