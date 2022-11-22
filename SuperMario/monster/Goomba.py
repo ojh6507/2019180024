@@ -13,6 +13,11 @@ RUN_SPEED_MPM = RUN_SPEED_KMPH * 1000.0/ 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPM/ 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
+JUMP_SPEED_KMPH = 10.0
+JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+
 def wander(self):
     self.speed = RUN_SPEED_PPS
     if self.timer <= 0:
@@ -79,31 +84,42 @@ class GOOMBA:
     def edit_x(self, x):
         self.x -= x
 
-    def __init__(self):
+    def __init__(self,x,y):
         if GOOMBA.image == None:
             GOOMBA.image = load_image('Goomba.png')
+
         self.frame = 1
         self.action = 1
-        self.x = random.randint(0, 1000)
-        self.x_dir = 0
-        self.y = 55
+        self.x = x
+        self.x_dir = -1
+        self.y = y
         self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
-
+        self.temp = self.x_dir
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-
+        self.Y_gravity = 10
+        self.Onground = False
 
     def draw(self):
         self.cur_state.draw(self)
         draw_rectangle(*self.get_bb())
 
     def update(self):
+        if self.x > 800:
+            self.x_dir = 0
+        else:
+            self.x_dir = self.temp
         self.cur_state.do(self)
+        if not self.Onground:
+            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+
 
     def get_bb(self):
-        return self.x - 10, self.y - 11, self.x + 10, self.y + 11
+        return self.x - 10, self.y - 16, self.x + 10, self.y + 18
+
+
 
     def handle_collision(self, other, group, pos):
         if group == 'fire:goomba':
@@ -112,3 +128,34 @@ class GOOMBA:
                 game_world.remove_object(other)
             except:
                 pass
+        elif group == 'goomba:ground':
+            if pos == 'bottom':
+                self.y = other.y + 58
+
+            if pos == 'right':
+                self.x_dir = -1
+
+            if pos == 'left':
+                self.x_dir = 1
+
+        elif group == 'goomba:itemBox':
+            if pos == 'bottom':
+                self.y = other.y + 35
+
+            if pos == 'right':
+                self.dir = -1
+                self.x -= 10
+
+            if pos == 'left':
+                self.dir = 1
+                self.x += 10
+        elif group == 'goomba:bricks':
+            if pos == 'bottom':
+                self.y = other.y + 35
+            if pos == 'right':
+                self.dir = -1
+                self.x -= 10
+
+            if pos == 'left':
+                self.dir = 1
+                self.x += 10
