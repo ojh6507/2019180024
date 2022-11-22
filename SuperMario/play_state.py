@@ -17,7 +17,7 @@ def setPos():
     server.itemBox[1].set_pos(900, 300)
     server.itemBox[2].set_pos(700, 150,'item')
 
-    server.itemBox[3].set_pos(2800, 200)
+    server.itemBox[3].set_pos(2800, 200,'item')
     server.itemBox[4].set_pos(10, 10)
     server.itemBox[5].set_pos(10, 10)
     server.itemBox[6].set_pos(10, 10)
@@ -37,10 +37,12 @@ def setPos():
     server.bricks[8].set_pos(3200,200)
     server.bricks[9].set_pos(3230,200)
 
+
 music = None
 
 def collide(a,b):
     str = ' '
+
     la, ba, ra, ta = a.get_bb()
     lb, bb, rb, tb = b.get_bb()
     if la > rb: return False
@@ -49,18 +51,17 @@ def collide(a,b):
     if ba > tb: return False
     # 충돌 없는 것부터 처리
 
-    if ra - lb >= 2 and la < lb:
+    if ra - lb >= 20 and la < lb:
         str = 'right'
 
-    if rb - la >= 2 and rb < ra:
+    if rb - la >= 20 and rb < ra:
         str = 'left'
 
-    if ((lb < ra and la < lb) or (la < rb and rb < ra) or (ra < rb and lb < la)) and (tb - ba <= 50 and ta > tb):
+    if ((ra - lb <= 20 and lb - la <= 20) or (rb - la <= 20 and ra - rb <= 20) or (ra <= rb and lb <= la)) and (tb - ba < 40 and ta > tb):
         str = 'bottom'
 
-    if ((lb < ra and la < lb) or (la < rb and rb < ra) or (ra < rb and lb < la)) and (ta - bb <= 10 and bb > ba):
+    if ((ra - lb <= 15 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
         str = 'top'
-
     return True, str
 
 
@@ -107,8 +108,12 @@ def set_world():
                 # game_world.add_object(underground,3)
 
 cur_len = None
+gposx = []
+gposy = []
 def enter():
-    global music
+    global music, gposx,gposy
+    gposx += [1000,1500,2200,2260]
+    gposy += [100, 100, 380, 380]
 
     server.world = round1.BACKGROUND()
     set_world()
@@ -117,7 +122,8 @@ def enter():
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(10)]
 
-    server.goomba = [Goomba.GOOMBA() for i in range(1)]
+    server.goomba = [Goomba.GOOMBA(gposx[i], gposy[i]) for i in range(4)]
+
     server.green = [Koopa.GreenKoopa() for i in range(3)]
     server.red = [Koopa.RedKoopa() for i in range(3)]
     setPos()
@@ -141,6 +147,9 @@ def enter():
     game_world.add_collision_group(server.player, server.goomba, 'player:goomba')
     game_world.add_collision_group(server.player, server.red, 'player:red')
     game_world.add_collision_group(server.player, server.green, 'player:green')
+    game_world.add_collision_group(server.goomba, server.ground, 'goomba:ground')
+    game_world.add_collision_group(server.goomba, server.itemBox, 'goomba:itemBox')
+    game_world.add_collision_group(server.goomba, server.bricks, 'goomba:bricks')
 
     #music = load_music('stage1.mp3')
     #music.set_volume(10)
@@ -151,6 +160,8 @@ def exit():
     game_world.clear()
     server.ground.clear()
     server.empty.clear()
+    server.goomba.clear()
+
 def update():
     set()
     if server.player.y < 0:
@@ -162,8 +173,9 @@ def update():
     for a, b, group in game_world.all_collision_pairs():
         if collide(a, b):
             v, p = collide(a,b)
-            a.handle_collision(b, group, p)
-            b.handle_collision(a, group, p)
+            if v:
+                a.handle_collision(b, group, p)
+                b.handle_collision(a, group, p)
 
 def draw_world():
     for game_object in game_world.all_objects():
