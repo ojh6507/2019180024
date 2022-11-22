@@ -16,12 +16,7 @@ def exit():
     del image
 
 def update():
-    global logo_time
-    if logo_time > 1.0:
-        logo_time = 0
-        game_framework.quit()
-    delay(0.01)
-    logo_time += 0.01
+    pass
 def draw():
     clear_canvas()
     image.draw(400,300)
