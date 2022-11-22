@@ -31,7 +31,7 @@ class MUSHROOM:
         self.y -= self.Y_gravity * 20 * game_framework.frame_time
 
     def get_bb(self):
-        return self.x-12, self.y-24, self.x+12, self.y
+        return self.x-12, self.y-25, self.x+12, self.y
 
     def handle_collision(self, other, group, pos):
         if group == 'player:mushroom':
@@ -39,17 +39,32 @@ class MUSHROOM:
         elif group == 'mushroom:ground':
             if pos == 'bottom':
                 self.Onground = True
-                self.y = other.y + 61
+                self.y = other.y + 62
 
             if pos == 'right':
                 self.Onground = True
-                self.dir = 0
+                self.dir = -1
                 self.x -= 10
 
             if pos == 'left':
                 self.Onground = True
-                self.dir = 0
+                self.dir = 1
                 self.x += 10
+        elif group == 'mushroom:itemBox':
+            if pos == 'bottom':
+                self.Onground = True
+                self.y = other.y + 40
+
+            if pos == 'right':
+                self.Onground = True
+                self.dir = -1
+                self.x -= 10
+
+            if pos == 'left':
+                self.Onground = True
+                self.dir = 1
+                self.x += 10
+
 
 
 class FLOWER:
@@ -102,3 +117,4 @@ class STAR:
     def handle_collision(self, other, group, pos):
         if group == 'player:mushroom':
             game_world.remove_object(self)
+
