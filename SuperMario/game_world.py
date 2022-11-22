@@ -51,7 +51,7 @@ def add_collision_group(a, b, group):
         else:
             collision_group[group][1].append(b)
 
-def all_collision_paris():
+def all_collision_pairs():
     for group, pairs in collision_group.items(): # items() key,  value
         for a in pairs[0]:
             for b in pairs[1]:
