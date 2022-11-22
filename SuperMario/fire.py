@@ -48,7 +48,7 @@ class Ball:
             self.count += 1
             self.ground = False
 
-        if self.count >= 8:
+        if self.count >= 8 or self.y < 0:
            self.destroy()
 
     def draw(self):
@@ -63,7 +63,7 @@ class Ball:
             pass
         if group == 'fire:ground':
             if pos == 'bottom':
-                self.ground =True
+                self.ground = True
             if pos == 'right' or pos == 'left':
                 self.destroy()
 
