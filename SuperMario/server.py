@@ -1,6 +1,6 @@
 player = None
 coin = None
-itmeBox = None
+itemBox = None
 goomba = None
 mushroom = None
 red = None
@@ -8,3 +8,6 @@ green = None
 flower = None
 world = None
 ground = []
+bricks = None
+empty = []
+underground = None
