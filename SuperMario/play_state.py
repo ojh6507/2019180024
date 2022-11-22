@@ -7,19 +7,15 @@ from player import character
 from block import block
 from monster import Goomba
 from monster import Koopa
-from item import MUSHROOM
-from item import FLOWER
 import server
 import title_state
 WIDTH, HEIGHT = 800,600
 
 def setPos():
-    for c in server.coin:
-        c.set_pos(random.randint(400, 500),random.randint(75, 200))
 
     server.itemBox[0].set_pos(900,150)
     server.itemBox[1].set_pos(900, 300)
-    server.itemBox[2].set_pos(700, 150)
+    server.itemBox[2].set_pos(700, 150,'item')
 
     server.itemBox[3].set_pos(2800, 200)
     server.itemBox[4].set_pos(10, 10)
@@ -112,41 +108,35 @@ def set_world():
 
 cur_len = None
 def enter():
-    global exp,music
+    global music
 
     server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
-    server.coin = [block.COIN() for n in range(0, 20)]
+    # server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(10)]
-    server.mushroom = MUSHROOM(500,65)
 
     server.goomba = [Goomba.GOOMBA() for i in range(1)]
     server.green = [Koopa.GreenKoopa() for i in range(3)]
     server.red = [Koopa.RedKoopa() for i in range(3)]
-    server.flower = FLOWER(1000, 65)
     setPos()
 
     game_world.add_object(server.world, 0)
     game_world.add_object(server.player, 1)
-    game_world.add_object(server.mushroom, 1)
-    game_world.add_object(server.flower, 1)
     game_world.add_objects(server.goomba, 1)
     game_world.add_objects(server.green, 1)
 
     game_world.add_objects(server.red, 1)
-    game_world.add_objects(server.coin, 1)
+    # game_world.add_objects(server.coin, 1)
     game_world.add_objects(server.itemBox, 2)
     game_world.add_objects(server.bricks, 1)
     game_world.add_objects(server.ground,3)
     game_world.add_objects(server.empty,3)
 
-    game_world.add_collision_group(server.player, server.coin, 'player:coin')
+    # game_world.add_collision_group(server.player, server.coin, 'player:coin')
     game_world.add_collision_group(server.player, server.itemBox, 'player:item_block')
     game_world.add_collision_group(server.player, server.bricks, 'player:bricks')
-    game_world.add_collision_group(server.player, server.mushroom, 'player:mushroom')
-    game_world.add_collision_group(server.player, server.flower, 'player:flower')
     game_world.add_collision_group(server.player, server.ground, 'player:ground')
     game_world.add_collision_group(server.player, server.goomba, 'player:goomba')
     game_world.add_collision_group(server.player, server.red, 'player:red')
@@ -169,7 +159,7 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
 
-    for a, b, group in game_world.all_collision_paris():
+    for a, b, group in game_world.all_collision_pairs():
         if collide(a, b):
             v, p = collide(a,b)
             a.handle_collision(b, group, p)
