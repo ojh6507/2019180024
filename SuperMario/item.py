@@ -11,6 +11,9 @@ class MUSHROOM:
     image = None
     def get_name(self):
         return 'mushroom'
+
+    def edit_x(self, x):
+        self.x -= x
     def __init__(self, x,y):
         if MUSHROOM.image == None:
             MUSHROOM.image = load_image('mushroom.png')
@@ -35,6 +38,9 @@ class FLOWER:
 
     def get_name(self):
         return 'flower'
+
+    def edit_x(self, x):
+        self.x -= x
 
     def __init__(self, x, y):
         if FLOWER.image == None:

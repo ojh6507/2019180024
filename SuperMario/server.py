@@ -6,4 +6,5 @@ mushroom = None
 red = None
 green = None
 flower = None
+world = None
 ground = []

@@ -461,6 +461,11 @@ class mario:
         if self.mario_size == 'Normal':
             return self.x - 10, self.y - 20, self.x + 10, self.y+16
 
+    def get_pos(self):
+        return self.x,self.y
+    def edit_x(self,x):
+        self.x = x
+
     def handle_collision(self, other, group, pos):
         if not self.die:
             if group == 'player:coin':
@@ -555,7 +560,7 @@ class mario:
 
 
             elif group == 'player:goomba':
-                if pos == 'top':
+                if pos == 'bottom':
                     self.jump = True
                     self.Y_velocity = self.jump_height
                     self.jump_func()

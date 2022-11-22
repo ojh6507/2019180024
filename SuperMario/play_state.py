@@ -23,7 +23,7 @@ def setPos():
         br.set_pos(random.randint(400, 5000), random.randint(200, 200))
 
 
-world = None
+
 exp = None
 brick_block = None
 brick = None
@@ -57,26 +57,27 @@ def collide(a,b):
 
 
 def set():
-    global world
+    player_x, player_y = server.player.get_pos()
+    world_x = server.world.get_pos()
 
-    if world.x < (-2950) and server.player.x - 400 < 0:
+    if world_x < (-2950) and player_x - 400 < 0:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (server.player.x - 400)
+                game_object.edit_x(player_x - 400)
 
 
-    elif world.x > (-2950) and server.player.x - 400 > 0:
+    elif world_x > (-2950) and player_x - 400 > 0:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (server.player.x - 400)
-        server.player.x = 400
+                game_object.edit_x(player_x - 400)
+        server.player.edit_x(400)
 
 
-    elif server.player.x - 400 < 0 and world.x - (server.player.x - 400) < 3750:
+    elif player_x - 400 < 0 and world_x - (player_x - 400) < 3750:
         for game_object in game_world.all_objects():
             if game_object.get_name() != 'player':
-                game_object.x -= (server.player.x - 400)
-        server.player.x = 400
+                game_object.edit_x(player_x - 400)
+        server.player.edit_x(400)
 
 empty = []
 underground = []
@@ -101,9 +102,9 @@ def set_world():
 
 cur_len = None
 def enter():
-    global world, brick_block,brick, exp,music,empty
+    global brick_block,brick, exp,music,empty
 
-    world = round1.BACKGROUND()
+    server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
 
@@ -119,7 +120,7 @@ def enter():
     server.flower = FLOWER(1000, 65)
     setPos()
 
-    game_world.add_object(world, 0)
+    game_world.add_object(server.world, 0)
     game_world.add_object(server.player, 1)
     game_world.add_object(server.mushroom, 1)
     game_world.add_object(server.flower, 1)

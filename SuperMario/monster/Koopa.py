@@ -38,6 +38,9 @@ class RedKoopa:
 
     def get_name(self):
         return 'monster'
+    def edit_x(self, x):
+        self.x -= x
+
     def __init__(self):
         if RedKoopa.image == None:
             RedKoopa.image = load_image('red_koopa.png')
@@ -91,6 +94,10 @@ class GreenKoopa:
 
     def get_name(self):
         return 'monster'
+
+    def edit_x(self, x):
+        self.x -= x
+
     def __init__(self):
         if GreenKoopa.image == None:
             GreenKoopa.image = load_image('green_koopa.png')

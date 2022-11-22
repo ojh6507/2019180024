@@ -17,6 +17,9 @@ class Ball:
     def get_name(self):
         return 'fire_ball'
 
+    def edit_x(self, x):
+        self.x -= x
+
     def __init__(self, x=800, y=300, dir = 1):
         if Ball.image == None:
             Ball.image = load_image('fire_ball.png')
@@ -30,7 +33,10 @@ class Ball:
         self.ground = False
         self.temp_y = y - 5
     def destroy(self):
-        game_world.remove_object(self)
+        try:
+            game_world.remove_object(self)
+        except:
+            pass
     def update(self):
         self.frame = (self.frame + 1) % 4
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time

@@ -55,7 +55,6 @@ class WALK:
     def enter(self, event):
         self.x_dir = -2
         pass
-
     def exit(self):
         pass
 
@@ -77,6 +76,8 @@ class GOOMBA:
     image = None
     def get_name(self):
         return 'monster'
+    def edit_x(self, x):
+        self.x -= x
 
     def __init__(self):
         if GOOMBA.image == None:
@@ -111,5 +112,3 @@ class GOOMBA:
                 game_world.remove_object(other)
             except:
                 pass
-
-

@@ -10,6 +10,9 @@ class item_block:
     def get_name(self):
         return 'item_block'
 
+    def edit_x(self, x):
+        self.x -= x
+
     def __init__(self):
         self.image = load_image('block_1.png')
         self.frame = 0
@@ -48,6 +51,9 @@ class COIN:
     def get_bb(self):
         return self.x - 10, self.y - 10,self.x + 10, self.y + 10
 
+    def edit_x(self, x):
+        self.x -= x
+
 
     def __init__(self):
         self.image =load_image('coin.png')
@@ -76,6 +82,9 @@ class COIN:
 class Bricks:
     def get_name(self):
         return 'brick'
+
+    def edit_x(self, x):
+        self.x -= x
 
     def __init__(self):
         self.image = load_image('block_2.png')

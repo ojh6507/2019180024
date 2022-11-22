@@ -46,7 +46,8 @@ class Empty_Tile:
     image = None
     def get_name(self):
         return 'background'
-
+    def edit_x(self,x):
+        self.x-=x
     def __init__(self,col, row):
         self.x, self.y = row * 50, col * 50
         self.rect_x, self.rect_y = self.x, self.y
@@ -91,13 +92,11 @@ class BACKGROUND:
     def __init__ (self):
         self.image = load_image('background.png')
         self.x = 3750
+    def edit_x(self,x):
+        self.x-=x
+    def get_pos(self):
+        return self.x
     def draw (self):
         self.image.draw(self.x, 500)
-
     def update(self):
         pass
-
-class collision:
-    def __init__(self ,x1, y1,x2,y2):
-        self.leftx,self.rightx, self.midy = x1,x2,(y1+y2)//2
-
