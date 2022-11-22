@@ -33,7 +33,6 @@ class item_block:
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
         self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
-
         draw_rectangle(*self.get_bb())
     def up_box(self):
         self.y += self.Y_velocity * game_framework.frame_time
@@ -42,6 +41,7 @@ class item_block:
             self.up = False
             self.y = self.temp
             self.Y_velocity = self.jump_height
+            self.available = False
     def get_bb(self):
         return self.x - 16, self.y - 16, self.x + 16, self.y + 16
 
@@ -76,20 +76,20 @@ class item_block:
         if self.available:
             if self.type =='item':
                 if server.player.mario_size == 'Small':
-                    Mushroom = MUSHROOM(self.x, self.y + 10)
+                    Mushroom = MUSHROOM(self.x, self.y + 17)
                     game_world.add_collision_group(server.player, Mushroom, 'player:mushroom')
                     game_world.add_collision_group(Mushroom, server.ground, 'mushroom:ground')
+                    game_world.add_collision_group(Mushroom,self, 'mushroom:itemBox')
 
                     game_world.add_object(Mushroom, 1)
                 else:
-                    Flower = FLOWER(self.x, self.y + 10)
-                    # game_world.add_collision_group(server.player, Flower, 'player:flower')
+                    Flower = FLOWER(self.x, self.y + 45)
+                    game_world.add_collision_group(server.player, Flower, 'player:flower')
                     game_world.add_object(Flower, 1)
             elif self.type == 'coin':
                 coin = COIN(self.x,self.y + 20, 'onblock')
                 game_world.add_object(coin,1)
                 print('gen coin!!!')
-            self.available = False
     def handle_collision(self, other, group, p):
         if group == 'player:item_block':
             if p == 'top':
