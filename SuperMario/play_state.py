@@ -10,25 +10,38 @@ from monster import Koopa
 from item import MUSHROOM
 from item import FLOWER
 import server
+import title_state
 WIDTH, HEIGHT = 800,600
 
 def setPos():
     for c in server.coin:
         c.set_pos(random.randint(400, 500),random.randint(75, 200))
 
-    for it in server.item:
-        it.set_pos(random.randint(400, 5000),random.randint(90, 200))
+    server.itemBox[0].set_pos(900,150)
+    server.itemBox[1].set_pos(900, 300)
+    server.itemBox[2].set_pos(700, 150)
 
-    for br in brick:
-        br.set_pos(random.randint(400, 5000), random.randint(200, 200))
+    server.itemBox[3].set_pos(2800, 200)
+    server.itemBox[4].set_pos(10, 10)
+    server.itemBox[5].set_pos(10, 10)
+    server.itemBox[6].set_pos(10, 10)
+    server.itemBox[7].set_pos(10, 10)
+    server.itemBox[8].set_pos(10, 10)
+    server.itemBox[9].set_pos(10, 10)
 
+    server.bricks[0].set_pos(930,150)
+    server.bricks[1].set_pos(870, 150)
 
+    server.bricks[2].set_pos(2200, 300)
+    server.bricks[3].set_pos(2230, 300)
+    server.bricks[4].set_pos(2260, 300)
+    server.bricks[5].set_pos(2290, 300)
+    server.bricks[6].set_pos(2320, 300)
+    server.bricks[7].set_pos(2350, 300)
+    server.bricks[8].set_pos(3200,200)
+    server.bricks[9].set_pos(3230,200)
 
-exp = None
-brick_block = None
-brick = None
 music = None
-
 
 def collide(a,b):
     str = ' '
@@ -40,17 +53,16 @@ def collide(a,b):
     if ba > tb: return False
     # 충돌 없는 것부터 처리
 
-
     if ra - lb >= 2 and la < lb:
         str = 'right'
 
     if rb - la >= 2 and rb < ra:
         str = 'left'
 
-    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
+    if ((lb < ra and la < lb) or (la < rb and rb < ra) or (ra < rb and lb < la)) and (tb - ba <= 50 and ta > tb):
         str = 'bottom'
 
-    if ((lb <= ra and la <= lb) or (la <= rb and rb <= ra) or (ra <= rb and lb <= la)) and (ta - bb <= 10 and bb > ba):
+    if ((lb < ra and la < lb) or (la < rb and rb < ra) or (ra < rb and lb < la)) and (ta - bb <= 10 and bb > ba):
         str = 'top'
 
     return True, str
@@ -79,15 +91,13 @@ def set():
                 game_object.edit_x(player_x - 400)
         server.player.edit_x(400)
 
-empty = []
-underground = []
+
 def set_world():
-    global empty, underground
     for col in range(len(round1.INFO)):
         for row in range(len(round1.INFO[col])):
 
             if round1.INFO[col][row] == 0:
-                empty.append( round1.Empty_Tile(col, row))
+                server.empty.append(round1.Empty_Tile(col, row))
                 # game_world.add_object(empty,2)
 
             elif round1.INFO[col][row] == 1:
@@ -102,16 +112,14 @@ def set_world():
 
 cur_len = None
 def enter():
-    global brick_block,brick, exp,music,empty
+    global exp,music
 
     server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
-
-    brick_block = block.Bricks()
     server.coin = [block.COIN() for n in range(0, 20)]
-    server.item = [block.item_block() for n in range(0, 5)]
-    brick = [block.Bricks() for n in range(0, 4)]
+    server.itemBox = [block.item_block() for n in range(10)]
+    server.bricks = [block.Bricks() for n in range(10)]
     server.mushroom = MUSHROOM(500,65)
 
     server.goomba = [Goomba.GOOMBA() for i in range(1)]
@@ -129,14 +137,14 @@ def enter():
 
     game_world.add_objects(server.red, 1)
     game_world.add_objects(server.coin, 1)
-    game_world.add_objects(server.item, 1)
-    game_world.add_objects(brick, 1)
+    game_world.add_objects(server.itemBox, 2)
+    game_world.add_objects(server.bricks, 1)
     game_world.add_objects(server.ground,3)
-    game_world.add_objects(empty,3)
+    game_world.add_objects(server.empty,3)
 
     game_world.add_collision_group(server.player, server.coin, 'player:coin')
-    game_world.add_collision_group(server.player, server.item, 'player:item_block')
-    game_world.add_collision_group(server.player, brick, 'player:bricks')
+    game_world.add_collision_group(server.player, server.itemBox, 'player:item_block')
+    game_world.add_collision_group(server.player, server.bricks, 'player:bricks')
     game_world.add_collision_group(server.player, server.mushroom, 'player:mushroom')
     game_world.add_collision_group(server.player, server.flower, 'player:flower')
     game_world.add_collision_group(server.player, server.ground, 'player:ground')
@@ -151,14 +159,12 @@ def enter():
 
 def exit():
     game_world.clear()
+    server.ground.clear()
+    server.empty.clear()
 def update():
     set()
-    # global fire,cur_len
-    # fire = server.player.gen_fire
-    # if cur_len != len(fire):
-    #     game_world.add_collision_group(fire, ground, 'fire:ground')
-    #     cur_len = len(fire)
-    #     if cur_len > 0: cur_len-=1
+    if server.player.y < 0:
+        game_framework.change_state(title_state)
 
     for game_object in game_world.all_objects():
         game_object.update()
