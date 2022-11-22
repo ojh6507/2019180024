@@ -180,6 +180,7 @@ class WALK:
                 self.clip = 27
             if self.mario_size == 'Normal':
                 self.clip = 25
+
         if self.jump:
             if self.mario_size == 'Small':
                 self.clip = 30
@@ -268,20 +269,37 @@ class WALK:
 
 class DIE:
     def enter(self, event):
+        self.Onground = False
         pass
 
-    def exit(self):
+    def exit(self, event):
         pass
 
     def do(self):
+        self.image = load_image('gameover_mario.png')
+        self.clip = 13
+        self.height = 60
+        self.perframe = 50
+        if self.jump:
+            self.jump_func()
+        self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
+
         pass
 
     def draw(self):
-        pass
+        if self.mario_size == 'Small':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                           self.reflect, self.x, self.y, 40, 40)
+
+        elif self.mario_size == 'Normal':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                       self.reflect, self.x, self.y, 50, 50)
 
 next_state = {
     IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE, SPACE: IDLE},
-    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK}
+    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK},
+    DIE: {RU: DIE, LU: DIE, RD: DIE, LD: DIE, ATTACK: DIE, SHIFTD: DIE, SHIFTU: DIE, SPACE: DIE},
+
 }
 # class explosion:
 #     def __init__(self):
@@ -316,7 +334,7 @@ class mario:
         self.image = load_image('smario_idle.png')
         self.mario_size = 'Small'
         self.frame = 0
-
+        self.die = False
         self.height = 0
         self.action = 0
         self.perframe = 0
@@ -349,15 +367,19 @@ class mario:
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
-
+        self.timer = 1
+        self.invincibility = False
+        self.dieEffect = False
 
     def jump_func(self):
         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
-
         if self.Onground:
             self.jump = False
             self.Y_velocity = self.jump_height
+
+
+
 
 
 
@@ -391,13 +413,19 @@ class mario:
         if not self.jump:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * 20 * game_framework.frame_time
 
-    def check_gameOver(self):
+        if self.invincibility:
+            self.timer -= game_framework.frame_time
+            temp = self.frame
+            self.frame = 100
+            self.frame = temp
+            if self.timer<= 0:
+                self.invincibility = False
+                self.timer = 1
         if self.die:
-            self.image =load_image('gameover_mario.png')
-            self.clip = 13
-            self.action = 0
-            self.height = 60
-            self.ch_size = 50
+            self.dieEffect = True
+            self.jump = True
+            self.Run = False
+            self.cur_state = DIE
 
     def draw(self):
         self.cur_state.draw(self)
@@ -416,105 +444,120 @@ class mario:
             game_world.add_collision_group(ball,server.goomba,'fire:goomba')
             game_world.add_collision_group(ball, server.red, 'fire:red')
             game_world.add_collision_group(ball, server.green, 'fire:green')
-
             game_world.add_object(ball, 1)
-
+    def check_state(self):
+        if not self.invincibility:
+            if self.mario_size == 'Small':
+                self.dieEffect = True
+                self.die = True
+            elif self.mario_size == 'Normal':
+                if self.flower == True:
+                    self.flower = False
+                else:
+                    self.mario_size = 'Small'
     def get_bb(self):
         if self.mario_size == 'Small':
-            return self.x - 10, self.y - 20, self.x + 10, self.y + 16
+            return self.x - 10, self.y - 17, self.x + 10, self.y + 16
         if self.mario_size == 'Normal':
             return self.x - 10, self.y - 20, self.x + 10, self.y+16
 
     def handle_collision(self, other, group, pos):
-        if group == 'player:coin':
-                pass
-        elif group == 'player:item_block':
+        if not self.die:
+            if group == 'player:coin':
+                    pass
+            elif group == 'player:item_block':
 
-            if pos == 'bottom':
-                self.Onground = True
-                if abs(self.x - other.x) <= 15:
-                    self.y = other.y + 40
+                if pos == 'bottom':
+                    self.Onground = True
+                    if abs(self.x - other.x) <= 15:
+                        self.y = other.y + 40
 
-            if pos == 'right':
-                self.x -= 15
+                if pos == 'right':
+                    self.x -= 15
 
-            if pos == 'left':
-                self.x += 15
+                if pos == 'left':
+                    self.x += 15
 
-            if pos == 'top':
-                self.Onground = False
-                self.Y_velocity *= -1
-                self.y+= self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                if pos == 'top':
+                    self.Onground = False
+                    self.Y_velocity *= -1
+                    self.y+= self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
-        elif group == 'player:bricks':
-            if pos == 'bottom':
-                self.Onground = True
-                if abs(self.x - other.x) <= 15:
-                    self.y = other.y + 40
+            elif group == 'player:bricks':
+                if pos == 'bottom':
+                    self.Onground = True
+                    if abs(self.x - other.x) <= 15:
+                        self.y = other.y + 40
 
-            if pos == 'right':
-                self.x_dir = 0
-                self.x -= 10
+                if pos == 'right':
+                    self.x_dir = 0
+                    self.x -= 10
 
-            if pos == 'left':
-                self.x_dir = 0
-                self.x += 10
+                if pos == 'left':
+                    self.x_dir = 0
+                    self.x += 10
 
-            if pos == 'top':
-                self.Onground = False
-                self.Y_velocity *= -1
-                self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
-        elif group == 'player:mushroom':
-            self.y += 5
-            self.mario_size = 'Normal'
-        elif group == 'player:flower':
-            self.mario_size = 'Normal'
-            self.flower = True
-        elif group == 'player:ground':
+                if pos == 'top':
+                    self.Onground = False
+                    self.Y_velocity *= -1
+                    self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+            elif group == 'player:mushroom':
+                self.y += 5
+                self.mario_size = 'Normal'
+            elif group == 'player:flower':
+                self.mario_size = 'Normal'
+                self.flower = True
+            elif group == 'player:ground':
+                if pos == 'bottom':
+                    self.Onground =True
+                    # if abs(other.y + 70) < 140:
+                    if self.mario_size == 'Small':
+                        self.y = other.y + 58
+                    else:
+                        self.y = other.y + 61
 
-            if pos == 'bottom':
+                if pos == 'right':
+                    self.Onground = True
+                    self.x_dir = 0
+                    self.x -= 10
 
-                self.Onground =True
-                # if abs(other.y + 70) < 140:
-                if self.mario_size == 'Small':
-                    self.y = other.y + 61
-                else:
-                    self.y = other.y + 61
+                if pos == 'left':
+                    self.Onground = True
+                    self.x_dir = 0
+                    self.x += 10
+            elif group == 'player:red':
+                if pos =='bottom':
+                    self.jump = True
+                    self.Y_velocity = self.jump_height
+                    self.jump_func()
+                elif pos == 'right':
+                    self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+                    self.check_state()
+                    self.invincibility = True
 
-            if pos == 'right':
-                self.Onground = True
-                self.x_dir = 0
-                self.x -= 10
+                elif pos == 'left':
+                    self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+                    self.check_state()
+                    self.invincibility =True
 
-            if pos == 'left':
-                self.Onground = True
-                self.x_dir = 0
-                self.x += 10
-        elif group == 'player:red':
-            if pos =='bottom':
-                self.jump = True
-                self.Y_velocity = self.jump_height
-                self.jump_func()
-            elif pos == 'right':
-                self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
-            elif pos == 'left':
-                self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+            elif group == 'player:green':
+                if pos == 'bottom':
+                    self.jump = True
+                    self.Y_velocity = self.jump_height
+                    self.jump_func()
+                elif pos == 'right':
+                    self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
+                    self.check_state()
 
-        elif group == 'player:green':
-            if pos == 'bottom':
-                self.jump = True
-                self.Y_velocity = self.jump_height
-                self.jump_func()
-            elif pos == 'right':
-                self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
+                elif pos == 'left':
+                    self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4* self.velocity
+                    self.check_state()
 
-            elif pos == 'left':
-                self.x += 1 * RUN_SPEED_PPS * game_framework.frame_time * 4* self.velocity
 
-        elif group == 'player:goomba':
-            if pos == 'top':
-                self.jump = True
-                self.Y_velocity = self.jump_height
-                self.jump_func()
+            elif group == 'player:goomba':
+                if pos == 'top':
+                    self.jump = True
+                    self.Y_velocity = self.jump_height
+                    self.jump_func()
 
 
