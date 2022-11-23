@@ -63,7 +63,7 @@ class RedKoopa:
         self.cur_state.do(self)
 
     def get_bb(self):
-        return self.x - 10, self.y - 23, self.x + 10, self.y + 21
+        return self.x - 10, self.y - 23, self.x + 10, self.y + 23
 
     def handle_collision(self, other, group, pos):
         if group == 'fire:red':
