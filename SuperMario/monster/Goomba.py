@@ -117,7 +117,7 @@ class GOOMBA:
 
 
     def get_bb(self):
-        return self.x - 10, self.y - 16, self.x + 10, self.y + 18
+        return self.x - 10, self.y - 16, self.x + 10, self.y + 25
 
 
 
