@@ -159,3 +159,9 @@ class GOOMBA:
             if pos == 'left':
                 self.dir = 1
                 self.x += 10
+        elif group == 'player:goomba':
+            if pos =='bottom':
+                try:
+                    game_world.remove_object(self)
+                except:
+                    pass
