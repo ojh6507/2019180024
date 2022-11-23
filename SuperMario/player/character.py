@@ -335,30 +335,6 @@ next_state = {
     DIE: {RU: DIE, LU: DIE, RD: DIE, LD: DIE, ATTACK: DIE, SHIFTD: DIE, SHIFTU: DIE, SPACE: DIE},
 
 }
-# class explosion:
-#     def __init__(self):
-#         self.image = load_image('explosion.png')
-#         self.frame = 0
-#         self.x = 10
-#         self.y = 10
-#         self.w = 30
-#         self.h = 29
-#         self.anim_count = 0
-#
-#     def update(self):
-#         self.anim_count += 1
-#         if self.anim_count == 4:
-#             self.frame = (self.frame+1)
-#             self.anim_count = 0
-#         if self.frame >= 5:
-#             destroy_exp()
-#     def set_pos(self,x,y):
-#         self.x = x
-#         self.y = y
-#     def draw(self):
-#         self.image.clip_draw(self.frame * self.w, 0, self.w, self.h, self.x, self.y)
-
-
 
 class mario:
     def get_name(self):
@@ -555,6 +531,7 @@ class mario:
             elif group == 'player:mushroom':
                 self.mario_size = 'Normal'
                 self.jump_height = 13
+                self.y+= 20
                 self.Y_velocity = self.jump_height
                 self.Onground = True
 
