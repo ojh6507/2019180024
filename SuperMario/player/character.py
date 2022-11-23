@@ -492,9 +492,9 @@ class mario:
                 self.Onground = True
     def get_bb(self):
         if self.mario_size == 'Small':
-            return self.x - 10, self.y - 17, self.x + 10, self.y + 16
+            return self.x - 10, self.y - 17, self.x + 10, self.y + 10
         if self.mario_size == 'Normal':
-            return self.x - 10, self.y - 20, self.x + 10, self.y+16
+            return self.x - 10, self.y - 17, self.x + 10, self.y+8
 
     def get_pos(self):
         return self.x,self.y
@@ -509,10 +509,10 @@ class mario:
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
-                        if self.mario_size == 'Small':
-                            self.y = other.y + 35
-                        else:
-                            self.y = other.y + 40
+                        # if self.mario_size == 'Small':
+                        self.y = other.y + 35
+                        # else:
+                        #     self.y = other.y + 40
                 if pos == 'right':
                     self.x -= 15
                     self.x_dir = 0
@@ -531,12 +531,12 @@ class mario:
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
-                        if self.mario_size =='Small':
-                            if self.y > other.y:
-                                self.y = other.y + 35
-                        else:
-                            if self.y > other.y:
-                                self.y = other.y + 40
+                        # if self.mario_size =='Small':
+                        if self.y > other.y:
+                            self.y = other.y + 35
+                        # else:
+                        #     if self.y > other.y:
+                        #         self.y = other.y + 40
 
                 if pos == 'right':
                     self.x_dir = 0
@@ -581,7 +581,6 @@ class mario:
                     self.Onground = True
                     self.x_dir = 0
                     self.x -= 10
-                    self.y = other.y + 61
 
                 if pos == 'left':
                     self.Onground = True
@@ -620,16 +619,21 @@ class mario:
 
 
             elif group == 'player:goomba':
-                if pos == 'top' or pos == 'bottom':
+                if pos == 'bottom':
                     self.jump = True
                     self.Y_velocity = self.jump_height
                     self.jump_func()
                 elif pos == 'right' and not self.invincibility:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
-
+                    self.invincibility = True
                 elif pos == 'left' and not self.invincibility:
                     self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
+                    self.invincibility = True
+                elif pos == 'top' and not self.invincibility:
+                    self.check_state()
+                    self.invincibility = True
+
 
 
