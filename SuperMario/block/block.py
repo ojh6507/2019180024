@@ -43,7 +43,7 @@ class item_block:
             self.Y_velocity = self.jump_height
             self.available = False
     def get_bb(self):
-        return self.x - 16, self.y - 16, self.x + 16, self.y + 16
+        return self.x - 15, self.y - 15, self.x + 15, self.y + 15
 
     def update(self):
         if self.up and self.available:
