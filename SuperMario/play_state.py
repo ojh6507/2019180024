@@ -34,8 +34,31 @@ def setPos():
     server.bricks[5].set_pos(2290, 300)
     server.bricks[6].set_pos(2320, 300)
     server.bricks[7].set_pos(2350, 300)
+
     server.bricks[8].set_pos(3200,200)
     server.bricks[9].set_pos(3230,200)
+    server.bricks[10].set_pos(3260, 200)
+
+    server.bricks[11].set_pos(4090, 200)
+    server.bricks[12].set_pos(4120, 200)
+    server.bricks[13].set_pos(4150, 200)
+
+    server.bricks[14].set_pos(5090, 200)
+    server.bricks[15].set_pos(5120, 200)
+    server.bricks[16].set_pos(5150, 200)
+
+    server.bricks[17].set_pos(5800, 200)
+    server.bricks[18].set_pos(5830, 200)
+    server.bricks[19].set_pos(5860, 200)
+
+    server.bricks[20].set_pos(6090, 200)
+    server.bricks[21].set_pos(6120, 200)
+    server.bricks[22].set_pos(6150, 200)
+    server.bricks[23].set_pos(6180, 200)
+
+    server.bricks[24].set_pos(6420, 150)
+    server.bricks[25].set_pos(6450, 150)
+    server.bricks[26].set_pos(6480, 150)
 
 
 music = None
@@ -51,16 +74,16 @@ def collide(a,b):
     if ba > tb: return False
     # 충돌 없는 것부터 처리
 
-    if ra - lb >= 20 and la < lb:
+    if ra - lb >= 1  and la < lb:
         str = 'right'
 
-    if rb - la >= 20 and rb < ra:
+    if rb - la >= 1 and rb < ra:
         str = 'left'
 
-    if ((ra - lb <= 20 and lb - la <= 20) or (rb - la <= 20 and ra - rb <= 20) or (ra <= rb and lb <= la)) and (tb - ba < 40 and ta > tb):
+    if ((ra - lb >= 1 and lb - la <= 20) or (rb - la <= 20 and ra - rb <= 20) or (ra <= rb and lb <= la)) and (tb - ba < 50 and ta > tb):
         str = 'bottom'
 
-    if ((ra - lb <= 15 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
+    if ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
         str = 'top'
     return True, str
 
@@ -112,15 +135,15 @@ gposx = []
 gposy = []
 def enter():
     global music, gposx,gposy
-    gposx += [1000,1500,2200,2260]
-    gposy += [100, 100, 380, 380]
+    gposx += [1000,1500,2200,2260] # for debug
+    gposy += [100, 100, 380, 380] # for debug
 
     server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
     # server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
-    server.bricks = [block.Bricks() for n in range(10)]
+    server.bricks = [block.Bricks() for n in range(40)]
 
     server.goomba = [Goomba.GOOMBA(gposx[i], gposy[i]) for i in range(4)]
 
