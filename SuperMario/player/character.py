@@ -618,6 +618,8 @@ class mario:
             elif group == 'player:red':
                 if pos =='bottom':
                     self.jump = True
+                    self.Onground = False
+
                     self.Y_velocity = self.jump_height
                     self.jump_func()
                 elif pos == 'right' and not self.invincibility:
@@ -633,6 +635,8 @@ class mario:
             elif group == 'player:green':
                 if pos == 'bottom':
                     self.jump = True
+                    self.Onground = False
+
                     self.Y_velocity = self.jump_height
                     self.jump_func()
                 elif pos == 'right' and not self.invincibility:
@@ -649,6 +653,7 @@ class mario:
             elif group == 'player:goomba':
                 if pos == 'bottom':
                     self.jump = True
+                    self.Onground = False
                     self.Y_velocity = self.jump_height
                     self.jump_func()
                 elif pos == 'right' and not self.invincibility:
