@@ -2,15 +2,16 @@ from pico2d import*
 import numpy as np
 import game_world
 
-INFO = np.zeros((13, 39))
-for i in range(39):
-    INFO[0,i] = 1
+INFO = np.zeros((13, 40))
+for i in range(40):
+    INFO[0, i] = 1
 
 INFO[0,8] = 0
 INFO[0,10] = 0
 INFO[0,25] = 0
 INFO[0,28] = 0
-INFO[0,30] = 0
+INFO[0,31] = 0
+
 
 INFO[1,13] = 1
 INFO[0,13] = 2
@@ -23,7 +24,7 @@ INFO[1,20] = 2
 INFO[0,20] = 2
 
 INFO[1,21] = 1
-INFO[0,21] = 1
+INFO[0,21] = 2
 
 # def set_world():
 #
