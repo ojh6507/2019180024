@@ -12,6 +12,13 @@ RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
 TIME_PER_ACTION = 1
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+
+JUMP_SPEED_KMPH = 10.0
+JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+
+
 class WALK:
     def enter(self, event):
         pass
@@ -32,7 +39,6 @@ class WALK:
         # self.image.clip_draw(int(self.frame) * 25, 50 * self.action, 25, 50, self.x, self.y)
         self.image.clip_composite_draw(int(self.frame) * 25, 50 * self.action, 25, 50, 0, self.reflect, self.x, self.y, 25, 50)
 
-
 class RedKoopa:
     image = None
 
@@ -47,7 +53,9 @@ class RedKoopa:
 
         self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
-        self.y = 62
+        self.y = 70
+        self.Y_gravity = 5
+
         self.x_dir = -1
         self.action = 1
         self.clip = 17
@@ -60,10 +68,19 @@ class RedKoopa:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.cur_state.do(self)
+
+        if self.x < 800:
+            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+            self.cur_state.do(self)
+        if self.x < -1000 or self.y < -1:
+            try:
+                game_world.remove_object(self)
+            except:
+                pass
 
     def get_bb(self):
         return self.x - 10, self.y - 23, self.x + 10, self.y + 23
+
 
     def handle_collision(self, other, group, pos):
         if group == 'fire:red':
@@ -84,9 +101,17 @@ class RedKoopa:
             elif pos == 'left':
                 self.x_dir = -1
                 self.reflect = ' '
+        if group == 'red:ground':
+            if pos == 'bottom':
+                self.y = other.y + 63
 
+            if pos == 'right':
+                self.x_dir = -1
+                self.reflect = ' '
 
-
+            if pos == 'left':
+                self.x_dir = 1
+                self.reflect = 'h'
 
 
 class GreenKoopa:
@@ -104,12 +129,14 @@ class GreenKoopa:
         self.frame = random.randint(0,15)
         self.action = 0
         self.x = random.randint(400, 3000)
-        self.y = 62
+        self.y = 80
+        self.Y_gravity = 5
+
         self.x_dir = -1
         self.action = 1
         self.reflect= ' '
         self.clip = 17
-
+        self.Y_gravity = 10
         self.TIME_PER_ACTION = 1
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
 
@@ -122,7 +149,15 @@ class GreenKoopa:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.cur_state.do(self)
+
+        if self.x < 800:
+            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+            self.cur_state.do(self)
+        if self.x < -1000 or self.y < -1:
+            try:
+                game_world.remove_object(self)
+            except:
+                pass
 
     def get_bb(self):
         return self.x - 10, self.y - 20, self.x + 10, self.y + 21
@@ -146,6 +181,18 @@ class GreenKoopa:
             elif pos == 'left':
                 self.x_dir = -1
                 self.reflect = ' '
+        if group == 'green:ground':
+            if pos == 'bottom':
+                self.y = other.y + 63
+
+            if pos == 'right':
+                self.x_dir = -1
+                self.reflect = ' '
+
+            if pos == 'left':
+                self.x_dir = 1
+                self.reflect = 'h'
+
 
 
 
