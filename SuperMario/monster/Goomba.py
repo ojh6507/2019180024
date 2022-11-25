@@ -28,34 +28,6 @@ def wander(self):
         return BehaviorTree.RUNNING
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class WALK:
     def enter(self, event):
         self.x_dir = -2
@@ -74,7 +46,6 @@ class WALK:
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
         self.image.clip_composite_draw(int(self.frame) * 28, 30 * self.action , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
-
         pass
 
 class GOOMBA:
@@ -84,15 +55,15 @@ class GOOMBA:
     def edit_x(self, x):
         self.x -= x
 
-    def __init__(self,x,y):
+    def __init__(self):
         if GOOMBA.image == None:
             GOOMBA.image = load_image('Goomba.png')
 
         self.frame = 1
         self.action = 1
-        self.x = x
+        self.x = 0
         self.x_dir = -1
-        self.y = y
+        self.y = 0
         self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
@@ -105,6 +76,9 @@ class GOOMBA:
     def draw(self):
         self.cur_state.draw(self)
         draw_rectangle(*self.get_bb())
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
 
     def update(self):
         self.cur_state.do(self)
@@ -151,6 +125,7 @@ class GOOMBA:
             if pos == 'left':
                 self.dir = 1
                 self.x += 10
+
         elif group == 'goomba:bricks':
             if pos == 'bottom':
                 self.y = other.y + 35
@@ -161,9 +136,12 @@ class GOOMBA:
             if pos == 'left':
                 self.dir = 1
                 self.x += 10
+
         elif group == 'player:goomba':
             if pos =='bottom':
                 try:
                     game_world.remove_object(self)
                 except:
                     pass
+
+
