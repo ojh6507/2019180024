@@ -148,8 +148,11 @@ class GreenKoopa:
         self.cur_state.draw(self)
         draw_rectangle(*self.get_bb())
 
-    def update(self):
+    def set_pos(self, x, y):
+        self.x = x
+        self.y = y
 
+    def update(self):
         if self.x < 800:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
             self.cur_state.do(self)
@@ -161,6 +164,9 @@ class GreenKoopa:
 
     def get_bb(self):
         return self.x - 10, self.y - 20, self.x + 10, self.y + 21
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
 
     def handle_collision(self, other, group, pos):
         if group == 'fire:green':
