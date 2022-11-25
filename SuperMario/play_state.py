@@ -103,6 +103,12 @@ def setPos():
     server.stair[33].set_pos(6910, 240)
     server.stair[34].set_pos(6940, 240)
 
+    server.goomba[0].set_pos(1000, 140)
+    server.goomba[1].set_pos(1500, 140)
+    server.goomba[2].set_pos(2200, 420)
+    server.goomba[3].set_pos(2260, 420)
+    server.goomba[4].set_pos(5770, 130)
+
 
 music = None
 
@@ -123,7 +129,7 @@ def collide(a,b):
     if rb - la >= 1 and rb < ra:
         str = 'left'
 
-    if ((ra - lb >= 1 and lb - la <= 20) or (rb - la <= 20 and ra - rb <= 20) or (ra <= rb and lb <= la)) and (tb - ba < 50 and ta > tb):
+    if ((ra - lb >= 1 and lb - la <= 20) or (rb - la <= 20 and ra - rb <= 20) or (ra <= rb and lb <= la)) and (tb - ba < 60 and ta > tb):
         str = 'bottom'
 
     if ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
@@ -170,16 +176,9 @@ def set_world():
 
             elif round1.INFO[col][row] == 2:
                 server.ground.append(round1.under_Tile(col, row))
-
                 # game_world.add_object(underground,3)
-
-cur_len = None
-gposx = []
-gposy = []
 def enter():
-    global music, gposx,gposy
-    gposx += [1000,1500,2200,2260] # for debug
-    gposy += [100, 100, 380, 380] # for debug
+    global music
 
     server.world = round1.BACKGROUND()
     set_world()
@@ -189,7 +188,7 @@ def enter():
     server.bricks = [block.Bricks() for n in range(40)]
     server.stair = [block.stair_block() for n in range(35)]
 
-    server.goomba = [Goomba.GOOMBA(gposx[i], gposy[i]) for i in range(4)]
+    server.goomba = [Goomba.GOOMBA() for i in range(5)]
     server.green = [Koopa.GreenKoopa() for i in range(3)]
     server.red = [Koopa.RedKoopa() for i in range(3)]
     setPos()
@@ -200,14 +199,14 @@ def enter():
     game_world.add_objects(server.green, 1)
 
     game_world.add_objects(server.red, 1)
-    # game_world.add_objects(server.coin, 1)
     game_world.add_objects(server.itemBox, 2)
     game_world.add_objects(server.bricks, 1)
     game_world.add_objects(server.stair, 1)
-    game_world.add_objects(server.ground,3)
-    game_world.add_objects(server.empty,3)
+    game_world.add_objects(server.ground, 3)
+    game_world.add_objects(server.empty, 3)
 
     # game_world.add_collision_group(server.player, server.coin, 'player:coin')
+
     game_world.add_collision_group(server.player, server.itemBox, 'player:item_block')
     game_world.add_collision_group(server.player, server.bricks, 'player:bricks')
     game_world.add_collision_group(server.player, server.ground, 'player:ground')
@@ -220,11 +219,6 @@ def enter():
     game_world.add_collision_group(server.player, server.stair, 'player:stair')
     game_world.add_collision_group(server.green, server.ground, 'green:ground')
     game_world.add_collision_group(server.red, server.ground, 'red:ground')
-
-    #music = load_music('stage1.mp3')
-    #music.set_volume(10)
-    #music.play()
-
 
 def exit():
     game_world.clear()
@@ -243,7 +237,7 @@ def update():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
-        if abs(a.x - b.x) <= 100:
+        if abs(a.x - b.x) <= 150:
             if collide(a, b):
                 v, p = collide(a,b)
                 if v:
