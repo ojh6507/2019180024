@@ -157,6 +157,7 @@ class IDLE:
 class WALK:
     def enter(self, event):
         self.frame = 0
+        self.walk = True
         if event == RD:
             self.face_dir = 1
             self.x_dir = self.face_dir
@@ -172,6 +173,7 @@ class WALK:
         self.TIME_PER_ACTION = 1
 
     def exit(self,event):
+        self.walk = False
         if event == ATTACK:
             self.Fire_Ball()
         self.velocity = 1
@@ -301,10 +303,34 @@ class WALK:
 
 
 
+class Clear_movement:
+    def enter(self,event):
+        pass
+    def exit(self, event):
+        pass
+    def do(self):
+        self.Onground = False
+        self.image = load_image('clear_mario.png')
+        self.clip = 9
+        self.height = 37
+        self.perframe = 33
+        self.y += JUMP_SPEED_PPS * game_framework.frame_time * 2
+        self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
+
+    def draw(self):
+        if self.mario_size == 'Small':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                           self.reflect, self.x, self.y, 50, 40)
+
+        elif self.mario_size == 'Normal':
+            self.image.clip_composite_draw(int(self.frame) * self.perframe, 0, self.perframe, self.height, 0,
+                                       self.reflect, self.x, self.y, 50, 50)
+
 
 
 class DIE:
     def enter(self, event):
+        self.die = True
         pass
 
     def exit(self, event):
@@ -333,6 +359,8 @@ next_state = {
     IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE, SPACE: IDLE},
     WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK},
     DIE: {RU: DIE, LU: DIE, RD: DIE, LD: DIE, ATTACK: DIE, SHIFTD: DIE, SHIFTU: DIE, SPACE: DIE},
+    Clear_movement: {RU: Clear_movement, LU: Clear_movement, RD: Clear_movement, LD: Clear_movement, ATTACK: Clear_movement, SHIFTD: Clear_movement, SHIFTU: Clear_movement, SPACE: Clear_movement}
+
 
 }
 
@@ -364,6 +392,7 @@ class mario:
 
         self.flower = False
         self.Run = False
+        self.walk = False
         self.growup = False
         self.jump = False
         self.Onground = True
@@ -396,6 +425,9 @@ class mario:
         self.cur_state.do(self)
         self.delay += game_framework.frame_time
         self.delay_draw += 1
+        if self.y < 0:
+            self.event_que.clear()
+
         if self.event_que:
             event = self.event_que.pop()
 
@@ -434,6 +466,12 @@ class mario:
             self.jump = True
             self.Run = False
             self.cur_state = DIE
+        if server.world.x < -2950:
+            self.cur_state = Clear_movement
+            self.jump = True
+
+        if not self.jump and (self.Run or self.walk):
+            self.Onground = True
 
     def draw(self):
         self.cur_state.draw(self)
@@ -469,8 +507,8 @@ class mario:
     def get_bb(self):
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 17, self.x + 10, self.y + 10
-        if self.mario_size == 'Normal':
-            return self.x - 10, self.y - 17, self.x + 10, self.y+8
+        elif self.mario_size == 'Normal':
+                return self.x - 10, self.y - 17, self.x + 10, self.y+8
 
     def get_pos(self):
         return self.x,self.y
@@ -479,6 +517,19 @@ class mario:
 
     def handle_collision(self, other, group, pos):
         if not self.die:
+            if group =='player:stair':
+                if pos == 'bottom':
+                    self.Onground = True
+                    if abs(self.x - other.x) <= 15:
+                        if self.y > other.y:
+                            self.y = other.y + 35
+                if pos == 'right':
+                    self.x_dir = 0
+                    self.x -= 10
+
+                if pos == 'left':
+                    self.x_dir = 0
+                    self.x += 10
             if group == 'player:coin':
                     pass
             elif group == 'player:item_block':
