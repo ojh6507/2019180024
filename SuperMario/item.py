@@ -65,6 +65,21 @@ class MUSHROOM:
                 self.dir = 1
                 self.x += 10
 
+        elif group == 'mushroom:brick':
+            if pos == 'bottom':
+                self.Onground = True
+                self.y = other.y + 40
+
+            if pos == 'right':
+                self.Onground = True
+                self.dir = -1
+                self.x -= 10
+
+            if pos == 'left':
+                self.Onground = True
+                self.dir = 1
+                self.x += 10
+
 
 
 class FLOWER:
