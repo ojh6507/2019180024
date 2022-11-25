@@ -64,11 +64,11 @@ class WALK:
         pass
 
     def do(self):
-        self.frame = (self.frame + ACTION_PER_TIME * 9 * game_framework.frame_time) % 9
-        if self.frame <= 1:
-            self.frame = 2
-
-        self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time
+        if self.x <= 800:
+            self.frame = (self.frame + ACTION_PER_TIME * 9 * game_framework.frame_time) % 9
+            if self.frame <= 1:
+                self.frame = 2
+            self.x += self.x_dir * RUN_SPEED_PPS * game_framework.frame_time
         pass
 
     def draw(self):
@@ -107,13 +107,15 @@ class GOOMBA:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        if self.x > 800:
-            self.x_dir = 0
-        else:
-            self.x_dir = self.temp
         self.cur_state.do(self)
         if not self.Onground:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+
+        if self.x < -1000:
+            try:
+                game_world.remove_object(self)
+            except:
+                pass
 
 
     def get_bb(self):
