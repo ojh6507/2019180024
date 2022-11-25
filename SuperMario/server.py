@@ -11,3 +11,4 @@ ground = []
 bricks = None
 empty = []
 underground = None
+stair = []
