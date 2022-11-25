@@ -6,6 +6,47 @@ import server
 from item import *
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+class stair_block:
+    image = None
+    def get_name(self):
+        return 'stair_block'
+
+    def edit_x(self, x):
+        self.x -= x
+    def __init__(self):
+        if stair_block.image == None:
+            stair_block.image = load_image('block_3.png')
+        self.frame = 0
+        self.x = 0
+        self.y = 0
+        self.x_size = 30
+        self.y_size = 40
+
+    def returnY(self):
+        return self.y
+    def draw(self):
+        # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
+        draw_rectangle(*self.get_bb())
+    def get_bb(self):
+        return self.x - 15, self.y - 15, self.x + 15, self.y + 15
+
+    def update(self):
+        if self.x <= 800:
+            self.frame = 0
+            self.x_size = 30
+            self.y_size = 30
+    def handle_collision(self, other, group, p):
+        if group == 'player:stair_block':
+           pass
+
+    def set_pos(self, x, y):
+        self.x = x
+        self.y = y - 5
+
+
+
+
 
 class item_block:
     image = None
@@ -46,20 +87,21 @@ class item_block:
         return self.x - 15, self.y - 15, self.x + 15, self.y + 15
 
     def update(self):
-        if self.up and self.available:
-            self.up_box()
-        if self.citem:
-            self.gen_item()
-            self.citem = False
-        if not self.available:
-            self.image = load_image('unblock_1.png')
-            self.frame = 0
-            self.x_size = 30
-            self.y_size = 30
-        else:
-            self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
-            self.x_size = 30
-            self.y_size = 40
+        if self.x <= 800:
+            if self.up and self.available:
+                self.up_box()
+            if self.citem:
+                self.gen_item()
+                self.citem = False
+            if not self.available:
+                self.image = load_image('unblock_1.png')
+                self.frame = 0
+                self.x_size = 30
+                self.y_size = 30
+            else:
+                self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
+                self.x_size = 30
+                self.y_size = 40
 
     def set_pos(self,x,y, type = 'coin'):
         self.x = x
@@ -127,9 +169,10 @@ class COIN:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        if self.gen != 'onground':
-            self.up_coin()
-        self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
+        if self.x <= 800:
+            if self.gen != 'onground':
+                self.up_coin()
+            self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
 
     def returnY(self):
         return self.y
