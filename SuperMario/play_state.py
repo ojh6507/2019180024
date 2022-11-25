@@ -18,12 +18,12 @@ def setPos():
     server.itemBox[2].set_pos(700, 150,'item')
 
     server.itemBox[3].set_pos(2800, 200,'item')
-    server.itemBox[4].set_pos(10, 10)
+    server.itemBox[4].set_pos(3230, 300,'coin')
     server.itemBox[5].set_pos(10, 10)
     server.itemBox[6].set_pos(10, 10)
     server.itemBox[7].set_pos(10, 10)
-    server.itemBox[8].set_pos(10, 10)
-    server.itemBox[9].set_pos(10, 10)
+    server.itemBox[8].set_pos(5800, 200,'item')
+    server.itemBox[9].set_pos(6450, 150)
 
     server.bricks[0].set_pos(930,150)
     server.bricks[1].set_pos(870, 150)
@@ -39,15 +39,15 @@ def setPos():
     server.bricks[9].set_pos(3230,200)
     server.bricks[10].set_pos(3260, 200)
 
-    server.bricks[11].set_pos(4090, 200)
-    server.bricks[12].set_pos(4120, 200)
-    server.bricks[13].set_pos(4150, 200)
+    server.bricks[11].set_pos(4160, 230)
+    server.bricks[12].set_pos(4190, 230)
+    server.bricks[13].set_pos(4220, 230)
 
     server.bricks[14].set_pos(5090, 200)
     server.bricks[15].set_pos(5120, 200)
     server.bricks[16].set_pos(5150, 200)
 
-    server.bricks[17].set_pos(5800, 200)
+    server.bricks[17].set_pos(5770, 200)
     server.bricks[18].set_pos(5830, 200)
     server.bricks[19].set_pos(5860, 200)
 
@@ -59,6 +59,49 @@ def setPos():
     server.bricks[24].set_pos(6420, 150)
     server.bricks[25].set_pos(6450, 150)
     server.bricks[26].set_pos(6480, 150)
+
+
+    server.stair[0].set_pos(6730, 60)
+    server.stair[1].set_pos(6760, 60)
+    server.stair[2].set_pos(6790, 60)
+    server.stair[3].set_pos(6820, 60)
+    server.stair[4].set_pos(6850, 60)
+    server.stair[5].set_pos(6880, 60)
+    server.stair[6].set_pos(6910, 60)
+    server.stair[7].set_pos(6940, 60)
+
+    server.stair[8].set_pos(6760, 90)
+    server.stair[9].set_pos(6790, 90)
+    server.stair[10].set_pos(6820, 90)
+    server.stair[11].set_pos(6850, 90)
+    server.stair[12].set_pos(6880, 90)
+    server.stair[13].set_pos(6910, 90)
+    server.stair[14].set_pos(6940, 90)
+
+    server.stair[15].set_pos(6790, 120)
+    server.stair[16].set_pos(6820, 120)
+    server.stair[17].set_pos(6850, 120)
+    server.stair[18].set_pos(6880, 120)
+    server.stair[19].set_pos(6910, 120)
+    server.stair[20].set_pos(6940, 120)
+
+    server.stair[21].set_pos(6820, 150)
+    server.stair[22].set_pos(6850, 150)
+    server.stair[23].set_pos(6880, 150)
+    server.stair[24].set_pos(6910, 150)
+    server.stair[25].set_pos(6940, 150)
+
+    server.stair[26].set_pos(6850, 180)
+    server.stair[27].set_pos(6880, 180)
+    server.stair[28].set_pos(6910, 180)
+    server.stair[29].set_pos(6940, 180)
+
+    server.stair[30].set_pos(6880, 210)
+    server.stair[31].set_pos(6910, 210)
+    server.stair[32].set_pos(6940, 210)
+
+    server.stair[33].set_pos(6910, 240)
+    server.stair[34].set_pos(6940, 240)
 
 
 music = None
@@ -144,9 +187,9 @@ def enter():
     # server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(40)]
+    server.stair = [block.stair_block() for n in range(35)]
 
     server.goomba = [Goomba.GOOMBA(gposx[i], gposy[i]) for i in range(4)]
-
     server.green = [Koopa.GreenKoopa() for i in range(3)]
     server.red = [Koopa.RedKoopa() for i in range(3)]
     setPos()
@@ -160,6 +203,7 @@ def enter():
     # game_world.add_objects(server.coin, 1)
     game_world.add_objects(server.itemBox, 2)
     game_world.add_objects(server.bricks, 1)
+    game_world.add_objects(server.stair, 1)
     game_world.add_objects(server.ground,3)
     game_world.add_objects(server.empty,3)
 
@@ -173,6 +217,9 @@ def enter():
     game_world.add_collision_group(server.goomba, server.ground, 'goomba:ground')
     game_world.add_collision_group(server.goomba, server.itemBox, 'goomba:itemBox')
     game_world.add_collision_group(server.goomba, server.bricks, 'goomba:bricks')
+    game_world.add_collision_group(server.player, server.stair, 'player:stair')
+    game_world.add_collision_group(server.green, server.ground, 'green:ground')
+    game_world.add_collision_group(server.red, server.ground, 'red:ground')
 
     #music = load_music('stage1.mp3')
     #music.set_volume(10)
@@ -189,16 +236,19 @@ def update():
     set()
     if server.player.y < 0:
         game_framework.change_state(title_state)
+    if server.player.y > 600:
+        game_framework.change_state(title_state)
 
     for game_object in game_world.all_objects():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
-        if collide(a, b):
-            v, p = collide(a,b)
-            if v:
-                a.handle_collision(b, group, p)
-                b.handle_collision(a, group, p)
+        if abs(a.x - b.x) <= 100:
+            if collide(a, b):
+                v, p = collide(a,b)
+                if v:
+                    a.handle_collision(b, group, p)
+                    b.handle_collision(a, group, p)
 
 def draw_world():
     for game_object in game_world.all_objects():
