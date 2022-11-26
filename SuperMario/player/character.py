@@ -382,7 +382,7 @@ class mario:
         self.delay_draw = 0
         self.clip = 76
         self.x = 100
-        self.y = 100
+        self.y = 132
 
         self.x_dir = 0
         self.face_dir = 1
@@ -460,7 +460,8 @@ class mario:
             if self.timer <= 0:
                 self.invincibility = False
                 self.timer = 1.0
-
+        if self.Onground:
+            self.y = clamp(60,self.y,800)
         if self.die:
             self.delay = 1.1
             self.jump = True
@@ -508,7 +509,7 @@ class mario:
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 17, self.x + 10, self.y + 10
         elif self.mario_size == 'Normal':
-                return self.x - 10, self.y - 17, self.x + 10, self.y+8
+            return self.x - 10, self.y - 17, self.x + 10, self.y + 10
 
     def get_pos(self):
         return self.x,self.y
@@ -554,7 +555,7 @@ class mario:
                         self.Y_velocity *= -1
                         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
-            elif group == 'player:bricks':
+            elif group == 'player:bricks' and (other.available or other.op=='solid'):
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
@@ -582,7 +583,7 @@ class mario:
             elif group == 'player:mushroom':
                 self.mario_size = 'Normal'
                 self.jump_height = 13
-                self.y+= 20
+                self.y+= 22
                 self.Y_velocity = self.jump_height
                 self.Onground = True
 
@@ -606,12 +607,10 @@ class mario:
                             self.y = other.y + 61
 
                 if pos == 'right':
-                    self.Onground = True
                     self.x_dir = 0
                     self.x -= 10
 
                 if pos == 'left':
-                    self.Onground = True
                     self.x_dir = 0
                     self.x += 10
 
