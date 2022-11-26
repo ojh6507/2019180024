@@ -36,7 +36,7 @@ class WALK:
         pass
 
     def do(self):
-        if self.x <= 800:
+        if self.x <= 850:
             self.frame = (self.frame + ACTION_PER_TIME * 9 * game_framework.frame_time) % 9
             if self.frame <= 1:
                 self.frame = 2
@@ -45,7 +45,7 @@ class WALK:
 
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
-        self.image.clip_composite_draw(int(self.frame) * 28, 30 * self.action , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
+        self.image.clip_composite_draw(int(self.frame) * 28, 30, 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
         pass
 
 class GOOMBA:
@@ -63,14 +63,14 @@ class GOOMBA:
         self.action = 1
         self.x = 0
         self.x_dir = -1
-        self.y = 0
+        self.y = 70
         self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
         self.temp = self.x_dir
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-        self.Y_gravity = 10
+        self.Y_gravity = 5
         self.Onground = False
 
     def draw(self):
@@ -84,7 +84,8 @@ class GOOMBA:
         self.cur_state.do(self)
         if not self.Onground:
             self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
-
+        else:
+            self.Onground = False
         if self.x < -1000:
             try:
                 game_world.remove_object(self)
@@ -94,6 +95,7 @@ class GOOMBA:
 
     def get_bb(self):
         return self.x - 10, self.y - 16, self.x + 10, self.y + 25
+        # return self.x - 10, self.y - 23, self.x + 10, self.y + 16
 
 
 
@@ -106,6 +108,7 @@ class GOOMBA:
                 pass
         elif group == 'goomba:ground':
             if pos == 'bottom':
+                self.Onground = True
                 self.y = other.y + 58
 
             if pos == 'right':
@@ -128,6 +131,7 @@ class GOOMBA:
 
         elif group == 'goomba:bricks':
             if pos == 'bottom':
+                self.Onground = True
                 self.y = other.y + 35
             if pos == 'right':
                 self.dir = -1
