@@ -6,11 +6,11 @@ INFO = np.zeros((13, 40))
 for i in range(40):
     INFO[0, i] = 1
 
-INFO[0,8] = 0
-INFO[0,10] = 0
-INFO[0,25] = 0
-INFO[0,28] = 0
-INFO[0,31] = 0
+INFO[0,8] = -1
+INFO[0,10] = -1
+INFO[0,25] = -1
+INFO[0,28] = -1
+INFO[0,31] = -1
 
 
 INFO[1,13] = 1
@@ -26,36 +26,28 @@ INFO[0,20] = 2
 INFO[1,21] = 1
 INFO[0,21] = 2
 
-# def set_world():
-#
-#     for col in range(len(INFO)):
-#         for row in range(len(INFO[col])):
-#
-#             if INFO[col][row] == 0:
-#                 empty = Empty_Tile(col, row)
-#                 game_world.add_object(empty,2)
-#
-#             elif INFO[col][row] == 1:
-#                 ground = Floor_Tile(col, row)
-#                 game_world.add_object(ground,3)
-#
-#             elif INFO[col][row] == 2:
-#                 underground = under_Tile(col, row)
-#                 game_world.add_object(underground,3)
 
 class Empty_Tile:
     image = None
+    def __init__(self, col, row):
+        self.x, self.y = row * 192, col * 77
     def get_name(self):
         return 'background'
     def edit_x(self,x):
         self.x-=x
+    def get_bb(self):
+        return self.x - 98, self.y - 40, self.x + 98, self.y + 200
     def __init__(self,col, row):
-        self.x, self.y = row * 50, col * 50
+        self.x, self.y = row * 192, col * 77
         self.rect_x, self.rect_y = self.x, self.y
 
     def update(self):
         pass
     def draw(self):
+        draw_rectangle(*self.get_bb())
+        pass
+
+    def handle_collision(self, other, group, pos):
         pass
 
 
