@@ -6,6 +6,12 @@ import server
 from item import *
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+
+JUMP_SPEED_KMPH = 10.0
+JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+
 class stair_block:
     image = None
     def get_name(self):
@@ -112,7 +118,7 @@ class item_block:
         self.x = x
         self.y = y
         self.temp = y
-        self.jump_height = y + 10
+        self.jump_height = y + 3
         self.Y_velocity =self.jump_height
         self.type = type
         self.available = True
@@ -135,8 +141,10 @@ class item_block:
                     game_world.add_collision_group(server.player, Flower, 'player:flower')
                     game_world.add_object(Flower, 1)
             elif self.type == 'coin':
-                coin = COIN(self.x,self.y + 20, 'onblock')
+                coin = COIN()
+                coin.set_pos(self.x,self.y,'block')
                 game_world.add_object(coin,1)
+
     def handle_collision(self, other, group, p):
         if group == 'player:item_block':
             if p == 'top' and not server.player.die:
@@ -159,16 +167,21 @@ class COIN:
         self.Y_velocity -= self.Y_gravity
         if self.Y_velocity < 0:
             game_world.remove_object(self)
-
-    def __init__(self ,x, y, gen = 'onground'):
-        self.image = load_image('coin.png')
-        self.frame = random.randint(0,3)
+    def set_pos(self,x,y, gen = 'onground'):
         self.x = x
         self.y = y
         self.jump_height = y + 5
         self.Y_velocity = self.jump_height
-        self.Y_gravity = 5
         self.gen = gen
+    def __init__(self):
+        self.image = load_image('coin.png')
+        self.frame = random.randint(0,3)
+        self.x = 0
+        self.y = 0
+        self.jump_height = 0
+        self.Y_velocity = self.jump_height
+        self.Y_gravity = 5
+        self.gen = 'block'
     def draw(self):
         self.image.clip_draw(int(self.frame) * 25 ,0 ,25 ,25 ,self.x, self.y)
         draw_rectangle(*self.get_bb())
@@ -203,12 +216,19 @@ class Bricks:
         self.available = True
         self.up = False
         self.y_size = 40
+        self.x_size = 30
+
         self.jump_height = 0
         self.Y_velocity = self.jump_height
         self.Y_gravity = 15
         self.temp = 0
+        self.clip = 4
+        self.width = 30
+        self.height = 40
+
+
     def draw(self):
-        self.image.clip_composite_draw(int(self.frame) * 30, 0, 30, 40, 0, ' ', self.x, self.y, 30,
+        self.image.clip_composite_draw(int(self.frame) * self.width, 0,self.width, self.height, 0, ' ', self.x, self.y, self.x_size,
                                        self.y_size)
         draw_rectangle(*self.get_bb())
 
@@ -216,17 +236,28 @@ class Bricks:
         if self.up and self.available:
             self.up_box()
         if not self.available and self.op == 'destroy':
-            try:
-                game_world.remove_object(self)
-            except:
-                pass
+            self.image = load_image('block_2_crack.png')
+            self.clip = 4
+            self.height = 40
+            self.width = 40
+            self.x_size = 80
+            self.y_size = 80
+            self.available = False
+            self.y -= 10 * JUMP_SPEED_PPS * game_framework.frame_time
+
         elif not self.available and self.op == 'solid':
             self.image = load_image('unblock_1.png')
             self.frame = 0
             self.y_size = 30
 
 
-        self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % 4
+        self.frame = (self.frame + ACTION_PER_TIME * 4 * game_framework.frame_time) % self.clip
+        if self.y < 0:
+            try:
+                game_world.remove_object(self)
+            except:
+                pass
+
 
     def up_box(self):
         self.y += self.Y_velocity * game_framework.frame_time
@@ -235,14 +266,13 @@ class Bricks:
             self.up = False
             self.y = self.temp
             self.Y_velocity = self.jump_height
-
             self.available = False
     def set_pos(self, x, y, op = 'destroy'):
         self.x = x
         self.y = y
         self.temp = y
         self.op = op
-        self.jump_height = y + 10
+        self.jump_height = y + 2
         self.Y_velocity = self.jump_height
 
     def returnY(self):
@@ -252,8 +282,9 @@ class Bricks:
         return self.x - 15, self.y - 15, self.x + 15, self.y + 15
     def handle_collision(self, other, group, pos):
         # print('ball disappear')
-        if group == 'player:bricks':
+        if group == 'player:bricks' and self.available:
            if pos =='top':
              self.up = True
+             self.frame = 0
 
 
