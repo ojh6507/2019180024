@@ -21,7 +21,7 @@ class stair_block:
         self.x -= x
     def __init__(self):
         if stair_block.image == None:
-            stair_block.image = load_image('block_3.png')
+            stair_block.image = load_image('block/block_3.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -64,7 +64,7 @@ class item_block:
 
     def __init__(self):
         if item_block.image == None:
-            item_block.image = load_image('block_1.png')
+            item_block.image = load_image('block/block_1.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -105,7 +105,7 @@ class item_block:
                 self.citem = False
 
             if not self.available:
-                self.image = load_image('unblock_1.png')
+                self.image = load_image('block/unblock_1.png')
                 self.frame = 0
                 self.x_size = 30
                 self.y_size = 30
@@ -174,7 +174,7 @@ class COIN:
         self.Y_velocity = self.jump_height
         self.gen = gen
     def __init__(self):
-        self.image = load_image('coin.png')
+        self.image = load_image('block/coin.png')
         self.frame = random.randint(0,3)
         self.x = 0
         self.y = 0
@@ -209,7 +209,7 @@ class Bricks:
         self.x -= x
 
     def __init__(self):
-        self.image = load_image('block_2.png')
+        self.image = load_image('block/block_2.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -236,7 +236,7 @@ class Bricks:
         if self.up and self.available:
             self.up_box()
         if not self.available and self.op == 'destroy':
-            self.image = load_image('block_2_crack.png')
+            self.image = load_image('block/block_2_crack.png')
             self.clip = 4
             self.height = 40
             self.width = 40
@@ -246,7 +246,7 @@ class Bricks:
             self.y -= 10 * JUMP_SPEED_PPS * game_framework.frame_time
 
         elif not self.available and self.op == 'solid':
-            self.image = load_image('unblock_1.png')
+            self.image = load_image('block/unblock_1.png')
             self.frame = 0
             self.y_size = 30
 

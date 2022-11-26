@@ -57,7 +57,7 @@ class GOOMBA:
 
     def __init__(self):
         if GOOMBA.image == None:
-            GOOMBA.image = load_image('Goomba.png')
+            GOOMBA.image = load_image('monster/Goomba.png')
 
         self.frame = 1
         self.action = 1

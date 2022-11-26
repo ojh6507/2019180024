@@ -17,7 +17,7 @@ class MUSHROOM:
         self.x -= x
     def __init__(self, x,y):
         if MUSHROOM.image == None:
-            MUSHROOM.image = load_image('mushroom.png')
+            MUSHROOM.image = load_image('item/mushroom.png')
         self.x, self.y =x, y
         self.Y_gravity = 10
         self.dir = -1
@@ -93,7 +93,7 @@ class FLOWER:
 
     def __init__(self, x, y):
         if FLOWER.image == None:
-            FLOWER.image = load_image('flower.png')
+            FLOWER.image = load_image('item/flower.png')
         self.x, self.y = x, y
 
     def draw(self):

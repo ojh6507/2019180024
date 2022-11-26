@@ -49,7 +49,7 @@ class RedKoopa:
 
     def __init__(self):
         if RedKoopa.image == None:
-            RedKoopa.image = load_image('red_koopa.png')
+            RedKoopa.image = load_image('monster/red_koopa.png')
 
         self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
@@ -149,7 +149,7 @@ class GreenKoopa:
 
     def __init__(self):
         if GreenKoopa.image == None:
-            GreenKoopa.image = load_image('green_koopa.png')
+            GreenKoopa.image = load_image('monster/green_koopa.png')
         self.frame = random.randint(0, 15)
         self.x = random.randint(400, 3000)
         self.y = 70
