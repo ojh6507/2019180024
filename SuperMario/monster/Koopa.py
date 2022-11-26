@@ -62,15 +62,22 @@ class RedKoopa:
         self.reflect = ' '
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-
+        self.Onground = False
+    def set_pos(self, x, y):
+        self.x = x
+        self.y = y
     def draw(self):
         self.cur_state.draw(self)
         draw_rectangle(*self.get_bb())
 
     def update(self):
 
-        if self.x < 800:
-            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+        if self.x < 850 :
+            if not self.Onground:
+                self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+            else:
+                self.Onground = False
+
             self.cur_state.do(self)
         if self.x < -1000 or self.y < -1:
             try:
@@ -79,7 +86,7 @@ class RedKoopa:
                 pass
 
     def get_bb(self):
-        return self.x - 10, self.y - 23, self.x + 10, self.y + 23
+        return self.x - 15, self.y - 23, self.x + 15, self.y + 23
 
 
     def handle_collision(self, other, group, pos):
@@ -89,6 +96,19 @@ class RedKoopa:
                 game_world.remove_object(other)
             except:
                 pass
+        if group == 'red:empty':
+            if pos == 'right':
+                self.x -= 50
+                self.x_dir = -1
+                self.reflect = ' '
+                self.Onground = True
+
+            if pos == 'left':
+                self.x_dir = 1
+                self.x += 50
+                self.reflect = 'h'
+                self.Onground = True
+
         if group == 'player:red':
             if pos == 'bottom':
                 try:
@@ -101,8 +121,10 @@ class RedKoopa:
             elif pos == 'left':
                 self.x_dir = -1
                 self.reflect = ' '
+
         if group == 'red:ground':
             if pos == 'bottom':
+                self.Onground = True
                 self.y = other.y + 63
 
             if pos == 'right':
@@ -112,6 +134,8 @@ class RedKoopa:
             if pos == 'left':
                 self.x_dir = 1
                 self.reflect = 'h'
+
+
 
 
 class GreenKoopa:
@@ -126,20 +150,16 @@ class GreenKoopa:
     def __init__(self):
         if GreenKoopa.image == None:
             GreenKoopa.image = load_image('green_koopa.png')
-        self.frame = random.randint(0,15)
-        self.action = 0
+        self.frame = random.randint(0, 15)
         self.x = random.randint(400, 3000)
-        self.y = 80
+        self.y = 70
         self.Y_gravity = 5
 
         self.x_dir = -1
         self.action = 1
-        self.reflect= ' '
         self.clip = 17
-        self.Y_gravity = 10
-        self.TIME_PER_ACTION = 1
-        self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
-
+        self.reflect = ' '
+        self.Onground = False
         self.cur_state = WALK
         self.cur_state.enter(self, None)
 
@@ -153,8 +173,11 @@ class GreenKoopa:
         self.y = y
 
     def update(self):
-        if self.x < 800:
-            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+        if self.x < 850:
+            if not self.Onground:
+                self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
+            else:
+                self.Onground = False
             self.cur_state.do(self)
         if self.x < -1000 or self.y < -1:
             try:
@@ -163,7 +186,8 @@ class GreenKoopa:
                 pass
 
     def get_bb(self):
-        return self.x - 10, self.y - 20, self.x + 10, self.y + 21
+        return self.x - 10, self.y - 23, self.x + 10, self.y + 23
+
     def set_pos(self,x,y):
         self.x = x
         self.y = y
@@ -175,22 +199,25 @@ class GreenKoopa:
                 game_world.remove_object(other)
             except:
                 pass
+
         if group == 'player:green':
             if pos == 'bottom':
                 try:
                     game_world.remove_object(self)
                 except:
                     pass
+
             elif pos == 'right':
                 self.x_dir = 1
                 self.reflect = 'h'
             elif pos == 'left':
                 self.x_dir = -1
                 self.reflect = ' '
+
         if group == 'green:ground':
             if pos == 'bottom':
-                self.y = other.y + 63
-
+                self.Onground = True
+                self.y = other.y + 65
             if pos == 'right':
                 self.x_dir = -1
                 self.reflect = ' '
