@@ -64,7 +64,6 @@ class IDLE:
             elif self.mario_size == 'Normal':
                 self.clip = 79
         else:
-            self.jump_func()
 
             if self.mario_size == 'Small':
                 self.clip = 30
@@ -103,7 +102,7 @@ class IDLE:
 
         if not self.jump:
             if self.mario_size == 'Small':
-                self.image = load_image('player/smario_idle.png')
+                self.image = load_image('./player/smario_idle.png')
                 self.perframe = 30
                 self.action = 0
                 self.height = 35
@@ -199,7 +198,7 @@ class WALK:
             elif self.mario_size == 'Normal':
                 self.clip = 18
                 self.TIME_PER_ACTION = 0.5
-            self.jump_func()
+
 
 
         if self.face_dir == -1:
@@ -332,7 +331,6 @@ class DIE:
         self.clip = 13
         self.height = 60
         self.perframe = 50
-        self.jump_func()
         self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
 
 
@@ -361,7 +359,8 @@ class mario:
 
         self.TIME_PER_ACTION = 1
         self.ACTION_PER_TIME = 1
-        self.image = load_image('player/smario_idle.png')
+        self.pre_velocity = 0
+        self.image = load_image('./player/smario_idle.png')
         self.mario_size = 'Small'
         self.frame = 0
         self.die = False
@@ -391,7 +390,9 @@ class mario:
         self.jump_height = 10
 
         self.Y_gravity = 0.25
-        self.Y_velocity = self.jump_height
+        self.pre_height = 0
+
+        self.Y_velocity = 0
         self.count_grow = 0
         self.count_jump = 0
 
@@ -403,12 +404,11 @@ class mario:
         self.invincibility = False
 
 
-    def jump_func(self):
+    def jump_func(self): # 점프
+
+        self.pre_velocity = self.Y_velocity
         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
-        if self.Onground:
-            self.jump = False
-            self.Y_velocity = self.jump_height
 
     def update(self):
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
@@ -425,6 +425,7 @@ class mario:
                 if self.Onground:
                     self.frame = 0
                     self.jump = True
+                    self.Y_velocity = self.jump_height
                     self.Onground =False
             elif event == SHIFTD:
                 self.frame = 0
@@ -433,17 +434,17 @@ class mario:
                 self.Run = False
 
             self.cur_state.exit(self,event)
-
             try:
                 self.cur_state = next_state[self.cur_state][event]
             except KeyError:
                 print('Error: ', self.cur_state.__name__,' ', event_name[event])
             self.cur_state.enter(self, event)
         self.x = clamp(0,self.x,800)
+        self.jump_func()
 
-        if not self.jump:
-            self.Onground = False
-            self.y -= self.Y_gravity * JUMP_SPEED_PPS * 20 * game_framework.frame_time
+        # if not self.jump: # 중력
+        #     self.Onground = False
+        #     self.y -= self.Y_gravity * JUMP_SPEED_PPS * 20 * game_framework.frame_time
 
         if self.invincibility:
             self.timer -= game_framework.frame_time
@@ -511,9 +512,11 @@ class mario:
             if group =='player:stair':
                 if pos == 'bottom':
                     self.Onground = True
-                    if abs(self.x - other.x) <= 15:
-                        if self.y > other.y:
-                            self.y = other.y + 35
+                    self.jump = False
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
                 if pos == 'right':
                     self.x_dir = 0
                     self.x -= 10
@@ -527,10 +530,12 @@ class mario:
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
-                        # if self.mario_size == 'Small':
-                        self.y = other.y + 35
-                        # else:
-                        #     self.y = other.y + 40
+                        self.Onground = True
+                        self.jump = False
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
+
                 if pos == 'right':
                     self.x -= 15
                     self.x_dir = 0
@@ -549,12 +554,11 @@ class mario:
                 if pos == 'bottom':
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
-                        # if self.mario_size =='Small':
-                        if self.y > other.y:
-                            self.y = other.y + 35
-                        # else:
-                        #     if self.y > other.y:
-                        #         self.y = other.y + 40
+                        self.Onground = True
+                        self.jump = False
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
 
                 if pos == 'right':
                     self.x_dir = 0
@@ -573,28 +577,21 @@ class mario:
             elif group == 'player:mushroom':
                 self.mario_size = 'Normal'
                 self.jump_height = 13
-                self.y+= 22
-                self.Y_velocity = self.jump_height
-                self.Onground = True
+
 
             elif group == 'player:flower':
                 self.mario_size = 'Normal'
-                self.jump_height = 13
-                self.Y_velocity = self.jump_height
                 self.flower = True
-                self.Onground = True
-
+                self.jump_height = 13
             elif group == 'player:ground':
 
                 if pos == 'bottom':
                     self.Onground =True
-                    # if abs(other.y + 70) < 140:
-                    if self.mario_size == 'Small':
-                        if self.y > other.y:
-                            self.y = other.y + 58
-                    else:
-                        if self.y > other.y:
-                            self.y = other.y + 61
+                    self.jump = False
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
 
                 if pos == 'right':
                     self.x_dir = 0
@@ -608,9 +605,8 @@ class mario:
                 if pos =='bottom':
                     self.jump = True
                     self.Onground = False
-
                     self.Y_velocity = self.jump_height
-                    self.jump_func()
+
                 elif pos == 'right' and not self.invincibility:
                     self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
@@ -627,7 +623,7 @@ class mario:
                     self.Onground = False
 
                     self.Y_velocity = self.jump_height
-                    self.jump_func()
+
                 elif pos == 'right' and not self.invincibility:
                     self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
                     self.check_state()
@@ -644,7 +640,7 @@ class mario:
                     self.jump = True
                     self.Onground = False
                     self.Y_velocity = self.jump_height
-                    self.jump_func()
+
                 elif pos == 'right' and not self.invincibility:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
