@@ -22,7 +22,7 @@ class Ball:
 
     def __init__(self, x=800, y=300, dir = 1):
         if Ball.image == None:
-            Ball.image = load_image('fire_ball.png')
+            Ball.image = load_image('./player/fire_ball.png')
         self.x, self.y, self.dir = x, y, dir
 
         self.height = 5

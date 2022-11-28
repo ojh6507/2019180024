@@ -56,10 +56,10 @@ class Floor_Tile(Empty_Tile):
     def __init__(self,col, row):
         if Floor_Tile.image == None:
             Floor_Tile.image = load_image('background/ground.png')
-        self.x, self.y = row * 192, col * 77
+        self.x, self.y = row * 192, col * 78
 
     def get_bb(self):
-        return self.x - 96, self.y - 40, self.x + 96, self.y + 40
+        return self.x - 97, self.y - 40, self.x + 97, self.y + 40
     def update(self):
         pass
     def draw(self):
@@ -83,7 +83,7 @@ class BACKGROUND:
     def get_name(self):
         return 'background'
     def __init__ (self):
-        self.image = load_image('background/background.png')
+        self.image = load_image('background/background_.png')
         self.x = 3750
     def edit_x(self,x):
         self.x-=x
