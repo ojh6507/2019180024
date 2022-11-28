@@ -27,6 +27,35 @@ def wander(self):
     else:
         return BehaviorTree.RUNNING
 
+class DIE:
+    def enter(self, event):
+        self.image = load_image('./monster/goomba_died.png')
+        pass
+
+    def exit(self):
+        self.Die = False
+        pass
+
+    def do(self):
+
+        if self.x <= 850:
+            self.frame = (self.frame + ACTION_PER_TIME * 9 * game_framework.frame_time) % 8
+
+        if int(self.frame) == 7:
+            try:
+                self.Die = False
+                game_world.remove_object(self)
+            except:
+                pass
+
+    def draw(self):
+        # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
+        self.image.clip_composite_draw(int(self.frame) * 28, 0, 28, 13, 0, self.reflect, self.x, self.y, 28, 13)
+
+
+
+
+        pass
 
 class WALK:
     def enter(self, event):
@@ -45,7 +74,7 @@ class WALK:
 
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 28, 30 * self.action, 28, 30,self.x, self.y)
-        self.image.clip_composite_draw(int(self.frame) * 28, 30, 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
+        self.image.clip_composite_draw(int(self.frame) * 28, 30 , 28, 30, 0, self.reflect, self.x, self.y, 28, 30)
         pass
 
 class GOOMBA:
@@ -57,7 +86,7 @@ class GOOMBA:
 
     def __init__(self):
         if GOOMBA.image == None:
-            GOOMBA.image = load_image('monster/Goomba.png')
+            GOOMBA.image = load_image('./monster/Goomba.png')
 
         self.frame = 1
         self.action = 1
@@ -75,7 +104,7 @@ class GOOMBA:
         self.pre_velocity = 0
         self.y_velocity = 0
         self.jump_height = 0
-
+        self.die = False
         self.Onground = False
 
     def draw(self):
@@ -96,6 +125,10 @@ class GOOMBA:
                 game_world.remove_object(self)
             except:
                 pass
+        if self.die:
+            self.cur_state = DIE
+            self.cur_state.enter(self, None)
+
 
 
     def get_bb(self):
@@ -156,9 +189,7 @@ class GOOMBA:
 
         elif group == 'player:goomba':
             if pos =='bottom':
-                try:
-                    game_world.remove_object(self)
-                except:
-                    pass
+                self.die = True
+
 
 
