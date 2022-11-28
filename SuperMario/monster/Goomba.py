@@ -67,10 +67,15 @@ class GOOMBA:
         self.reflect = ' '
         self.count_anim = 0
         self.turn = 0
+
         self.temp = self.x_dir
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-        self.Y_gravity = 5
+        self.Y_gravity = 0.25
+        self.pre_velocity = 0
+        self.y_velocity = 0
+        self.jump_height = 0
+
         self.Onground = False
 
     def draw(self):
@@ -82,10 +87,10 @@ class GOOMBA:
 
     def update(self):
         self.cur_state.do(self)
-        if not self.Onground:
-            self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
-        else:
-            self.Onground = False
+        self.pre_velocity = self.y_velocity
+        self.y += self.y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+        self.y_velocity -= self.Y_gravity
+
         if self.x < -1000:
             try:
                 game_world.remove_object(self)
@@ -108,8 +113,10 @@ class GOOMBA:
                 pass
         elif group == 'goomba:ground':
             if pos == 'bottom':
-                self.Onground = True
-                self.y = other.y + 58
+
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
 
             if pos == 'right':
                 self.x_dir = -1
@@ -119,7 +126,10 @@ class GOOMBA:
 
         elif group == 'goomba:itemBox':
             if pos == 'bottom':
-                self.y = other.y + 35
+
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
 
             if pos == 'right':
                 self.dir = -1
@@ -131,8 +141,11 @@ class GOOMBA:
 
         elif group == 'goomba:bricks':
             if pos == 'bottom':
-                self.Onground = True
-                self.y = other.y + 35
+
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
+
             if pos == 'right':
                 self.dir = -1
                 self.x -= 10

@@ -62,7 +62,12 @@ class RedKoopa:
         self.reflect = ' '
         self.cur_state = WALK
         self.cur_state.enter(self, None)
-        self.Onground = False
+
+        self.Y_gravity = 0.25
+        self.pre_velocity = 0
+        self.y_velocity = 0
+        self.jump_height = 0
+
     def set_pos(self, x, y):
         self.x = x
         self.y = y
@@ -72,13 +77,13 @@ class RedKoopa:
 
     def update(self):
 
-        if self.x < 850 :
-            if not self.Onground:
-                self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
-            else:
-                self.Onground = False
+        self.pre_velocity = self.y_velocity
+        self.y += self.y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+        self.y_velocity -= self.Y_gravity
 
+        if self.x < 850:
             self.cur_state.do(self)
+
         if self.x < -1000 or self.y < -1:
             try:
                 game_world.remove_object(self)
@@ -98,14 +103,26 @@ class RedKoopa:
                 pass
         if group == 'red:empty':
             if pos == 'right':
-                self.x -= 50
+                self.y += 5
+                self.x -= 2
+
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
+
                 self.x_dir = -1
                 self.reflect = ' '
                 self.Onground = True
 
             if pos == 'left':
+                self.y += 5
+                self.x += 2
                 self.x_dir = 1
-                self.x += 50
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
+
+
                 self.reflect = 'h'
                 self.Onground = True
 
@@ -115,24 +132,47 @@ class RedKoopa:
                     game_world.remove_object(self)
                 except:
                     pass
-            elif pos == 'right':
-                self.x_dir = 1
-                self.reflect = 'h'
+
             elif pos == 'left':
-                self.x_dir = -1
-                self.reflect = ' '
+                    self.y += 5
+                    self.x -= 2
+                    self.x_dir = -1
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.y_velocity = 0
+                    self.pre_velocity = 0
+                    self.reflect = ' '
+
+            elif pos == 'right':
+                    self.y += 5
+                    self.x += 2
+                    self.x_dir = 1
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.y_velocity = 0
+                    self.pre_velocity = 0
+                    self.reflect = 'h'
 
         if group == 'red:ground':
             if pos == 'bottom':
-                self.Onground = True
-                self.y = other.y + 63
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
 
             if pos == 'right':
+                self.y += 5
+                self.x -= 2
                 self.x_dir = -1
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
                 self.reflect = ' '
 
             if pos == 'left':
+                self.y += 5
+                self.x += 2
                 self.x_dir = 1
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
                 self.reflect = 'h'
 
 
@@ -153,15 +193,19 @@ class GreenKoopa:
         self.frame = random.randint(0, 15)
         self.x = random.randint(400, 3000)
         self.y = 70
-        self.Y_gravity = 5
 
         self.x_dir = -1
         self.action = 1
         self.clip = 17
         self.reflect = ' '
-        self.Onground = False
         self.cur_state = WALK
         self.cur_state.enter(self, None)
+
+        self.Y_gravity = 0.25
+        self.pre_velocity = 0
+        self.y_velocity = 0
+        self.jump_height = 0
+
 
 
     def draw(self):
@@ -173,11 +217,11 @@ class GreenKoopa:
         self.y = y
 
     def update(self):
+        self.pre_velocity = self.y_velocity
+        self.y += self.y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+        self.y_velocity -= self.Y_gravity
+
         if self.x < 850:
-            if not self.Onground:
-                self.y -= self.Y_gravity * JUMP_SPEED_PPS * game_framework.frame_time
-            else:
-                self.Onground = False
             self.cur_state.do(self)
         if self.x < -1000 or self.y < -1:
             try:
@@ -207,25 +251,46 @@ class GreenKoopa:
                 except:
                     pass
 
-            elif pos == 'right':
-                self.x_dir = 1
-                self.reflect = 'h'
             elif pos == 'left':
+                self.y += 5
+                self.x -= 2
                 self.x_dir = -1
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
                 self.reflect = ' '
+
+            elif pos == 'right':
+                self.y += 5
+                self.x += 2
+                self.x_dir = 1
+                self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                self.y_velocity = 0
+                self.pre_velocity = 0
+                self.reflect = 'h'
 
         if group == 'green:ground':
-            if pos == 'bottom':
-                self.Onground = True
-                self.y = other.y + 65
-            if pos == 'right':
-                self.x_dir = -1
-                self.reflect = ' '
+                if pos == 'bottom':
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.y_velocity = 0
+                    self.pre_velocity = 0
 
-            if pos == 'left':
-                self.x_dir = 1
-                self.reflect = 'h'
+                if pos == 'right':
+                    self.y += 5
+                    self.x -= 2
+                    self.x_dir = -1
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.y_velocity = 0
+                    self.pre_velocity = 0
+                    self.reflect = ' '
 
-
+                if pos == 'left':
+                    self.y += 5
+                    self.x += 2
+                    self.x_dir = 1
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.y_velocity = 0
+                    self.pre_velocity = 0
+                    self.reflect = 'h'
 
 
