@@ -9,7 +9,7 @@ from monster import Goomba
 from monster import Koopa
 import server
 import title_state
-WIDTH, HEIGHT = 800,600
+WIDTH, HEIGHT = 1000, 1000
 
 def setPos():
 
@@ -56,58 +56,58 @@ def setPos():
     server.bricks[26].set_pos(6510, 150)
 
 
-    server.stair[0].set_pos(6730, 60)
-    server.stair[1].set_pos(6760, 60)
-    server.stair[2].set_pos(6790, 60)
-    server.stair[3].set_pos(6820, 60)
-    server.stair[4].set_pos(6850, 60)
-    server.stair[5].set_pos(6880, 60)
-    server.stair[6].set_pos(6910, 60)
-    server.stair[7].set_pos(6940, 60)
-
-    server.stair[8].set_pos(6760, 90)
-    server.stair[9].set_pos(6790, 90)
-    server.stair[10].set_pos(6820, 90)
-    server.stair[11].set_pos(6850, 90)
-    server.stair[12].set_pos(6880, 90)
-    server.stair[13].set_pos(6910, 90)
-    server.stair[14].set_pos(6940, 90)
-
-    server.stair[15].set_pos(6790, 120)
-    server.stair[16].set_pos(6820, 120)
-    server.stair[17].set_pos(6850, 120)
-    server.stair[18].set_pos(6880, 120)
-    server.stair[19].set_pos(6910, 120)
-    server.stair[20].set_pos(6940, 120)
-
-    server.stair[21].set_pos(6820, 150)
-    server.stair[22].set_pos(6850, 150)
-    server.stair[23].set_pos(6880, 150)
-    server.stair[24].set_pos(6910, 150)
-    server.stair[25].set_pos(6940, 150)
-
-    server.stair[26].set_pos(6850, 180)
-    server.stair[27].set_pos(6880, 180)
-    server.stair[28].set_pos(6910, 180)
-    server.stair[29].set_pos(6940, 180)
-
-    server.stair[30].set_pos(6880, 210)
-    server.stair[31].set_pos(6910, 210)
-    server.stair[32].set_pos(6940, 210)
-
-    server.stair[33].set_pos(6910, 240)
-    server.stair[34].set_pos(6940, 240)
+    # server.stair[0].set_pos(6730, 60)
+    # server.stair[1].set_pos(6760, 60)
+    # server.stair[2].set_pos(6790, 60)
+    # server.stair[3].set_pos(6820, 60)
+    # server.stair[4].set_pos(6850, 60)
+    # server.stair[5].set_pos(6880, 60)
+    # server.stair[6].set_pos(6910, 60)
+    # server.stair[7].set_pos(6940, 60)
+    #
+    # server.stair[8].set_pos(6760, 90)
+    # server.stair[9].set_pos(6790, 90)
+    # server.stair[10].set_pos(6820, 90)
+    # server.stair[11].set_pos(6850, 90)
+    # server.stair[12].set_pos(6880, 90)
+    # server.stair[13].set_pos(6910, 90)
+    # server.stair[14].set_pos(6940, 90)
+    #
+    # server.stair[15].set_pos(6790, 120)
+    # server.stair[16].set_pos(6820, 120)
+    # server.stair[17].set_pos(6850, 120)
+    # server.stair[18].set_pos(6880, 120)
+    # server.stair[19].set_pos(6910, 120)
+    # server.stair[20].set_pos(6940, 120)
+    #
+    # server.stair[21].set_pos(6820, 150)
+    # server.stair[22].set_pos(6850, 150)
+    # server.stair[23].set_pos(6880, 150)
+    # server.stair[24].set_pos(6910, 150)
+    # server.stair[25].set_pos(6940, 150)
+    #
+    # server.stair[26].set_pos(6850, 180)
+    # server.stair[27].set_pos(6880, 180)
+    # server.stair[28].set_pos(6910, 180)
+    # server.stair[29].set_pos(6940, 180)
+    #
+    # server.stair[30].set_pos(6880, 210)
+    # server.stair[31].set_pos(6910, 210)
+    # server.stair[32].set_pos(6940, 210)
+    #
+    # server.stair[33].set_pos(6910, 240)
+    # server.stair[34].set_pos(6940, 240)
 
     server.goomba[0].set_pos(1000, 200)
     server.goomba[1].set_pos(1500, 200)
     server.goomba[2].set_pos(2200, 430)
     server.goomba[3].set_pos(2260, 430)
-    server.goomba[4].set_pos(5800, 200)
+    server.goomba[4].set_pos(5800, 260)
 
     server.red[0].set_pos(1750, 80)
     server.red[1].set_pos(3500, 80)
     server.red[2].set_pos(5000, 80)
-    server.red[3].set_pos(3960, 80)
+    server.red[3].set_pos(3960, 400)
 
 
     server.coin[0].set_pos(1500, 200)
@@ -136,10 +136,10 @@ def setPos():
     server.coin[18].set_pos(6190, 60)
     server.coin[19].set_pos(6220, 60)
 
-    server.green[0].set_pos(2500, 110)
-    server.green[1].set_pos(3000, 80)
-    server.green[2].set_pos(4000, 80)
-    server.green[3].set_pos(6300, 80)
+    server.green[0].set_pos(2500, 150)
+    server.green[1].set_pos(3000, 110)
+    server.green[2].set_pos(4000, 400)
+    server.green[3].set_pos(6300, 110)
 
 music = None
 
@@ -155,15 +155,14 @@ def collide(a,b):
 
     if ra >= lb and la <= lb:
         str = 'right'
-    elif rb >= la and rb <= ra:
+
+    if rb >= la and rb <= ra:
         str = 'left'
 
-    if ((ra - lb >= 1 and lb - la <= 50) or (rb - la >= 1 and ra - rb <= 50) or (ra <= rb and lb <= la)) and (tb >= ba and ta > tb):
+    if ((ra - lb >= 1 and lb - la <= 50) or (rb - la >= 1 and ra - rb <= 50) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
         str = 'bottom'
-    elif ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
+    if ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
         str = 'top'
-
-
     return True, str
 
 
@@ -210,26 +209,28 @@ def enter():
     server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
+    pipe = block.Pipe()
     server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(40)]
-    server.stair = [block.stair_block() for n in range(35)]
-
+    # server.stair = [block.stair_block() for n in range(35)]
     server.goomba = [Goomba.GOOMBA() for i in range(5)]
     server.green = [Koopa.GreenKoopa() for i in range(4)]
     server.red = [Koopa.RedKoopa() for i in range(4)]
+
     setPos()
 
     game_world.add_object(server.world, 0)
     game_world.add_object(server.player, 1)
     game_world.add_objects(server.goomba, 1)
     game_world.add_objects(server.green, 1)
+    game_world.add_object(pipe, 3)
 
     game_world.add_objects(server.red, 1)
     game_world.add_objects(server.coin, 2)
     game_world.add_objects(server.itemBox, 2)
     game_world.add_objects(server.bricks, 1)
-    game_world.add_objects(server.stair, 1)
+    # game_world.add_objects(server.stair, 1)
     game_world.add_objects(server.ground, 3)
     game_world.add_objects(server.empty, 3)
 
@@ -243,10 +244,12 @@ def enter():
     game_world.add_collision_group(server.goomba, server.ground, 'goomba:ground')
     game_world.add_collision_group(server.goomba, server.itemBox, 'goomba:itemBox')
     game_world.add_collision_group(server.goomba, server.bricks, 'goomba:bricks')
-    game_world.add_collision_group(server.player, server.stair, 'player:stair')
     game_world.add_collision_group(server.green, server.ground, 'green:ground')
     game_world.add_collision_group(server.red, server.ground, 'red:ground')
     game_world.add_collision_group(server.red, server.empty, 'red:empty')
+    game_world.add_collision_group(server.player, pipe, 'player:pipe')
+
+    # game_world.add_collision_group(server.player, server.stair, 'player:stair')
 
 
 def exit():

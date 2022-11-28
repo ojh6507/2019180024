@@ -11,6 +11,33 @@ JUMP_SPEED_KMPH = 10.0
 JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
 JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
 JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+class Pipe:
+    image = None
+    def get_name(self):
+        return 'pipe'
+    def edit_x(self, x):
+        self.x -= x
+    def __init__(self):
+        if Pipe.image == None:
+            Pipe.image = load_image('./block/pipe.png')
+        self.x = 7100
+        self.y = 80
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
+    def get_bb(self):
+        return self.x - 30 , self.y - 45, self.x + 30, self.y + 45
+
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 35, 40, 0, ' ', self.x, self.y, 55, 90)
+        draw_rectangle(*self.get_bb())
+
+        pass
+    def update(self):
+        pass
+
+    def handle_collision(self, other, group, p):
+        pass
 
 class stair_block:
     image = None
@@ -21,7 +48,7 @@ class stair_block:
         self.x -= x
     def __init__(self):
         if stair_block.image == None:
-            stair_block.image = load_image('block/block_3.png')
+            stair_block.image = load_image('./block/block_3.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -35,7 +62,7 @@ class stair_block:
         self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
         draw_rectangle(*self.get_bb())
     def get_bb(self):
-        return self.x - 15, self.y - 15, self.x + 15, self.y + 15
+        return self.x - 15 , self.y - 20, self.x + 15, self.y + 20
 
     def update(self):
         if self.x <= 800:
@@ -64,7 +91,7 @@ class item_block:
 
     def __init__(self):
         if item_block.image == None:
-            item_block.image = load_image('block/block_1.png')
+            item_block.image = load_image('./block/block_1.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -105,7 +132,7 @@ class item_block:
                 self.citem = False
 
             if not self.available:
-                self.image = load_image('block/unblock_1.png')
+                self.image = load_image('./block/unblock_1.png')
                 self.frame = 0
                 self.x_size = 30
                 self.y_size = 30
@@ -174,13 +201,13 @@ class COIN:
         self.Y_velocity = self.jump_height
         self.gen = gen
     def __init__(self):
-        self.image = load_image('block/coin.png')
+        self.image = load_image('./block/coin.png')
         self.frame = random.randint(0,3)
         self.x = 0
         self.y = 0
         self.jump_height = 0
         self.Y_velocity = self.jump_height
-        self.Y_gravity = 5
+        self.Y_gravity = 0.25
         self.gen = 'block'
     def draw(self):
         self.image.clip_draw(int(self.frame) * 25 ,0 ,25 ,25 ,self.x, self.y)
@@ -209,7 +236,7 @@ class Bricks:
         self.x -= x
 
     def __init__(self):
-        self.image = load_image('block/block_2.png')
+        self.image = load_image('./block/block_2.png')
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -236,7 +263,7 @@ class Bricks:
         if self.up and self.available:
             self.up_box()
         if not self.available and self.op == 'destroy':
-            self.image = load_image('block/block_2_crack.png')
+            self.image = load_image('./block/block_2_crack.png')
             self.clip = 4
             self.height = 40
             self.width = 40
@@ -246,7 +273,7 @@ class Bricks:
             self.y -= 10 * JUMP_SPEED_PPS * game_framework.frame_time
 
         elif not self.available and self.op == 'solid':
-            self.image = load_image('block/unblock_1.png')
+            self.image = load_image('./block/unblock_1.png')
             self.frame = 0
             self.y_size = 30
 
