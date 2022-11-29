@@ -44,7 +44,6 @@ class Empty_Tile:
     def update(self):
         pass
     def draw(self):
-        draw_rectangle(*self.get_bb())
         pass
 
     def handle_collision(self, other, group, pos):
@@ -64,7 +63,6 @@ class Floor_Tile(Empty_Tile):
         pass
     def draw(self):
         self.image.draw(self.x, self.y)
-        draw_rectangle(*self.get_bb())
     def handle_collision(self,other,group,pos):
         pass
 
