@@ -8,8 +8,8 @@ from block import block
 from monster import Goomba
 from monster import Koopa
 import server
-import title_state
-WIDTH, HEIGHT = 1000, 1000
+import stage_clear
+import gameOver
 
 def setPos():
 
@@ -55,48 +55,6 @@ def setPos():
     server.bricks[25].set_pos(6480, 150)
     server.bricks[26].set_pos(6510, 150)
 
-
-    # server.stair[0].set_pos(6730, 60)
-    # server.stair[1].set_pos(6760, 60)
-    # server.stair[2].set_pos(6790, 60)
-    # server.stair[3].set_pos(6820, 60)
-    # server.stair[4].set_pos(6850, 60)
-    # server.stair[5].set_pos(6880, 60)
-    # server.stair[6].set_pos(6910, 60)
-    # server.stair[7].set_pos(6940, 60)
-    #
-    # server.stair[8].set_pos(6760, 90)
-    # server.stair[9].set_pos(6790, 90)
-    # server.stair[10].set_pos(6820, 90)
-    # server.stair[11].set_pos(6850, 90)
-    # server.stair[12].set_pos(6880, 90)
-    # server.stair[13].set_pos(6910, 90)
-    # server.stair[14].set_pos(6940, 90)
-    #
-    # server.stair[15].set_pos(6790, 120)
-    # server.stair[16].set_pos(6820, 120)
-    # server.stair[17].set_pos(6850, 120)
-    # server.stair[18].set_pos(6880, 120)
-    # server.stair[19].set_pos(6910, 120)
-    # server.stair[20].set_pos(6940, 120)
-    #
-    # server.stair[21].set_pos(6820, 150)
-    # server.stair[22].set_pos(6850, 150)
-    # server.stair[23].set_pos(6880, 150)
-    # server.stair[24].set_pos(6910, 150)
-    # server.stair[25].set_pos(6940, 150)
-    #
-    # server.stair[26].set_pos(6850, 180)
-    # server.stair[27].set_pos(6880, 180)
-    # server.stair[28].set_pos(6910, 180)
-    # server.stair[29].set_pos(6940, 180)
-    #
-    # server.stair[30].set_pos(6880, 210)
-    # server.stair[31].set_pos(6910, 210)
-    # server.stair[32].set_pos(6940, 210)
-    #
-    # server.stair[33].set_pos(6910, 240)
-    # server.stair[34].set_pos(6940, 240)
 
     server.goomba[0].set_pos(1000, 200)
     server.goomba[1].set_pos(1500, 200)
@@ -210,6 +168,8 @@ def enter():
     set_world()
     server.player = character.mario()
     pipe = block.Pipe()
+    pipe.activate = True
+
     server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(40)]
@@ -261,11 +221,13 @@ def exit():
 def update():
     set()
     if server.player.y < 0:
-        game_framework.change_state(title_state)
+        server.min_health = -1
+        game_framework.change_state(gameOver)
         print('gameover')
     if server.player.y > 700:
-        game_framework.change_state(title_state)
-        print('clear')
+        server.min_health = 0
+        server.stage_info = 2
+        game_framework.change_state(stage_clear)
     for game_object in game_world.all_objects():
         game_object.update()
 
