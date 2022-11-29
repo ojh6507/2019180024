@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 import game_world
 import server
+
 from item import *
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -20,65 +21,94 @@ class Pipe:
     def __init__(self):
         if Pipe.image == None:
             Pipe.image = load_image('./block/pipe.png')
+        self.font = load_font('./block/SuperMario256.ttf', 14)
+        self.activate = False
+        self.type = 'goal'
         self.x = 7100
         self.y = 80
-    def set_pos(self,x,y):
+        self.tempy = self.y
+        self.x_size = 55
+        self.y_size = 90
+
+        self.bb_x = 30
+        self.bb_y = 45
+        self.num = 0
+
+    def setPos(self,x,y, num = 0, type = 'goal'):
         self.x = x
         self.y = y
+        self.tempy = y
+        self.type = type
+        self.num = num
+
+
     def get_bb(self):
-        return self.x - 30 , self.y - 45, self.x + 30, self.y + 45
+        return self.x - self.bb_x , self.y - self.bb_y, self.x + self.bb_x, self.y + self.bb_y
 
     def draw(self):
-        self.image.clip_composite_draw(0, 0, 35, 40, 0, ' ', self.x, self.y, 55, 90)
-        draw_rectangle(*self.get_bb())
+        if self.type == 'stage':
+            self.font.draw(self.x - self.bb_x , self.y + self.bb_y + 20, 'Stage %d' %self.num, (255, 255, 255))
+
+        self.image.clip_composite_draw(0, 0, 35, 40, 0, ' ', self.x, self.y, self.x_size,self.y_size)
 
         pass
     def update(self):
+        if self.activate:
+            self.image = load_image('./block/pipe.png')
+            self.x_size = 55
+            self.y_size = 90
+            self.y = self.tempy
+        else:
+            self.image = load_image('./block/broken_pipe.png')
+            self.x_size = 45
+            self.y_size = 50
+            self.y = self.tempy - 15
+        self.bb_x = self.x_size // 2
+        self.bb_y = self.y_size // 2
         pass
 
     def handle_collision(self, other, group, p):
         pass
 
-class stair_block:
-    image = None
-    def get_name(self):
-        return 'stair_block'
-
-    def edit_x(self, x):
-        self.x -= x
-    def __init__(self):
-        if stair_block.image == None:
-            stair_block.image = load_image('./block/block_3.png')
-        self.frame = 0
-        self.x = 0
-        self.y = 0
-        self.x_size = 30
-        self.y_size = 40
-
-    def returnY(self):
-        return self.y
-    def draw(self):
-        # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
-        self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
-        draw_rectangle(*self.get_bb())
-    def get_bb(self):
-        return self.x - 15 , self.y - 20, self.x + 15, self.y + 20
-
-    def update(self):
-        if self.x <= 800:
-            self.frame = 0
-            self.x_size = 30
-            self.y_size = 30
-    def handle_collision(self, other, group, p):
-        if group == 'player:stair_block':
-           pass
-
-    def set_pos(self, x, y):
-        self.x = x
-        self.y = y - 5
-
-
-
+# class stair_block:
+#     image = None
+#     def get_name(self):
+#         return 'stair_block'
+#
+#     def edit_x(self, x):
+#         self.x -= x
+#     def __init__(self):
+#         if stair_block.image == None:
+#             stair_block.image = load_image('./block/block_3.png')
+#         self.frame = 0
+#         self.x = 0
+#         self.y = 0
+#         self.x_size = 32
+#         self.y_size = 42
+#
+#     def returnY(self):
+#         return self.y
+#     def draw(self):
+#         # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
+#         self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
+#     def get_bb(self):
+#         return self.x - 15 , self.y - 20, self.x + 15, self.y + 20
+#
+#     def update(self):
+#         if self.x <= 800:
+#             self.frame = 0
+#             self.x_size = 30
+#             self.y_size = 30
+#     def handle_collision(self, other, group, p):
+#         if group == 'player:stair_block':
+#            pass
+#
+#     def set_pos(self, x, y):
+#         self.x = x
+#         self.y = y - 5
+#
+#
+#
 
 
 class item_block:
@@ -102,12 +132,11 @@ class item_block:
         self.Y_velocity = 0
         self.jump_height = 0
         self.type =' '
-        self.x_size = 30
+        self.x_size = 33
         self.y_size = 40
     def draw(self):
         # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
         self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
-        draw_rectangle(*self.get_bb())
     def up_box(self):
         self.y += self.Y_velocity * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
@@ -171,6 +200,7 @@ class item_block:
                 coin = COIN()
                 coin.set_pos(self.x,self.y,'block')
                 game_world.add_object(coin,1)
+                server.coin_count += 1
 
     def handle_collision(self, other, group, p):
         if group == 'player:item_block':
@@ -205,13 +235,12 @@ class COIN:
         self.frame = random.randint(0,3)
         self.x = 0
         self.y = 0
-        self.jump_height = 0
+        self.jump_height = 5
         self.Y_velocity = self.jump_height
-        self.Y_gravity = 0.25
+        self.Y_gravity = 5
         self.gen = 'block'
     def draw(self):
         self.image.clip_draw(int(self.frame) * 25 ,0 ,25 ,25 ,self.x, self.y)
-        draw_rectangle(*self.get_bb())
 
 
     def update(self):
@@ -243,7 +272,7 @@ class Bricks:
         self.available = True
         self.up = False
         self.y_size = 40
-        self.x_size = 30
+        self.x_size = 33
 
         self.jump_height = 0
         self.Y_velocity = self.jump_height
@@ -257,7 +286,6 @@ class Bricks:
     def draw(self):
         self.image.clip_composite_draw(int(self.frame) * self.width, 0,self.width, self.height, 0, ' ', self.x, self.y, self.x_size,
                                        self.y_size)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
         if self.up and self.available:
