@@ -308,7 +308,7 @@ class Clear_movement:
         self.clip = 9
         self.height = 37
         self.perframe = 33
-        self.y += JUMP_SPEED_PPS * game_framework.frame_time * 2
+        self.y += 5 * JUMP_SPEED_PPS * game_framework.frame_time * 2
         self.frame = (self.frame + self.ACTION_PER_TIME * self.clip * game_framework.frame_time) % self.clip
 
     def draw(self):
@@ -436,6 +436,9 @@ class mario:
                 self.Run = True
             elif event == DD:
               self.godown = True
+            elif event == DU:
+                self.godown = False
+
 
             if event == SHIFTU:
                 self.Run = False
@@ -461,6 +464,7 @@ class mario:
             self.jump = True
             self.Run = False
             self.cur_state = DIE
+
         if self.clear:
             self.cur_state = Clear_movement
             self.jump = True
@@ -503,7 +507,7 @@ class mario:
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 20, self.x + 10, self.y + 10
         elif self.mario_size == 'Normal':
-            return self.x - 15, self.y - 20, self.x + 15, self.y + 10
+            return self.x - 12, self.y - 20, self.x + 12, self.y + 10
 
     def get_pos(self):
         return self.x,self.y
@@ -512,27 +516,8 @@ class mario:
 
     def handle_collision(self, other, group, pos):
         if not self.die:
-
-            # if group =='player:stair':
-            #     if pos == 'bottom':
-            #         self.Onground = True
-            #         self.jump = False
-            #         self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
-            #         self.Y_velocity = 0
-            #         self.pre_velocity = 0
-            #         print('bottom')
-            #
-            #     if pos == 'right':
-            #         self.x_dir = 0
-            #         self.x -= 15
-            #         print('collide')
-            #
-            #     if pos == 'left':
-            #         self.x_dir = 0
-            #         self.x += 15
-
             if group == 'player:coin':
-                    pass
+                server.coin_count += 1
             elif group == 'player:item_block':
                 if pos == 'bottom':
                     self.Onground = True
@@ -652,9 +637,9 @@ class mario:
                         self.Y_velocity = 0
                         self.pre_velocity = 0
                     else:
-                        if self.y < 80:
+                        if self.y <= 130:
                             self.clear = True
-                        print(self.y)
+
                 if pos == 'left':
                     self.x_dir = 0
                     self.x += 10
@@ -668,6 +653,88 @@ class mario:
                     self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                     self.Y_velocity = 0
                     self.pre_velocity = 0
+
+            elif group == 'player:stage1':
+                if pos == 'bottom':
+                    self.jump = False
+                    if not self.godown or not other.activate:
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
+                    else:
+                        if self.y <= 130:
+                         server.curr_stage = 1
+
+
+                if pos == 'left':
+                    self.x_dir = 0
+                    self.x += 10
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
+                if pos == 'right':
+                    self.x_dir = 0
+                    self.x -= 10
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
+            elif group == 'player:stage2':
+                if pos == 'bottom':
+                    self.jump = False
+                    if not self.godown or not other.activate:
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
+                    else:
+                        if self.y <= 130:
+                            server.curr_stage = 2
+
+
+                if pos == 'left':
+                    self.x_dir = 0
+                    self.x += 10
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
+                if pos == 'right':
+                    self.x_dir = 0
+                    self.x -= 10
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+
+            elif group == 'player:stage3':
+                    if pos == 'bottom':
+                        self.jump = False
+                        if not self.godown or not other.activate:
+                            self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                            self.Y_velocity = 0
+                            self.pre_velocity = 0
+                        else:
+                            if self.y <= 130:
+                                server.curr_stage = 3
+
+                    if pos == 'left':
+                        self.x_dir = 0
+                        self.x += 10
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
+
+                    if pos == 'right':
+                        self.x_dir = 0
+                        self.x -= 10
+                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+                        self.Y_velocity = 0
+                        self.pre_velocity = 0
+
+
+
+
+
 
 
 
@@ -688,6 +755,45 @@ class mario:
                 elif pos == 'top' and not self.invincibility:
                     self.check_state()
                     self.invincibility = True
+class Coin_count:
+    image = None
+    def __init__(self):
+        if Coin_count.image ==None:
+            Coin_count.image = load_image('./block/coin.png')
+            Coin_count.font = load_font('./block/SuperMario256.ttf')
+        self.x = 50
+        self.y = 540
 
+    def edit_x(self,x):
+        pass
+    def get_name(self):
+        return 'txt'
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 25, 25, 0, '', self.x, self.y, 25, 25)
+        self.font.draw(self.x + 20 , self.y, 'x %d' % server.coin_count, (255, 255, 255))
+
+        pass
+    def update(self):
+        pass
+
+class Health_count:
+    image = None
+    def __init__(self):
+        if Health_count.image == None:
+            Health_count.image = load_image('./player/mario_face.png')
+        self.x = 50
+        self.y = 570
+        self.font = load_font('./block/SuperMario256.ttf')
+        self.reflect = ' '
+    def edit_x(self,x):
+        pass
+    def get_name(self):
+        return 'txt'
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 30, 31, 0, '', self.x, self.y, 30, 30)
+        count_str = str(server.health)
+        self.font.draw(self.x + 20 , self.y,'x ' + count_str.zfill(2), (255, 255, 255))
+    def update(self):
+        pass
 
 
