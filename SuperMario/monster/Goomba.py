@@ -132,7 +132,7 @@ class GOOMBA:
 
 
     def get_bb(self):
-        return self.x - 10, self.y - 16, self.x + 10, self.y + 25
+        return self.x - 15, self.y - 16, self.x + 15, self.y + 25
         # return self.x - 10, self.y - 23, self.x + 10, self.y + 16
 
 
@@ -153,9 +153,14 @@ class GOOMBA:
 
             if pos == 'right':
                 self.x_dir = -1
+                self.reflect = ' '
+                self.y+=10
 
             if pos == 'left':
                 self.x_dir = 1
+                self.reflect = 'h'
+                self.y += 10
+
 
         elif group == 'goomba:itemBox':
             if pos == 'bottom':
@@ -164,13 +169,14 @@ class GOOMBA:
                 self.y_velocity = 0
                 self.pre_velocity = 0
 
+
             if pos == 'right':
-                self.dir = -1
-                self.x -= 10
+                self.x_dir = -1
+                self.reflect = ' '
 
             if pos == 'left':
-                self.dir = 1
-                self.x += 10
+                self.x_dir = 1
+                self.reflect = 'h'
 
         elif group == 'goomba:bricks':
             if pos == 'bottom':
@@ -180,12 +186,12 @@ class GOOMBA:
                 self.pre_velocity = 0
 
             if pos == 'right':
-                self.dir = -1
-                self.x -= 10
+                self.x_dir = -1
+                self.reflect = ' '
 
             if pos == 'left':
-                self.dir = 1
-                self.x += 10
+                self.x_dir = 1
+                self.reflect = 'h'
 
         elif group == 'player:goomba':
             if pos =='bottom':

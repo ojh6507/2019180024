@@ -54,7 +54,6 @@ class RedKoopa:
         self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
         self.y = 70
-        self.Y_gravity = 5
 
         self.x_dir = -1
         self.action = 1
