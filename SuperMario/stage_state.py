@@ -8,7 +8,7 @@ import server
 from block import block
 import play_state
 import stage2_play_state
-
+import stage3_play_state
 music = None
 
 def collide(a,b):
@@ -56,7 +56,7 @@ def set_world():
 def enter():
     global music
     set_world()
-    server.health += server.min_health
+    # server.health += server.min_health
     server.min_health = 0
     server.curr_stage = 0
     server.pipes = [block.Pipe() for i in range(3)]
@@ -64,7 +64,7 @@ def enter():
     server.player = character.mario()
 
     cc = character.Coin_count()
-    mh = character.Health_count()
+    # mh = character.Health_count()
 
     if server.stage_info <= 3:
         server.pipes[0].activate = True
@@ -76,7 +76,7 @@ def enter():
     game_world.add_object(server.world, 0)
     game_world.add_object(server.player, 1)
     game_world.add_object(cc, 1)
-    game_world.add_object(mh, 1)
+    # game_world.add_object(mh, 1)
 
     game_world.add_objects(server.ground, 1)
     game_world.add_objects(server.pipes, 1)
@@ -99,6 +99,8 @@ def update():
         game_framework.change_state(play_state)
     if server.curr_stage == 2:
         game_framework.change_state(stage2_play_state)
+    if server.curr_stage == 3:
+        game_framework.change_state(stage3_play_state)
 
     for game_object in game_world.all_objects():
         game_object.update()
