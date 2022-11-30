@@ -13,19 +13,20 @@ import gameOver
 
 def setPos():
 
-    server.itemBox[0].set_pos(900,150)
-    server.itemBox[1].set_pos(900, 300)
-    server.itemBox[2].set_pos(700, 150,'item')
+    server.itemBox[0].set_pos(790,150)
+    server.itemBox[1].set_pos(730, 150,'item')
+    server.itemBox[2].set_pos(1100, 150,'coin')
+
     server.itemBox[3].set_pos(2800, 200,'item')
     server.itemBox[4].set_pos(3230, 300,'coin')
     server.itemBox[5].set_pos(10, 10)
-    server.itemBox[6].set_pos(10, 10)
-    server.itemBox[7].set_pos(10, 10)
+    server.itemBox[6].set_pos(4830, 150)
+    server.itemBox[7].set_pos(4800, 150)
     server.itemBox[8].set_pos(5800, 200,'item')
     server.itemBox[9].set_pos(6450, 150)
 
     server.bricks[0].set_pos(930, 150)
-    server.bricks[1].set_pos(870, 150)
+    server.bricks[1].set_pos(700, 150)
     server.bricks[2].set_pos(2200, 300)
     server.bricks[3].set_pos(2230, 300)
     server.bricks[4].set_pos(2260, 300)
@@ -48,8 +49,8 @@ def setPos():
     server.bricks[19].set_pos(5860, 200)
 
     server.bricks[20].set_pos(6090, 200,'solid')
-    server.bricks[21].set_pos(6120, 200)
-    server.bricks[22].set_pos(6150, 200)
+    server.bricks[21].set_pos(6120, 200,'solid')
+    server.bricks[22].set_pos(6150, 200,'solid')
     server.bricks[23].set_pos(6180, 200)
     server.bricks[24].set_pos(6420, 150)
     server.bricks[25].set_pos(6480, 150)
@@ -94,10 +95,10 @@ def setPos():
     server.coin[18].set_pos(6190, 60)
     server.coin[19].set_pos(6220, 60)
 
-    server.green[0].set_pos(2500, 150)
-    server.green[1].set_pos(3000, 110)
+    server.green[0].set_pos(2500, 200)
+    server.green[1].set_pos(3000, 200)
     server.green[2].set_pos(4000, 400)
-    server.green[3].set_pos(6300, 110)
+    server.green[3].set_pos(6300, 200)
 
 music = None
 
@@ -111,16 +112,15 @@ def collide(a,b):
     if ta < bb: return False
     if ba > tb: return False
 
-    if ra >= lb and la <= lb:
+    if a.y > tb:
+        str = 'bottom'
+    elif abs(a.x - b.x) < 5 and a.y < b.y:
+        str = 'top'
+    elif abs(a.y - b.y) < 70 and a.x < b.x:
         str = 'right'
-
-    if rb >= la and rb <= ra:
+    elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
 
-    if ((ra - lb >= 1 and lb - la <= 50) or (rb - la >= 1 and ra - rb <= 50) or (ra <= rb and lb <= la)) and (tb - ba <= 50 and ta > tb):
-        str = 'bottom'
-    if ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
-        str = 'top'
     return True, str
 
 
@@ -202,11 +202,22 @@ def enter():
     game_world.add_collision_group(server.player, server.green, 'player:green')
     game_world.add_collision_group(server.goomba, server.ground, 'goomba:ground')
     game_world.add_collision_group(server.goomba, server.itemBox, 'goomba:itemBox')
+
+
+
     game_world.add_collision_group(server.goomba, server.bricks, 'goomba:bricks')
     game_world.add_collision_group(server.green, server.ground, 'green:ground')
     game_world.add_collision_group(server.red, server.ground, 'red:ground')
     game_world.add_collision_group(server.red, server.empty, 'red:empty')
     game_world.add_collision_group(server.player, pipe, 'player:pipe')
+
+    game_world.add_collision_group(None, server.ground, 'fire:ground')
+    game_world.add_collision_group(None, server.goomba, 'fire:goomba')
+    game_world.add_collision_group(None, server.red, 'fire:red')
+    game_world.add_collision_group(None, server.green, 'fire:green')
+    game_world.add_collision_group(None, server.itemBox, 'fire:itembox')
+    game_world.add_collision_group(None, server.bricks, 'fire:bricks')
+    game_world.add_collision_group(None, server.pipes, 'fire:pipes')
 
     # game_world.add_collision_group(server.player, server.stair, 'player:stair')
 
