@@ -9,6 +9,10 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
+JUMP_SPEED_KMPH = 10.0
+JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
 
 
 class Ball:
@@ -25,13 +29,12 @@ class Ball:
             Ball.image = load_image('./player/fire_ball.png')
         self.x, self.y, self.dir = x, y, dir
 
-        self.height = 5
-        self.Y_velocity = 5
-        self.Y_gravity = 1
+        self.height = 3
+        self.Y_velocity = 2
+        self.Y_gravity = 0.25
         self.frame = 0
         self.count = 0
         self.ground = False
-        self.temp_y = y - 5
     def destroy(self):
         try:
             game_world.remove_object(self)
@@ -40,7 +43,7 @@ class Ball:
     def update(self):
         self.frame = (self.frame + 1) % 4
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
-        self.y += self.Y_velocity
+        self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
 
         if self.ground: #타일과 충돌로 변경 예쩡
@@ -66,6 +69,9 @@ class Ball:
                 self.ground = True
             if pos == 'right' or pos == 'left':
                 self.destroy()
+        if group =='fire:itembox' or group == 'fire:bricks' or group =='fire:pipes':
+            self.destroy()
+
 
 
 
