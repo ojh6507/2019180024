@@ -418,8 +418,10 @@ class mario:
     def update(self):
         self.ACTION_PER_TIME = 1.0 / self.TIME_PER_ACTION
         self.cur_state.do(self)
+
         self.delay += game_framework.frame_time
         self.delay_draw += 1
+
         if self.y < 0:
             self.event_que.clear()
 
@@ -458,7 +460,9 @@ class mario:
             self.timer -= game_framework.frame_time
             if self.timer <= 0:
                 self.invincibility = False
+                self.delay = 1.1
                 self.timer = 1.0
+
         if self.die:
             self.delay = 1.1
             self.jump = True
@@ -484,10 +488,14 @@ class mario:
     def Fire_Ball(self):
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir * self.velocity)
-            game_world.add_collision_group(ball, server.ground, 'fire:ground')
-            game_world.add_collision_group(ball, server.goomba,'fire:goomba')
-            game_world.add_collision_group(ball, server.red, 'fire:red')
-            game_world.add_collision_group(ball, server.green, 'fire:green')
+            game_world.add_collision_group(ball, None, 'fire:ground')
+            game_world.add_collision_group(ball, None,'fire:goomba')
+            game_world.add_collision_group(ball, None, 'fire:red')
+            game_world.add_collision_group(ball, None, 'fire:green')
+            game_world.add_collision_group(ball, None, 'fire:bowser')
+            game_world.add_collision_group(ball, None, 'fire:itembox')
+            game_world.add_collision_group(ball, None, 'fire:bricks')
+            game_world.add_collision_group(ball, None, 'fire:pipes')
             game_world.add_object(ball, 1)
     def check_state(self):
         self.delay = -1
@@ -691,7 +699,6 @@ class mario:
                         if self.y <= 130:
                             server.curr_stage = 2
 
-
                 if pos == 'left':
                     self.x_dir = 0
                     self.x += 10
@@ -732,12 +739,6 @@ class mario:
                         self.pre_velocity = 0
 
 
-
-
-
-
-
-
             elif group == 'player:goomba':
                 if pos == 'bottom':
                     self.jump = True
@@ -755,11 +756,33 @@ class mario:
                 elif pos == 'top' and not self.invincibility:
                     self.check_state()
                     self.invincibility = True
+
+            elif group == 'player:bowser' and other.hp > 0:
+                if pos == 'bottom' and not other.defense:
+                    self.jump = True
+                    self.Onground = False
+                    self.Y_velocity = self.jump_height
+
+                elif (pos == 'right' or other.defense) and not self.invincibility:
+                    self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+                    self.check_state()
+                    self.invincibility = True
+                elif (pos == 'left' or other.defense) and not self.invincibility:
+                    self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
+                    self.check_state()
+                    self.invincibility = True
+                elif (pos == 'top' or other.defense) and not self.invincibility:
+                    self.check_state()
+                    self.invincibility = True
+
+
 class Coin_count:
     image = None
+    font = None
     def __init__(self):
         if Coin_count.image ==None:
             Coin_count.image = load_image('./block/coin.png')
+        if Coin_count.font == None:
             Coin_count.font = load_font('./block/SuperMario256.ttf')
         self.x = 50
         self.y = 540
@@ -770,7 +793,7 @@ class Coin_count:
         return 'txt'
     def draw(self):
         self.image.clip_composite_draw(0, 0, 25, 25, 0, '', self.x, self.y, 25, 25)
-        self.font.draw(self.x + 20 , self.y, 'x %d' % server.coin_count, (255, 255, 255))
+        Coin_count.font.draw(self.x + 20 , self.y, 'x %d' % server.coin_count, (255, 255, 255))
 
         pass
     def update(self):
