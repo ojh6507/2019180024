@@ -3,7 +3,7 @@ import game_framework
 from pico2d import *
 import game_framework
 import stage_state
-import logo_state
+import main_menu
 
 running = True
 image = None
@@ -31,9 +31,9 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_a):
             game_framework.change_state(stage_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_b) :
-            game_framework.change_state(logo_state)
+            game_framework.change_state(main_menu)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_KP_A):
             game_framework.change_state(stage_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_KP_B):
-            game_framework.change_state(logo_state)
+            game_framework.change_state(main_menu)
 
