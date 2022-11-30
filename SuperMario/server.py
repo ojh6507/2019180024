@@ -13,6 +13,7 @@ empty = []
 underground = None
 stair = []
 pipes = []
+bowser = None
 stage_info = 1
 curr_stage = 0
 coin_count = 0
