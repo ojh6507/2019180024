@@ -14,6 +14,7 @@ JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
 JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
 class Pipe:
     image = None
+    font = None
     def get_name(self):
         return 'pipe'
     def edit_x(self, x):
@@ -21,7 +22,8 @@ class Pipe:
     def __init__(self):
         if Pipe.image == None:
             Pipe.image = load_image('./block/pipe.png')
-        self.font = load_font('./block/SuperMario256.ttf', 14)
+        if Pipe.font == None:
+            Pipe.font = load_font('./block/SuperMario256.ttf', 14)
         self.activate = False
         self.type = 'goal'
         self.x = 7100
@@ -254,7 +256,7 @@ class COIN:
 
     def handle_collision(self, other, group, pos):
         # print('ball disappear')
-        if group == 'player:coin':
+        if group == 'player:coin' and not server.player.die:
             game_world.remove_object(self)
 
 class Bricks:
@@ -337,7 +339,7 @@ class Bricks:
         return self.x - 15, self.y - 15, self.x + 15, self.y + 15
     def handle_collision(self, other, group, pos):
         # print('ball disappear')
-        if group == 'player:bricks' and self.available:
+        if group == 'player:bricks' and self.available and not server.player.die:
            if pos =='top':
              self.up = True
              self.frame = 0
