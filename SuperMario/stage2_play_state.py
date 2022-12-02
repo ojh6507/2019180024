@@ -13,9 +13,9 @@ import gameOver
 
 def setPos():
 
-    server.itemBox[0].set_pos(790,150)
-    server.itemBox[1].set_pos(730, 150,'item')
-    server.itemBox[2].set_pos(1100, 150,'coin')
+    server.itemBox[0].set_pos(1700,150)
+    server.itemBox[1].set_pos(1760, 150,'item')
+    server.itemBox[2].set_pos(2100, 150,'coin')
 
     server.itemBox[3].set_pos(2800, 200,'item')
     server.itemBox[4].set_pos(3230, 300,'coin')
@@ -25,8 +25,8 @@ def setPos():
     server.itemBox[8].set_pos(5800, 200,'item')
     server.itemBox[9].set_pos(6450, 150)
 
-    server.bricks[0].set_pos(930, 150)
-    server.bricks[1].set_pos(700, 150)
+    server.bricks[0].set_pos(1730, 150)
+    server.bricks[1].set_pos(1790, 150)
     server.bricks[2].set_pos(2200, 300)
     server.bricks[3].set_pos(2230, 300)
     server.bricks[4].set_pos(2260, 300)
@@ -224,6 +224,7 @@ def enter():
 
 def exit():
     game_world.clear()
+    server.world = None
     server.ground.clear()
     server.empty.clear()
     server.goomba.clear()
