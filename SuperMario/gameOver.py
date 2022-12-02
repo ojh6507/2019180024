@@ -7,11 +7,15 @@ import main_menu
 
 running = True
 image = None
+music = None
 logo_time = 0.0
 
 def enter():
-    global image
+    global image, music
     image = load_image('./background/gameover.png')
+    music = load_wav('./music/Death.wav')
+    music.set_volume(40)
+    music.play()
 
 def exit():
     global image
