@@ -113,7 +113,7 @@ class GOOMBA:
 
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
+
     def set_pos(self,x,y):
         self.x = x
         self.y = y
@@ -200,7 +200,7 @@ class GOOMBA:
                 self.reflect = 'h'
 
         elif group == 'player:goomba':
-            if pos =='bottom':
+            if pos =='bottom' and not other.die:
                 self.stomp_sound.play()
                 self.die = True
 

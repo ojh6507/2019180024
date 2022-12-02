@@ -42,6 +42,7 @@ class WALK:
 class RedKoopa:
     image = None
     stomp_sound = None
+
     def get_name(self):
         return 'monster'
     def edit_x(self, x):
@@ -52,6 +53,8 @@ class RedKoopa:
             RedKoopa.image = load_image('monster/red_koopa.png')
         if RedKoopa.stomp_sound == None:
             RedKoopa.stomp_sound = load_wav('./music/EnemyStomp.wav')
+            RedKoopa.stomp_sound.set_volume(40)
+
         self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
         self.y = 70
@@ -73,7 +76,7 @@ class RedKoopa:
         self.y = y
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
+
 
     def update(self):
 
@@ -128,6 +131,7 @@ class RedKoopa:
 
         if group == 'player:red':
             if pos == 'bottom':
+                RedKoopa.stomp_sound.play()
                 try:
                     game_world.remove_object(self)
                 except:
@@ -180,7 +184,7 @@ class RedKoopa:
 
 class GreenKoopa:
     image = None
-
+    stomp_sound = None
     def get_name(self):
         return 'monster'
 
@@ -189,7 +193,11 @@ class GreenKoopa:
 
     def __init__(self):
         if GreenKoopa.image == None:
-            GreenKoopa.image = load_image('monster/green_koopa.png')
+            GreenKoopa.image = load_image('./monster/green_koopa.png')
+        if GreenKoopa.stomp_sound == None:
+            GreenKoopa.stomp_sound = load_wav('./music/EnemyStomp.wav')
+            GreenKoopa.stomp_sound.set_volume(40)
+
         self.frame = random.randint(0, 15)
         self.x = random.randint(400, 3000)
         self.y = 70
@@ -210,7 +218,7 @@ class GreenKoopa:
 
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
+
 
     def set_pos(self, x, y):
         self.x = x
@@ -246,6 +254,7 @@ class GreenKoopa:
 
         if group == 'player:green':
             if pos == 'bottom':
+                GreenKoopa.stomp_sound.play()
                 try:
                     game_world.remove_object(self)
                 except:
