@@ -5,16 +5,18 @@ import block.block
 import game_framework
 from fire import Ball
 import game_world
+import stage_clear
 from block import block
 
 
-RD, LD, RU, LU, SPACE, ATTACK, SHIFTD, SHIFTU, SPACE, DD, DU = range(11)
+RD, LD, RU, LU, SPACE, ATTACK, SHIFTD, SHIFTU, SPACE, DD, DU, UD = range(12)
 event_name = ['RD', 'LD', 'RU', 'LU', 'JUMP', 'ATTACK']
 key_event_table = {
 (SDL_KEYDOWN, SDLK_SPACE): SPACE,
 (SDL_KEYDOWN, SDLK_LSHIFT): SHIFTD,
 (SDL_KEYDOWN, SDLK_RIGHT): RD,
 (SDL_KEYDOWN, SDLK_DOWN): DD,
+(SDL_KEYDOWN, SDLK_UP): UD,
 (SDL_KEYDOWN, SDLK_LEFT): LD,
 (SDL_KEYDOWN, SDLK_z): ATTACK,
 (SDL_KEYUP, SDLK_RIGHT): RU,
@@ -349,11 +351,11 @@ class DIE:
                                        self.reflect, self.x, self.y, 50, 50)
 
 next_state = {
-    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE, SPACE: IDLE, DD:IDLE, DU:IDLE},
-    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK, DD:WALK, DU:WALK},
-    DIE: {RU: DIE, LU: DIE, RD: DIE, LD: DIE, ATTACK: DIE, SHIFTD: DIE, SHIFTU: DIE, SPACE: DIE, DD:DIE, DU:DIE},
+    IDLE: {RU: WALK, LU: WALK, RD: WALK, LD: WALK, ATTACK: IDLE, SHIFTD: IDLE, SHIFTU: IDLE, SPACE: IDLE, DD:IDLE, DU:IDLE, UD:IDLE},
+    WALK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: WALK, SHIFTD: WALK, SHIFTU: WALK, SPACE: WALK, DD:WALK, DU:WALK, UD:WALK},
+    DIE: {RU: DIE, LU: DIE, RD: DIE, LD: DIE, ATTACK: DIE, SHIFTD: DIE, SHIFTU: DIE, SPACE: DIE, DD:DIE, DU:DIE, UD:DIE},
     Clear_movement: {RU: Clear_movement, LU: Clear_movement, RD: Clear_movement, LD: Clear_movement, ATTACK: Clear_movement, SHIFTD: Clear_movement,
-                     SHIFTU: Clear_movement, SPACE: Clear_movement, DD:Clear_movement, DU:Clear_movement}
+                     SHIFTU: Clear_movement, SPACE: Clear_movement, DD:Clear_movement, DU:Clear_movement, UD:Clear_movement}
 
 
 }
@@ -367,6 +369,18 @@ class mario:
         self.ACTION_PER_TIME = 1
         self.pre_velocity = 0
         self.image = load_image('./player/smario_idle.png')
+
+        self.pipe = load_wav('./music/Pipe.wav')
+        self.pipe.set_volume(30)
+        self.BlastOff = load_wav('./music/CannonBlast.wav')
+
+        self.powerUp = load_wav('./music/PowerUp.wav')
+        self.powerDown = load_wav('./music/PowerDown.wav')
+
+        self.powerUp.set_volume(35)
+        self.powerDown.set_volume(35)
+
+        self.BlastOff.set_volume(10)
         self.mario_size = 'Small'
         self.frame = 0
         self.die = False
@@ -393,7 +407,7 @@ class mario:
         self.jump_music =load_wav('./music/Jump.wav')
         self.clear_voice = load_wav('./music/Yahoo.wav')
         self.jump_music.set_volume(30)
-        self.clear_voice.set_volume(5)
+        self.clear_voice.set_volume(25)
 
         self.mass = 10
         self.jump_height = 10
@@ -411,7 +425,8 @@ class mario:
         self.invincibility = False
         self.clear = False
         self.godown = False
-
+        self.door_open = False
+        self.tempx = 0
 
     def jump_func(self): # 점프
 
@@ -443,8 +458,8 @@ class mario:
                 self.Run = True
             elif event == DD:
               self.godown = True
-            elif event == DU:
-                self.godown = False
+            elif event == UD:
+                self.door_open = True
 
 
             if event == SHIFTU:
@@ -458,7 +473,8 @@ class mario:
                 print('Error: ', self.cur_state.__name__,' ', event_name[event])
             self.cur_state.enter(self, event)
         self.x = clamp(0,self.x,800)
-
+        if self.tempx != 0:
+            self.x = self.tempx
         self.jump_func()
 
         if self.invincibility:
@@ -483,7 +499,7 @@ class mario:
 
     def draw(self):
         self.cur_state.draw(self)
-        draw_rectangle(*self.get_bb())
+
 
     def add_event(self,event):
         self.event_que.insert(0, event)
@@ -495,13 +511,13 @@ class mario:
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir * self.velocity)
             game_world.add_object(ball, 1)
-            game_world.add_collision_group(None, ball, 'fire:ground')
+            game_world.add_collision_group(ball, None, 'fire:ground')
             game_world.add_collision_group(None, ball,'fire:goomba')
             game_world.add_collision_group(None, ball, 'fire:red')
             game_world.add_collision_group(None, ball, 'fire:green')
             game_world.add_collision_group(None, ball, 'fire:itembox')
             game_world.add_collision_group(None, ball, 'fire:bricks')
-            game_world.add_collision_group(None, ball, 'fire:pipes')
+            game_world.add_collision_group(None, ball, 'fire:pipe')
             game_world.add_collision_group(ball, None, 'fire:bowser')
 
     def check_state(self):
@@ -512,6 +528,7 @@ class mario:
                 self.Y_velocity = self.jump_height
 
             elif self.mario_size == 'Normal':
+                self.powerDown.play()
                 if self.flower == True:
                     self.flower = False
                 else:
@@ -579,11 +596,14 @@ class mario:
                         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
             elif group == 'player:mushroom':
+                self.powerUp.play()
+
                 self.mario_size = 'Normal'
                 self.jump_height = 13
 
 
             elif group == 'player:flower':
+                self.powerUp.play()
                 self.mario_size = 'Normal'
                 self.flower = True
                 self.jump_height = 13
@@ -654,36 +674,41 @@ class mario:
                         self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                         self.Y_velocity = 0
                         self.pre_velocity = 0
-                    else:
-                        if self.y <= 130:
-                            self.clear = True
 
-                if pos == 'left':
+                if (pos == 'top' or pos == ' ') and self.godown:
+                    self.BlastOff.play()
+                    if abs(self.y - other.y) <= 35 and self.godown:
+                        self.x = other.x
+                        self.clear = True
+
+                if pos == 'left' and not self.godown:
                     self.x_dir = 0
-                    self.x += 10
+                    self.x += 1
                     self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                     self.Y_velocity = 0
                     self.pre_velocity = 0
-
-                if pos == 'right':
+                if pos == 'right' and not self.godown:
                     self.x_dir = 0
                     self.x -= 10
                     self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                     self.Y_velocity = 0
                     self.pre_velocity = 0
 
+
             elif group == 'player:stage1':
+
                 if pos == 'bottom':
                     self.jump = False
                     if not self.godown or not other.activate:
                         self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                         self.Y_velocity = 0
                         self.pre_velocity = 0
-                    else:
-                        if self.y <= 130:
-                         server.curr_stage = 1
-
-
+                if pos == ' ' and self.godown:
+                    self.pipe.play()
+                    if abs(self.y - other.y) <= 30 and self.godown and other.activate:
+                        self.x = other.x
+                        self.godown = False
+                        server.curr_stage = 1
                 if pos == 'left':
                     self.x_dir = 0
                     self.x += 10
@@ -705,9 +730,13 @@ class mario:
                         self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                         self.Y_velocity = 0
                         self.pre_velocity = 0
-                    else:
-                        if self.y <= 130:
-                            server.curr_stage = 2
+
+                if pos == ' ' and self.godown:
+                    self.pipe.play()
+                    if abs(self.y - other.y) <= 30 and self.godown and other.activate:
+                        self.x = other.x
+                        self.godown = False
+                        server.curr_stage = 2
 
                 if pos == 'left':
                     self.x_dir = 0
@@ -723,6 +752,19 @@ class mario:
                     self.Y_velocity = 0
                     self.pre_velocity = 0
 
+            elif group == 'player:door':
+                if other.activate and self.door_open:
+                    if abs(self.x - other.x) < 3 and abs(self.y - other.y) <= 11:
+                        self.door_open = False
+                        server.curr_stage = 4
+
+            elif group == 'player:Bossdoor':
+                if other.activate and self.door_open:
+                    if abs(self.x - other.x) < 30 and abs(self.y - other.y) <= 30:
+                        self.tempx= other.x
+                        self.door_open = False
+                        other.working = True
+
             elif group == 'player:stage3':
                     if pos == 'bottom':
                         self.jump = False
@@ -730,8 +772,11 @@ class mario:
                             self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                             self.Y_velocity = 0
                             self.pre_velocity = 0
-                        else:
-                            if self.y <= 130:
+                    if pos == ' ' and self.godown:
+                        self.pipe.play()
+                        if abs(self.y - other.y) <= 30 and self.godown and other.activate:
+                                self.x = other.x
+                                self.godown = False
                                 server.curr_stage = 3
 
                     if pos == 'left':
@@ -769,7 +814,7 @@ class mario:
                     self.check_state()
                     self.invincibility = True
 
-            elif group == 'player:bowser' and other.hp > 0:
+            elif group == 'player:bowser' and other.hp > 0 :
                 if pos == 'bottom' and not other.defense:
                     self.jump = True
                     self.Onground = False
@@ -777,15 +822,15 @@ class mario:
                     self.jump_music.play()
 
 
-                elif (pos == 'right' or other.defense) and not self.invincibility:
+                elif (pos == 'right' or other.defense) and not self.invincibility and not other.chance:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
                     self.invincibility = True
-                elif (pos == 'left' or other.defense) and not self.invincibility:
+                elif (pos == 'left' or other.defense) and not self.invincibility and not other.chance:
                     self.x += 2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
                     self.check_state()
                     self.invincibility = True
-                elif (pos == 'top' or other.defense) and not self.invincibility:
+                elif (pos == 'top' or other.defense) and not self.invincibility and not other.chance:
                     self.check_state()
                     self.invincibility = True
 
