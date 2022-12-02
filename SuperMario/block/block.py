@@ -8,10 +8,104 @@ from item import *
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
+OPEN_TIME_PER_ACTION = 1
+OPEN_PER_TIME = 1.0 / OPEN_TIME_PER_ACTION
+
 JUMP_SPEED_KMPH = 10.0
 JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
 JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
 JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
+
+class Boss_Door:
+    image = None
+    sound = None
+    def __init__(self):
+        if Boss_Door.image == None:
+            Boss_Door.image = [load_image("./block/BossDoor/" + "bd_" + "%d" %i + ".png") for i in range(1, 15)]
+        if Boss_Door.sound == None:
+            Boss_Door.sound = load_wav('./music/door_open.wav')
+            Boss_Door.sound.set_volume(30)
+
+        self.frame = 0
+        self.reflect = ' '
+        self.x_size = 117
+        self.y_size = 98
+        self.x = 400
+        self.y = 82
+        self.bb_x = self.x_size //2
+        self.bb_y = self.y_size // 2
+        self.activate = True
+        self.working = False
+        self.trans_scene = False
+        self.play_sound = True
+    def update(self):
+        if self.working:
+            if self.play_sound:
+                self.sound.play()
+                self.play_sound = False
+            self.frame = (self.frame + len(Boss_Door.image) * OPEN_PER_TIME * game_framework.frame_time) % len(Boss_Door.image)
+
+        if int(self.frame) == len(Boss_Door.image) - 1:
+            self.frame = len(Boss_Door.image) - 1
+            self.trans_scene = True
+            self.working = False
+
+    def draw(self):
+        self.image[int(self.frame)].clip_composite_draw(0, 0, 107, 68, 0, self.reflect, self.x, self.y,
+                                                                    self.x_size, self.y_size)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - self.bb_x, self.y - self.bb_y, self.x + self.bb_x, self.y + self.bb_y
+    def handle_collision(self, other, group, p):
+        pass
+
+
+
+class Door:
+    image = None
+    def get_name(self):
+        return 'pipe'
+
+    def edit_x(self, x):
+        self.x -= x
+
+    def __init__(self):
+        if Door.image == None:
+            Pipe.image = load_image('./block/pipe.png')
+        self.activate = False
+        self.x = 750
+        self.y = 75
+        self.x_size = 46
+        self.y_size = 62
+        self.bb_x = self.x_size//2
+        self.bb_y = self.y_size//2
+        self.num = 0
+
+    def setPos(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get_bb(self):
+        return self.x - self.bb_x, self.y - self.bb_y, self.x + self.bb_x, self.y + self.bb_y
+
+    def draw(self):
+        self.image.clip_composite_draw(0, 0, 32, 48, 0, ' ', self.x, self.y, self.x_size, self.y_size)
+
+
+    def update(self):
+        if self.activate:
+            self.image = load_image('./block/avail_door.png')
+        else:
+            self.image = load_image('./block/closed_door.png')
+
+        self.bb_x = self.x_size // 2
+        self.bb_y = self.y_size // 2
+
+    def handle_collision(self, other, group, p):
+        pass
+
+
 class Pipe:
     image = None
     font = None
@@ -72,45 +166,6 @@ class Pipe:
     def handle_collision(self, other, group, p):
         pass
 
-# class stair_block:
-#     image = None
-#     def get_name(self):
-#         return 'stair_block'
-#
-#     def edit_x(self, x):
-#         self.x -= x
-#     def __init__(self):
-#         if stair_block.image == None:
-#             stair_block.image = load_image('./block/block_3.png')
-#         self.frame = 0
-#         self.x = 0
-#         self.y = 0
-#         self.x_size = 32
-#         self.y_size = 42
-#
-#     def returnY(self):
-#         return self.y
-#     def draw(self):
-#         # self.image.clip_draw(int(self.frame) * 30, 0, 30, 40, self.x, self.y)
-#         self.image.clip_composite_draw(int(self.frame)*30, 0, 30, 40, 0, ' ', self.x, self.y,self.x_size,self.y_size)
-#     def get_bb(self):
-#         return self.x - 15 , self.y - 20, self.x + 15, self.y + 20
-#
-#     def update(self):
-#         if self.x <= 800:
-#             self.frame = 0
-#             self.x_size = 30
-#             self.y_size = 30
-#     def handle_collision(self, other, group, p):
-#         if group == 'player:stair_block':
-#            pass
-#
-#     def set_pods(self, x, y):
-#         self.x = x
-#         self.y = y - 5
-#
-#
-#
 
 
 class item_block:
@@ -195,7 +250,7 @@ class item_block:
                     Mushroom = MUSHROOM(self.x, self.y + 17)
                     game_world.add_collision_group(server.player, Mushroom, 'player:mushroom')
                     game_world.add_collision_group(Mushroom, server.ground, 'mushroom:ground')
-                    game_world.add_collision_group(Mushroom,self, 'mushroom:itemBox')
+                    game_world.add_collision_group(Mushroom, server.itemBox, 'mushroom:itemBox')
                     game_world.add_collision_group(Mushroom, server.bricks, 'mushroom:brick')
 
                     game_world.add_object(Mushroom, 1)
@@ -246,7 +301,7 @@ class COIN:
             COIN.image = load_image('./block/coin.png')
         if COIN.sound == None:
             COIN.sound = load_wav('./music/Coin.wav')
-            COIN.sound.set_volume(45)
+            COIN.sound.set_volume(50)
 
         self.frame = random.randint(0,3)
         self.x = 0
@@ -275,6 +330,10 @@ class COIN:
             game_world.remove_object(self)
 
 class Bricks:
+
+    Brick_effect = None
+    effect = None
+    image = None
     def get_name(self):
         return 'brick'
 
@@ -282,7 +341,14 @@ class Bricks:
         self.x -= x
 
     def __init__(self):
-        self.image = load_image('./block/block_2.png')
+        if Bricks.image == None:
+            Bricks.image = load_image('./block/block_2.png')
+        if Bricks.Brick_effect == None:
+            Bricks.Brick_effect = load_wav('./music/BrickBlock.wav')
+            Bricks.Brick_effect.set_volume(50)
+        if Bricks.effect == None:
+            Bricks.effect = load_wav('./music/Bump.wav')
+            Bricks.effect.set_volume(40)
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -358,5 +424,10 @@ class Bricks:
            if pos =='top':
              self.up = True
              self.frame = 0
+             if self.op == 'destroy':
+                 self.Brick_effect.play()
+             else:
+                 self.effect.play()
+
 
 
