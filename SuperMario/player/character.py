@@ -390,6 +390,10 @@ class mario:
         self.walk = False
         self.jump = False
         self.Onground = True
+        self.jump_music =load_wav('./music/Jump.wav')
+        self.clear_voice = load_wav('./music/Yahoo.wav')
+        self.jump_music.set_volume(30)
+        self.clear_voice.set_volume(5)
 
         self.mass = 10
         self.jump_height = 10
@@ -433,6 +437,7 @@ class mario:
                     self.frame = 0
                     self.jump = True
                     self.Y_velocity = self.jump_height
+                    self.jump_music.play()
             elif event == SHIFTD:
                 self.frame = 0
                 self.Run = True
@@ -473,6 +478,7 @@ class mario:
             self.cur_state = Clear_movement
             self.jump = True
             self.Y_velocity = self.Y_gravity
+            self.clear_voice.play()
 
 
     def draw(self):
@@ -488,15 +494,16 @@ class mario:
     def Fire_Ball(self):
         if self.flower:
             ball = Ball(self.x, self.y, self.face_dir * self.velocity)
-            game_world.add_collision_group(ball, None, 'fire:ground')
-            game_world.add_collision_group(ball, None,'fire:goomba')
-            game_world.add_collision_group(ball, None, 'fire:red')
-            game_world.add_collision_group(ball, None, 'fire:green')
-            game_world.add_collision_group(ball, None, 'fire:bowser')
-            game_world.add_collision_group(ball, None, 'fire:itembox')
-            game_world.add_collision_group(ball, None, 'fire:bricks')
-            game_world.add_collision_group(ball, None, 'fire:pipes')
             game_world.add_object(ball, 1)
+            game_world.add_collision_group(None, ball, 'fire:ground')
+            game_world.add_collision_group(None, ball,'fire:goomba')
+            game_world.add_collision_group(None, ball, 'fire:red')
+            game_world.add_collision_group(None, ball, 'fire:green')
+            game_world.add_collision_group(None, ball, 'fire:itembox')
+            game_world.add_collision_group(None, ball, 'fire:bricks')
+            game_world.add_collision_group(None, ball, 'fire:pipes')
+            game_world.add_collision_group(ball, None, 'fire:bowser')
+
     def check_state(self):
         self.delay = -1
         if not self.invincibility:
@@ -608,6 +615,7 @@ class mario:
                     self.jump = True
                     self.Onground = False
                     self.Y_velocity = self.jump_height
+                    self.jump_music.play()
 
                 elif pos == 'right' and not self.invincibility:
                     self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
@@ -626,6 +634,8 @@ class mario:
                     self.Onground = False
 
                     self.Y_velocity = self.jump_height
+                    self.jump_music.play()
+
 
                 elif pos == 'right' and not self.invincibility:
                     self.x += -1 * RUN_SPEED_PPS * game_framework.frame_time * 4  *self.velocity
@@ -744,6 +754,8 @@ class mario:
                     self.jump = True
                     self.Onground = False
                     self.Y_velocity = self.jump_height
+                    self.jump_music.play()
+
 
                 elif pos == 'right' and not self.invincibility:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
@@ -762,6 +774,8 @@ class mario:
                     self.jump = True
                     self.Onground = False
                     self.Y_velocity = self.jump_height
+                    self.jump_music.play()
+
 
                 elif (pos == 'right' or other.defense) and not self.invincibility:
                     self.x += -2 * RUN_SPEED_PPS * game_framework.frame_time * 4 * self.velocity
