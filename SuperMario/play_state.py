@@ -99,8 +99,6 @@ def setPos():
     server.green[2].set_pos(4000, 400)
     server.green[3].set_pos(6300, 110)
 
-music = None
-
 def collide(a,b):
     str = ' '
 
@@ -113,9 +111,9 @@ def collide(a,b):
 
     if a.y > tb:
         str = 'bottom'
-    elif abs(a.x - b.x) < 5 and a.y < b.y:
+    elif abs(a.x - b.x) < 12 and a.y < b.y:
         str = 'top'
-    elif abs(a.y - b.y) < 70 and a.x < b.x:
+    elif abs(a.y - b.y) < 72 and a.x < b.x:
         str = 'right'
     elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
@@ -161,8 +159,6 @@ def set_world():
                 server.ground.append(round1.under_Tile(col, row))
 
 def enter():
-    global music
-
     server.world = round1.BACKGROUND()
     set_world()
     server.player = character.mario()
@@ -208,19 +204,21 @@ def enter():
     game_world.add_collision_group(server.red, server.empty, 'red:empty')
     game_world.add_collision_group(server.player, pipe, 'player:pipe')
 
-    game_world.add_collision_group(None, server.ground, 'fire:ground')
-    game_world.add_collision_group(None, server.goomba, 'fire:goomba')
-    game_world.add_collision_group(None, server.red, 'fire:red')
-    game_world.add_collision_group(None, server.green, 'fire:green')
-    game_world.add_collision_group(None, server.itemBox, 'fire:itembox')
-    game_world.add_collision_group(None, server.bricks, 'fire:bricks')
-    game_world.add_collision_group(None, server.pipes, 'fire:pipes')
+    game_world.add_collision_group(server.ground,None, 'fire:ground')
+    game_world.add_collision_group(server.goomba,None,'fire:goomba')
+    game_world.add_collision_group(server.red,None, 'fire:red')
+    game_world.add_collision_group(server.green,None, 'fire:green')
+    game_world.add_collision_group(server.itemBox,None, 'fire:itembox')
+    game_world.add_collision_group(server.bricks,None, 'fire:bricks')
+    game_world.add_collision_group(server.pipes,None, 'fire:pipes')
 
     # game_world.add_collision_group(server.player, server.stair, 'player:stair')
 
 
 def exit():
     game_world.clear()
+    server.world = None
+
     server.ground.clear()
     server.empty.clear()
     server.goomba.clear()
