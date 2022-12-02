@@ -111,11 +111,11 @@ def collide(a,b):
 
     if a.y > tb:
         str = 'bottom'
-    elif abs(a.x - b.x) < 12 and a.y < b.y:
+    elif abs(a.x - b.x) < 12 and a.y < b.y and not a.y > tb:
         str = 'top'
-    elif abs(a.y - b.y) < 72 and a.x < b.x:
+    elif abs(a.y - b.y) < 72 and a.x < b.x and not a.y > tb:
         str = 'right'
-    elif abs(a.y - b.y) < 70 and a.x > b.x:
+    elif abs(a.y - b.y) < 70 and a.x > b.x and not a.y > tb:
         str = 'left'
 
     return True, str
@@ -168,7 +168,6 @@ def enter():
     server.coin = [block.COIN() for n in range(0, 20)]
     server.itemBox = [block.item_block() for n in range(10)]
     server.bricks = [block.Bricks() for n in range(40)]
-    # server.stair = [block.stair_block() for n in range(35)]
     server.goomba = [Goomba.GOOMBA() for i in range(5)]
     server.green = [Koopa.GreenKoopa() for i in range(4)]
     server.red = [Koopa.RedKoopa() for i in range(4)]
@@ -185,7 +184,6 @@ def enter():
     game_world.add_objects(server.coin, 2)
     game_world.add_objects(server.itemBox, 2)
     game_world.add_objects(server.bricks, 1)
-    # game_world.add_objects(server.stair, 1)
     game_world.add_objects(server.ground, 3)
     game_world.add_objects(server.empty, 3)
 
@@ -204,20 +202,30 @@ def enter():
     game_world.add_collision_group(server.red, server.empty, 'red:empty')
     game_world.add_collision_group(server.player, pipe, 'player:pipe')
 
-    game_world.add_collision_group(server.ground,None, 'fire:ground')
-    game_world.add_collision_group(server.goomba,None,'fire:goomba')
-    game_world.add_collision_group(server.red,None, 'fire:red')
-    game_world.add_collision_group(server.green,None, 'fire:green')
-    game_world.add_collision_group(server.itemBox,None, 'fire:itembox')
-    game_world.add_collision_group(server.bricks,None, 'fire:bricks')
-    game_world.add_collision_group(server.pipes,None, 'fire:pipes')
+    game_world.add_collision_group(None, server.ground, 'fire:ground')
+    game_world.add_collision_group(server.goomba, None,'fire:goomba')
+    game_world.add_collision_group(server.red, None, 'fire:red')
+    game_world.add_collision_group(server.green, None, 'fire:green')
+    game_world.add_collision_group(server.itemBox, None, 'fire:itembox')
+    game_world.add_collision_group(server.bricks, None, 'fire:bricks')
+    game_world.add_collision_group(pipe, None, 'fire:pipe')
 
     # game_world.add_collision_group(server.player, server.stair, 'player:stair')
 
 
 def exit():
     game_world.clear()
+
     server.world = None
+    server.coin.clear()
+    server.itemBox.clear()
+    server.goomba.clear()
+    server.red.clear()
+    server.green.clear()
+    server.ground.clear()
+    server.bricks.clear()
+    server.empty.clear()
+    server.pipes.clear()
 
     server.ground.clear()
     server.empty.clear()
