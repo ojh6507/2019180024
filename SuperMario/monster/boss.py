@@ -58,8 +58,8 @@ class BOSS:
         self.hard = False
         self.build_behavior_tree()
         self.hp = 100
-        self.x_size = 70
-        self.y_size = 70
+        self.x_size = 50
+        self.y_size = 50
         self.chance = False
     def update(self):
         self.hp = clamp(0, self.hp, 100)
@@ -68,8 +68,7 @@ class BOSS:
             self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
 
-        # self.x = clamp(20, self.x, 780)
-        self.y = clamp(70,self.y,90)
+        self.y = clamp(70, self.y, 90)
         self.pre_velocity = self.y_velocity
         self.y += self.y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.y_velocity -= self.Y_gravity
@@ -129,29 +128,34 @@ class BOSS:
                 self.reflect = ' '
             else:
                 self.reflect = 'h'
-            self.images['defense'][int(self.frame)].clip_composite_draw(0, 0, 31, 21, 0, self.reflect, self.x, self.y, 70, 60)
-            self.x_size = 70
-            self.y_size = 60
+
+            self.x_size = 50
+            self.y_size = 40
+            self.images['defense'][int(self.frame)].clip_composite_draw(0, 0, 31, 21, 0, self.reflect, self.x, self.y, self.x_size, self.y_size)
+
         elif self.chance:
+            self.x_size = 50
+            self.y_size = 40
             self.images['chance'][int(self.frame)].clip_composite_draw(0, 0, 50, 50, 0, self.reflect, self.x, self.y,
-                                                                        70, 60)
-            self.x_size = 70
-            self.y_size = 60
+                                                                        self.x_size, self.y_size)
+
         elif self.hp <= 0:
+            self.x_size = 50
+            self.y_size = 40
             self.images['dead'][int(self.frame)].clip_composite_draw(0, 0, 50, 50, 0, self.reflect, self.x, self.y,
-                                                                       70, 60)
-            self.x_size = 70
-            self.y_size = 60
+                                                                       self.x_size, self.y_size)
+
 
         else:
             if math.cos(self.dir) < 0:
                 self.reflect = 'h'
             else:
                 self.reflect = ' '
+            self.x_size = 50
+            self.y_size = 50
             self.images['walk'][int(self.frame)].clip_composite_draw(0, 0, 32, 37, 0, self.reflect, self.x, self.y,
-                                       70, 70)
-            self.x_size = 70
-            self.y_size = 70
+                                       self.x_size,self.y_size)
+
         self.font.draw(self.x - 20, self.y - 50, 'HP %d' % self.hp, (255, 255, 255))
 
         draw_rectangle(*self.get_bb())
@@ -165,6 +169,7 @@ class BOSS:
                 self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                 self.y_velocity = 0
                 self.pre_velocity = 0
+
         if self.hp > 0:
             if group == 'player:bowser' and not other.die:
                 if pos == 'bottom':
