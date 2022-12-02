@@ -79,6 +79,7 @@ class WALK:
 
 class GOOMBA:
     image = None
+    stomp_sound = None
     def get_name(self):
         return 'monster'
     def edit_x(self, x):
@@ -87,6 +88,9 @@ class GOOMBA:
     def __init__(self):
         if GOOMBA.image == None:
             GOOMBA.image = load_image('./monster/Goomba.png')
+        if GOOMBA.stomp_sound == None:
+            GOOMBA.stomp_sound= load_wav('./music/EnemyStomp.wav')
+            GOOMBA.stomp_sound.set_volume(25)
 
         self.frame = 1
         self.action = 1
@@ -139,6 +143,8 @@ class GOOMBA:
 
     def handle_collision(self, other, group, pos):
         if group == 'fire:goomba':
+            self.stomp_sound.play()
+
             try:
                 game_world.remove_object(self)
                 game_world.remove_object(other)
@@ -195,6 +201,7 @@ class GOOMBA:
 
         elif group == 'player:goomba':
             if pos =='bottom':
+                self.stomp_sound.play()
                 self.die = True
 
 

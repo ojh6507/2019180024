@@ -41,7 +41,7 @@ class WALK:
 
 class RedKoopa:
     image = None
-
+    stomp_sound = None
     def get_name(self):
         return 'monster'
     def edit_x(self, x):
@@ -50,7 +50,8 @@ class RedKoopa:
     def __init__(self):
         if RedKoopa.image == None:
             RedKoopa.image = load_image('monster/red_koopa.png')
-
+        if RedKoopa.stomp_sound == None:
+            RedKoopa.stomp_sound = load_wav('./music/EnemyStomp.wav')
         self.frame = random.randint(0,15)
         self.x = random.randint(400, 3000)
         self.y = 70
