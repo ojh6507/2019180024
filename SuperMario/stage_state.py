@@ -86,11 +86,15 @@ def enter():
     game_world.add_collision_group(server.player, server.pipes[1], 'player:stage2')
     game_world.add_collision_group(server.player, server.pipes[2], 'player:stage3')
     setpos()
-
+    music = load_music('./music/stage_menu.mp3')
+    music.set_volume(40)
+    music.repeat_play()
 
 def exit():
+    global  music
     game_world.clear()
     server.ground.clear()
+    del music
     server.empty.clear()
 
 def update():
