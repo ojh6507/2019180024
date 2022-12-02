@@ -49,7 +49,7 @@ def enter():
     server.player = character.mario()
     server.player.flower = True
     server.player.mario_size = 'Normal'
-    server.player.jump_height =13
+    server.player.jump_height = 13
     server.bowser = boss.BOSS()
     game_world.add_object(server.bowser, 1)
     game_world.add_object(server.world, 0)
@@ -57,7 +57,7 @@ def enter():
     game_world.add_objects(server.ground,1)
     game_world.add_collision_group(server.player, server.ground, 'player:ground')
     game_world.add_collision_group(server.bowser, server.ground, 'bowser:ground')
-    game_world.add_collision_group(None, server.ground, 'fire:ground')
+    game_world.add_collision_group(server.ground, None, 'fire:ground')
 
     game_world.add_collision_group(server.player, server.bowser, 'player:bowser')
     game_world.add_collision_group(None, server.bowser, 'fire:bowser')
@@ -65,6 +65,7 @@ def enter():
 
 def exit():
     game_world.clear()
+    server.world = None
 
 def update():
     server.player.y = clamp(65, server.player.y, 800)
