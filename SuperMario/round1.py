@@ -82,7 +82,7 @@ class BACKGROUND:
     def __init__ (self):
         self.image = load_image('./background/background_.png')
         self.bgm = load_music('./music/stage1.mp3')
-        self.bgm.set_volume(40)
+        self.bgm.set_volume(50)
         self.bgm.repeat_play()
         self.x = 3750
     def edit_x(self,x):
