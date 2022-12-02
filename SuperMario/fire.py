@@ -29,13 +29,13 @@ class Ball:
             Ball.image = load_image('./player/fire_ball.png')
         self.x, self.y, self.dir = x, y, dir
 
-        self.height = 3
         self.Y_velocity = 2
         self.Y_gravity = 0.25
         self.frame = 0
         self.count = 0
         self.ground = False
     def destroy(self):
+        print('destroy')
         try:
             game_world.remove_object(self)
         except:
@@ -46,13 +46,12 @@ class Ball:
         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
         self.Y_velocity -= self.Y_gravity
 
-        if self.ground: #타일과 충돌로 변경 예쩡
-            self.Y_velocity = 5
+        if self.ground:
+            self.Y_velocity = 2
             self.count += 1
             self.ground = False
-
-        if self.count >= 8 or self.y < 0:
-           self.destroy()
+        if self.y < 0:
+            self.destroy()
 
     def draw(self):
         self.image.clip_draw(self.frame * 15, 0, 15, 13, self.x, self.y)
@@ -65,12 +64,11 @@ class Ball:
         if group == 'fire:red':
             pass
         if group == 'fire:ground':
-            if pos == 'bottom':
-                self.ground = True
-            if pos == 'right' or pos == 'left':
-                self.destroy()
+            self.ground = True
+
         if group =='fire:itembox' or group == 'fire:bricks' or group =='fire:pipes':
-            self.destroy()
+            if pos == 'top':
+                self.ground = True
 
 
 
