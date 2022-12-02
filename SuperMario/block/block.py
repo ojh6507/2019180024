@@ -105,7 +105,7 @@ class Pipe:
 #         if group == 'player:stair_block':
 #            pass
 #
-#     def set_pos(self, x, y):
+#     def set_pods(self, x, y):
 #         self.x = x
 #         self.y = y - 5
 #
@@ -115,6 +115,7 @@ class Pipe:
 
 class item_block:
     image = None
+    effect = None
     def get_name(self):
         return 'item_block'
 
@@ -124,6 +125,10 @@ class item_block:
     def __init__(self):
         if item_block.image == None:
             item_block.image = load_image('./block/block_1.png')
+        if item_block.effect ==None:
+            item_block.effect = load_wav('./music/Bump.wav')
+            item_block.effect.set_volume(40)
+
         self.frame = 0
         self.x = 0
         self.y = 0
@@ -200,19 +205,23 @@ class item_block:
                     game_world.add_object(Flower, 1)
             elif self.type == 'coin':
                 coin = COIN()
-                coin.set_pos(self.x,self.y,'block')
+                coin.set_pos(self.x, self.y, 'block')
                 game_world.add_object(coin,1)
                 server.coin_count += 1
+                coin.sound.play()
 
     def handle_collision(self, other, group, p):
         if group == 'player:item_block':
             if p == 'top' and not server.player.die:
                 self.citem =True
                 self.up = True
+                item_block.effect.play()
 
 
 
 class COIN:
+    sound = None
+    image = None
     def get_name(self):
         return 'coin'
     def get_bb(self):
@@ -233,7 +242,12 @@ class COIN:
         self.Y_velocity = self.jump_height
         self.gen = gen
     def __init__(self):
-        self.image = load_image('./block/coin.png')
+        if COIN.image == None:
+            COIN.image = load_image('./block/coin.png')
+        if COIN.sound == None:
+            COIN.sound = load_wav('./music/Coin.wav')
+            COIN.sound.set_volume(45)
+
         self.frame = random.randint(0,3)
         self.x = 0
         self.y = 0
@@ -257,6 +271,7 @@ class COIN:
     def handle_collision(self, other, group, pos):
         # print('ball disappear')
         if group == 'player:coin' and not server.player.die:
+            COIN.sound.play()
             game_world.remove_object(self)
 
 class Bricks:
