@@ -114,9 +114,9 @@ def collide(a,b):
 
     if a.y > tb:
         str = 'bottom'
-    elif abs(a.x - b.x) < 5 and a.y < b.y:
+    elif abs(a.x - b.x) < 12 and a.y < b.y:
         str = 'top'
-    elif abs(a.y - b.y) < 70 and a.x < b.x:
+    elif abs(a.y - b.y) < 72 and a.x < b.x:
         str = 'right'
     elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
@@ -212,12 +212,12 @@ def enter():
     game_world.add_collision_group(server.player, pipe, 'player:pipe')
 
     game_world.add_collision_group(None, server.ground, 'fire:ground')
-    game_world.add_collision_group(None, server.goomba, 'fire:goomba')
-    game_world.add_collision_group(None, server.red, 'fire:red')
-    game_world.add_collision_group(None, server.green, 'fire:green')
-    game_world.add_collision_group(None, server.itemBox, 'fire:itembox')
-    game_world.add_collision_group(None, server.bricks, 'fire:bricks')
-    game_world.add_collision_group(None, server.pipes, 'fire:pipes')
+    game_world.add_collision_group(server.goomba, None, 'fire:goomba')
+    game_world.add_collision_group(server.red, None, 'fire:red')
+    game_world.add_collision_group(server.green, None, 'fire:green')
+    game_world.add_collision_group(server.itemBox, None, 'fire:itembox')
+    game_world.add_collision_group(server.bricks, None, 'fire:bricks')
+    game_world.add_collision_group(pipe, None, 'fire:pipe')
 
     # game_world.add_collision_group(server.player, server.stair, 'player:stair')
 

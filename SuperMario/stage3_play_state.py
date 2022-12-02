@@ -1,19 +1,15 @@
-import random
 import game_framework
 import game_world
 import round3
 from pico2d import *
 from player import character
 from block import block
-from monster import Goomba
-from monster import Koopa
 import server
-import stage_clear
+import all_stage_clear
 import gameOver
 from monster import boss
 
 
-music = None
 def collide(a,b):
     str = ' '
 
@@ -51,16 +47,21 @@ def enter():
     server.player.mario_size = 'Normal'
     server.player.jump_height = 13
     server.bowser = boss.BOSS()
+    server.door = block.Door()
+
     game_world.add_object(server.bowser, 1)
     game_world.add_object(server.world, 0)
     game_world.add_object(server.player, 1)
     game_world.add_objects(server.ground,1)
+    game_world.add_object(server.door, 0)
+
     game_world.add_collision_group(server.player, server.ground, 'player:ground')
     game_world.add_collision_group(server.bowser, server.ground, 'bowser:ground')
-    game_world.add_collision_group(server.ground, None, 'fire:ground')
+    game_world.add_collision_group( None, server.ground, 'fire:ground')
 
     game_world.add_collision_group(server.player, server.bowser, 'player:bowser')
     game_world.add_collision_group(None, server.bowser, 'fire:bowser')
+    game_world.add_collision_group(server.player, server.door, 'player:door')
 
 
 def exit():
@@ -71,9 +72,9 @@ def update():
     server.player.y = clamp(65, server.player.y, 800)
     if server.player.die:
         game_framework.change_state(gameOver)
-    if server.player.y > 700:
+    if server.player.y > 700 or server.curr_stage == 4:
         server.stage_info = 3
-        game_framework.change_state(stage_clear)
+        game_framework.change_state(all_stage_clear)
     for game_object in game_world.all_objects():
         game_object.update()
 

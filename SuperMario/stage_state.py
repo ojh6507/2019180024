@@ -8,7 +8,7 @@ import server
 from block import block
 import play_state
 import stage2_play_state
-import stage3_play_state
+import semi_stage3_play_state
 music = None
 
 def collide(a,b):
@@ -98,13 +98,15 @@ def exit():
     server.empty.clear()
 
 def update():
-    set()
     if server.curr_stage == 1:
+        delay(0.5)
         game_framework.change_state(play_state)
     if server.curr_stage == 2:
+        delay(0.5)
         game_framework.change_state(stage2_play_state)
     if server.curr_stage == 3:
-        game_framework.change_state(stage3_play_state)
+        delay(0.5)
+        game_framework.change_state(semi_stage3_play_state)
 
     for game_object in game_world.all_objects():
         game_object.update()
