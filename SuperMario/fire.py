@@ -17,7 +17,8 @@ JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
 
 class Ball:
     image = None
-
+    bump_sound = None
+    gen_Fire = None
     def get_name(self):
         return 'fire_ball'
 
@@ -27,6 +28,13 @@ class Ball:
     def __init__(self, x=800, y=300, dir = 1):
         if Ball.image == None:
             Ball.image = load_image('./player/fire_ball.png')
+        if Ball.bump_sound == None:
+            Ball.bump_sound = load_wav('./music/Bump.wav')
+            Ball.bump_sound.set_volume(30)
+        if Ball.gen_Fire == None:
+            Ball.gen_Fire = load_wav('./music/genFire.wav')
+            Ball.gen_Fire.set_volume(30)
+        Ball.gen_Fire.play()
         self.x, self.y, self.dir = x, y, dir
 
         self.Y_velocity = 2
@@ -35,7 +43,6 @@ class Ball:
         self.count = 0
         self.ground = False
     def destroy(self):
-        print('destroy')
         try:
             game_world.remove_object(self)
         except:
@@ -55,7 +62,7 @@ class Ball:
 
     def draw(self):
         self.image.clip_draw(self.frame * 15, 0, 15, 13, self.x, self.y)
-        draw_rectangle(*self.get_bb())
+
     def get_bb(self):
         return self.x-10, self.y-10,self.x+10, self.y+10
     def handle_collision(self, other, group, pos):
@@ -64,11 +71,30 @@ class Ball:
         if group == 'fire:red':
             pass
         if group == 'fire:ground':
-            self.ground = True
+            if pos == 'bottom':
+                self.ground = True
+            else:
+                Ball.bump_sound.play()
+                self.destroy()
 
-        if group =='fire:itembox' or group == 'fire:bricks' or group =='fire:pipes':
+        if group == 'fire:itembox':
             if pos == 'top':
                 self.ground = True
+            elif pos == 'right' or pos == 'left':
+                Ball.bump_sound.play()
+                self.destroy()
+        if group == 'fire:bricks':
+            if pos == 'top':
+                self.ground = True
+            elif pos == 'right' or pos == 'left':
+                Ball.bump_sound.play()
+                self.destroy()
+        if group == 'fire:pipe':
+            if pos == 'top':
+                self.ground = True
+            else:
+                Ball.bump_sound.play()
+                self.destroy()
 
 
 
