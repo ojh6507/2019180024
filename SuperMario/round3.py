@@ -48,6 +48,9 @@ class BACKGROUND:
         return 'background'
     def __init__ (self):
         self.image = load_image('./background/tower_background.png')
+        self.bgm = load_music('./music/stage3.mp3')
+        self.bgm.set_volume(40)
+        self.bgm.repeat_play()
         self.canvas_width = get_canvas_width()
         self.canvas_height = get_canvas_height()
         self.w = self.image.w

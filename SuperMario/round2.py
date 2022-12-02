@@ -97,7 +97,7 @@ class under_Tile(Floor_Tile):
 
     def __init__(self, col, row):
         if under_Tile.image == None:
-            under_Tile.image = load_image('background/underground.png')
+            under_Tile.image = load_image('background/sand_underground.png')
         self.x, self.y = row * 192, col * 77
 
 
@@ -107,6 +107,10 @@ class BACKGROUND:
         return 'background'
     def __init__ (self):
         self.image = load_image('./background/background2.png')
+        self.bgm = load_music('./music/stage2.mp3')
+        self.bgm.set_volume(40)
+        self.bgm.repeat_play()
+
         self.canvas_width = get_canvas_width()
         self.canvas_height = get_canvas_height()
         self.w = self.image.w

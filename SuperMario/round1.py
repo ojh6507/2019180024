@@ -53,7 +53,7 @@ class Floor_Tile(Empty_Tile):
     image = None
     def __init__(self,col, row):
         if Floor_Tile.image == None:
-            Floor_Tile.image = load_image('background/ground.png')
+            Floor_Tile.image = load_image('./background/ground.png')
         self.x, self.y = row * 192, col * 78
 
     def get_bb(self):
@@ -71,8 +71,8 @@ class under_Tile(Floor_Tile):
 
     def __init__(self, col, row):
         if under_Tile.image == None:
-            under_Tile.image = load_image('background/underground.png')
-        self.x, self.y = row * 192, col * 77
+            under_Tile.image = load_image('./background/underground.png')
+        self.x, self.y = row * 192, col * 78
 
 
 
@@ -80,7 +80,10 @@ class BACKGROUND:
     def get_name(self):
         return 'background'
     def __init__ (self):
-        self.image = load_image('background/background_.png')
+        self.image = load_image('./background/background_.png')
+        self.bgm = load_music('./music/stage1.mp3')
+        self.bgm.set_volume(40)
+        self.bgm.repeat_play()
         self.x = 3750
     def edit_x(self,x):
         self.x-=x

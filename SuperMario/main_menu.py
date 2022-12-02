@@ -10,21 +10,25 @@ logo = None
 bx = None
 ly = None
 gap = None
+voice = None
 def enter():
 
-    global bx,ly, bgimg, font,logo,gap
+    global bx, ly, bgimg, font, logo, gap, voice
     bx = 3770
     ly = 430
     gap = 0.5
     font = load_font('./block/SuperMario256.ttf', 30)
     logo = load_image('./background/nsmb_logo.png')
     bgimg = main_background.BACKGROUND()
+    voice = load_wav('./music/Lets_Go.wav')
+    voice.set_volume(20)
 
 
 def exit():
-    global bgimg, font
+    global bgimg, font, voice
     del bgimg
     del font
+    del voice
 
 def update():
     global bx,ly,gap
@@ -59,6 +63,8 @@ def handle_events():
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.quit()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
+            voice.play()
+            delay(1)
             game_framework.change_state(stage_state)
 
 
