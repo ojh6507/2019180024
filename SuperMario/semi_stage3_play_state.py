@@ -21,18 +21,17 @@ def collide(a,b):
     if ta < bb: return False
     if ba > tb: return False
 
-    if ra >= lb and la <= lb:
-        str = 'right'
-    elif rb >= la and rb <= ra:
-        str = 'left'
-
-    if ((ra - lb >= 1 and lb - la <= 50) or (rb - la >= 1 and ra - rb <= 50) or (ra <= rb and lb <= la)) and (tb >= ba and ta > tb):
-        str = 'bottom'
-    elif ((ra - lb >= 1 and lb - la <= 15) or (rb - la <= 15 and ra - rb <= 15) or (ra <= rb and lb <= la)) and (ta - bb < 20 and bb > ba):
+    if abs(a.x - b.x) < 12 and a.y < b.y:
         str = 'top'
-
+    elif abs(a.y - b.y) < 72 and a.x < b.x:
+        str = 'right'
+    elif abs(a.y - b.y) < 70 and a.x > b.x:
+        str = 'left'
+    if a.y > tb or ba >= tb:
+        str = 'bottom'
 
     return True, str
+
 def setpos():
     pass
 
