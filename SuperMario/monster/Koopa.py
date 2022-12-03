@@ -157,6 +157,11 @@ class RedKoopa:
 
         if group == 'red:ground':
             if pos == 'bottom':
+                la, ba, ra, ta = self.get_bb()
+                lb, bb, rb, tb = other.get_bb()
+                if tb > ba:
+                    self.y += 2
+
                 self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                 self.y_velocity = 0
                 self.pre_velocity = 0
@@ -280,6 +285,11 @@ class GreenKoopa:
 
         if group == 'green:ground':
                 if pos == 'bottom':
+                    la, ba, ra, ta = self.get_bb()
+                    lb, bb, rb, tb = other.get_bb()
+                    if tb > ba:
+                        self.y += 2
+
                     self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                     self.y_velocity = 0
                     self.pre_velocity = 0
