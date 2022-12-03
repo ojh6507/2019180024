@@ -57,9 +57,10 @@ class BOSS:
         self.x = 600
         self.y = 66
         self.dir = 1
+
         self.action = 1
         self.clip = 17
-        self.reflect = 'h'
+        self.reflect = ' '
         self.speed = 0
         self.timer = 1.2
         self.timer_1 = 4.0
@@ -131,6 +132,7 @@ class BOSS:
                 self.y = 66
                 server.door.activate = True
         else:
+            self.dir = math.atan2(0, server.player.x - self.x)
             self.start_time += game_framework.frame_time
 
     def find_player(self):
@@ -202,7 +204,7 @@ class BOSS:
                     self.images['attacked'][int(self.frame)].clip_composite_draw(0, 0, 32, 37, 0, self.reflect, self.x, self.y,
                                                                              self.x_size, self.y_size)
 
-        self.font.draw(self.x - 20, self.y - 50, 'HP %d' % self.hp, (255, 255, 255))
+        self.font.draw(self.x - 20, self.y - 30, 'HP %d' % self.hp, (255, 255, 255))
 
 
     def get_bb(self):
