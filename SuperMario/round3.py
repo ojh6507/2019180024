@@ -33,7 +33,7 @@ class Floor_Tile(Empty_Tile):
         self.x, self.y = row * 192, col * 77
 
     def get_bb(self):
-        return self.x - 400, self.y - 40, self.x + 400, self.y + 45
+        return self.x - 93, self.y - 40, self.x + 93, self.y + 45
     def update(self):
         pass
     def draw(self):

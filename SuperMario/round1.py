@@ -40,6 +40,7 @@ class Empty_Tile:
     def __init__(self,col, row):
         self.x, self.y = row * 192, col * 77
 
+
     def update(self):
         pass
     def draw(self):
@@ -57,11 +58,12 @@ class Floor_Tile(Empty_Tile):
         self.x, self.y = row * 192, col * 78
 
     def get_bb(self):
-        return self.x - 97, self.y - 40, self.x + 97, self.y + 40
+        return self.x - 100, self.y - 40, self.x + 100, self.y + 40
     def update(self):
         pass
     def draw(self):
         self.image.draw(self.x, self.y)
+
     def handle_collision(self,other,group,pos):
         pass
 
