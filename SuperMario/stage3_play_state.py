@@ -20,12 +20,12 @@ def collide(a,b):
     if ta < bb: return False
     if ba > tb: return False
 
-    if a.y > tb:
-        str = 'bottom'
-    elif abs(a.y - b.y) < 70 and a.x < b.x:
+    if abs(a.y - b.y) < 72 and a.x < b.x:
         str = 'right'
     elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
+    if a.y > tb or ba >= tb:
+        str = 'bottom'
 
     return True, str
 
@@ -39,7 +39,6 @@ def set_world():
 
 
 def enter():
-    global music
     set_world()
     server.world = round3.BACKGROUND()
     server.player = character.mario()
@@ -72,14 +71,16 @@ def update():
     server.player.y = clamp(65, server.player.y, 800)
     if server.player.die:
         game_framework.change_state(gameOver)
-    if server.player.y > 700 or server.curr_stage == 4:
+    if server.player.y > 700:
         server.stage_info = 3
+    if server.door.trans_scene:
         game_framework.change_state(all_stage_clear)
+
     for game_object in game_world.all_objects():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
-        if abs(a.x - b.x) <= 95:
+        if abs(a.x - b.x) <= 110:
             if collide(a, b):
                 v, p = collide(a,b)
                 if v:

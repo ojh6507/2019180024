@@ -19,7 +19,7 @@ def setPos():
 
     server.itemBox[3].set_pos(2800, 200,'item')
     server.itemBox[4].set_pos(3230, 300,'coin')
-    server.itemBox[5].set_pos(10, 10)
+    server.itemBox[5].set_pos(6660, 300,'item')
     server.itemBox[6].set_pos(4830, 150)
     server.itemBox[7].set_pos(4800, 150)
     server.itemBox[8].set_pos(5800, 200,'item')
@@ -97,7 +97,7 @@ def setPos():
 
     server.green[0].set_pos(2500, 200)
     server.green[1].set_pos(3000, 200)
-    server.green[2].set_pos(4000, 400)
+    server.green[2].set_pos(3800, 600)
     server.green[3].set_pos(6300, 200)
 
 music = None
@@ -112,14 +112,14 @@ def collide(a,b):
     if ta < bb: return False
     if ba > tb: return False
 
-    if a.y > tb:
-        str = 'bottom'
-    elif abs(a.x - b.x) < 12 and a.y < b.y:
+    if abs(a.x - b.x) < 12 and a.y < b.y:
         str = 'top'
     elif abs(a.y - b.y) < 72 and a.x < b.x:
         str = 'right'
     elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
+    if a.y > tb or ba >= tb:
+        str = 'bottom'
 
     return True, str
 
@@ -241,7 +241,7 @@ def update():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
-        if abs(a.x - b.x) <= 95:
+        if abs(a.x - b.x) <= 110:
             if collide(a, b):
                 v, p = collide(a,b)
                 if v:
