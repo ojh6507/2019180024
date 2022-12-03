@@ -28,7 +28,7 @@ key_event_table = {
 }
 
 PIXEL_PER_METER = (10.0/0.3)
-RUN_SPEED_KMPH = 15.0
+RUN_SPEED_KMPH = 18.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -538,8 +538,9 @@ class mario:
     def get_bb(self):
         if self.mario_size == 'Small':
             return self.x - 10, self.y - 20, self.x + 10, self.y + 10
-        elif self.mario_size == 'Normal':
-            return self.x - 12, self.y - 20, self.x + 12, self.y + 10
+        else:
+            return self.x - 10, self.y - 22, self.x + 10, self.y + 10
+
 
     def get_pos(self):
         return self.x,self.y
@@ -550,8 +551,14 @@ class mario:
         if not self.die:
             if group == 'player:coin':
                 server.coin_count += 1
+
             elif group == 'player:item_block':
                 if pos == 'bottom':
+                    la, ba, ra, ta = self.get_bb()
+                    lb, bb, rb, tb = other.get_bb()
+                    if tb > ba:
+                        self.y += 2
+
                     self.Onground = True
                     if abs(self.x - other.x) <= 15:
                         self.Onground = True
@@ -576,11 +583,16 @@ class mario:
 
             elif group == 'player:bricks' and (other.available or other.op=='solid'):
                 if pos == 'bottom':
-                    if abs(self.x - other.x) <= 15:
-                        self.jump = False
-                        self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
-                        self.Y_velocity = 0
-                        self.pre_velocity = 0
+                    la, ba, ra, ta = self.get_bb()
+                    lb, bb, rb, tb = other.get_bb()
+                    if tb > ba:
+                        self.y += 2
+
+                    self.jump = False
+                    self.Y_velocity = 0
+                    self.pre_velocity = 0
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+
 
                 if pos == 'right':
                     self.x_dir = 0
@@ -595,9 +607,10 @@ class mario:
                         self.Y_velocity *= -1
                         self.y += self.Y_velocity * JUMP_SPEED_PPS * game_framework.frame_time
 
+
             elif group == 'player:mushroom':
                 self.powerUp.play()
-
+                self.y += 10
                 self.mario_size = 'Normal'
                 self.jump_height = 13
 
@@ -610,10 +623,15 @@ class mario:
 
             elif group == 'player:ground':
                 if pos == 'bottom':
+                    la, ba, ra, ta = self.get_bb()
+                    lb, bb, rb, tb = other.get_bb()
+                    if tb > ba:
+                        self.y+= 2
                     self.jump = False
-                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
                     self.Y_velocity = 0
                     self.pre_velocity = 0
+                    self.y -= self.pre_velocity * JUMP_SPEED_PPS * game_framework.frame_time
+
 
 
                 if pos == 'right':
@@ -632,6 +650,7 @@ class mario:
 
             elif group == 'player:red':
                 if pos =='bottom':
+
                     self.jump = True
                     self.Onground = False
                     self.Y_velocity = self.jump_height
@@ -678,7 +697,7 @@ class mario:
                 if (pos == 'top' or pos == ' ') and self.godown:
                     self.BlastOff.play()
                     if abs(self.y - other.y) <= 35 and self.godown:
-                        self.x = other.x
+                        self.tempx = other.x
                         self.clear = True
 
                 if pos == 'left' and not self.godown:
@@ -706,7 +725,7 @@ class mario:
                 if pos == ' ' and self.godown:
                     self.pipe.play()
                     if abs(self.y - other.y) <= 30 and self.godown and other.activate:
-                        self.x = other.x
+                        self.tempx = other.x
                         self.godown = False
                         server.curr_stage = 1
                 if pos == 'left':
@@ -734,7 +753,7 @@ class mario:
                 if pos == ' ' and self.godown:
                     self.pipe.play()
                     if abs(self.y - other.y) <= 30 and self.godown and other.activate:
-                        self.x = other.x
+                        self.tempx =other.x
                         self.godown = False
                         server.curr_stage = 2
 
@@ -754,9 +773,10 @@ class mario:
 
             elif group == 'player:door':
                 if other.activate and self.door_open:
-                    if abs(self.x - other.x) < 3 and abs(self.y - other.y) <= 11:
+                    if abs(self.x - other.x) < 10 and abs(self.y - other.y) <= 30:
+                        self.tempx = other.x
                         self.door_open = False
-                        server.curr_stage = 4
+                        other.working = True
 
             elif group == 'player:Bossdoor':
                 if other.activate and self.door_open:
@@ -775,7 +795,7 @@ class mario:
                     if pos == ' ' and self.godown:
                         self.pipe.play()
                         if abs(self.y - other.y) <= 30 and self.godown and other.activate:
-                                self.x = other.x
+                                self.tempx = other.x
                                 self.godown = False
                                 server.curr_stage = 3
 
