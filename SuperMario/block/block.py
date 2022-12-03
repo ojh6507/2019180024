@@ -11,6 +11,9 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 OPEN_TIME_PER_ACTION = 1
 OPEN_PER_TIME = 1.0 / OPEN_TIME_PER_ACTION
 
+N_OPEN_TIME_PER_ACTION = 0.5
+N_OPEN_PER_TIME = 1.0 / N_OPEN_TIME_PER_ACTION
+
 JUMP_SPEED_KMPH = 10.0
 JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
 JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
@@ -53,7 +56,6 @@ class Boss_Door:
     def draw(self):
         self.image[int(self.frame)].clip_composite_draw(0, 0, 107, 68, 0, self.reflect, self.x, self.y,
                                                                     self.x_size, self.y_size)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - self.bb_x, self.y - self.bb_y, self.x + self.bb_x, self.y + self.bb_y
@@ -72,7 +74,10 @@ class Door:
 
     def __init__(self):
         if Door.image == None:
-            Pipe.image = load_image('./block/pipe.png')
+            Door.image = {}
+            Door.image['open'] = [load_image("./block/opened_door/" +"door_" + "%d" %i + ".png") for i in range(1, 13)]
+            Door.image['close'] = [load_image('./block/closed_door.png') for i in range(1,13)]
+
         self.activate = False
         self.x = 750
         self.y = 75
@@ -81,7 +86,10 @@ class Door:
         self.bb_x = self.x_size//2
         self.bb_y = self.y_size//2
         self.num = 0
-
+        self.frame = 0
+        self.op = 'close'
+        self.working = False
+        self.trans_scene = False
     def setPos(self, x, y):
         self.x = x
         self.y = y
@@ -90,18 +98,25 @@ class Door:
         return self.x - self.bb_x, self.y - self.bb_y, self.x + self.bb_x, self.y + self.bb_y
 
     def draw(self):
-        self.image.clip_composite_draw(0, 0, 32, 48, 0, ' ', self.x, self.y, self.x_size, self.y_size)
+        self.image[self.op][int(self.frame)].clip_composite_draw(0, 0, 32, 48, 0, ' ', self.x, self.y, self.x_size, self.y_size)
 
 
     def update(self):
         if self.activate:
-            self.image = load_image('./block/avail_door.png')
+            self.op = 'open'
         else:
-            self.image = load_image('./block/closed_door.png')
+            self.op ='close'
 
         self.bb_x = self.x_size // 2
         self.bb_y = self.y_size // 2
+        if self.working:
+            self.frame = (self.frame + len(Door.image[self.op]) * N_OPEN_PER_TIME * game_framework.frame_time) % len(Door.image[self.op])
 
+
+            if int(self.frame) == len(Door.image[self.op]) - 1:
+                self.frame = len(Door.image[self.op]) - 1
+                self.working = False
+                self.trans_scene = True
     def handle_collision(self, other, group, p):
         pass
 
@@ -125,7 +140,6 @@ class Pipe:
         self.tempy = self.y
         self.x_size = 55
         self.y_size = 90
-
         self.bb_x = 30
         self.bb_y = 45
         self.num = 0
