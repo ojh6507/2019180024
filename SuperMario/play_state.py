@@ -2,30 +2,33 @@ import random
 import game_framework
 import game_world
 import round1
+
 from pico2d import *
 from player import character
 from block import block
 from monster import Goomba
 from monster import Koopa
+
 import server
 import stage_clear
 import gameOver
 
+
 def setPos():
 
-    server.itemBox[0].set_pos(900,150)
-    server.itemBox[1].set_pos(900, 300)
-    server.itemBox[2].set_pos(700, 150,'item')
+    server.itemBox[0].set_pos(900,200)
+    server.itemBox[1].set_pos(900, 350)
+    server.itemBox[2].set_pos(700, 200,'item')
     server.itemBox[3].set_pos(2800, 200,'item')
     server.itemBox[4].set_pos(3230, 300,'coin')
     server.itemBox[5].set_pos(10, 10)
     server.itemBox[6].set_pos(10, 10)
     server.itemBox[7].set_pos(10, 10)
     server.itemBox[8].set_pos(5800, 200,'item')
-    server.itemBox[9].set_pos(6450, 150)
+    server.itemBox[9].set_pos(6450, 200)
 
-    server.bricks[0].set_pos(930, 150)
-    server.bricks[1].set_pos(870, 150)
+    server.bricks[0].set_pos(930, 200)
+    server.bricks[1].set_pos(870, 200)
     server.bricks[2].set_pos(2200, 300)
     server.bricks[3].set_pos(2230, 300)
     server.bricks[4].set_pos(2260, 300)
@@ -47,13 +50,13 @@ def setPos():
     server.bricks[18].set_pos(5830, 200)
     server.bricks[19].set_pos(5860, 200)
 
-    server.bricks[20].set_pos(6090, 200,'solid')
-    server.bricks[21].set_pos(6120, 200)
-    server.bricks[22].set_pos(6150, 200)
-    server.bricks[23].set_pos(6180, 200)
-    server.bricks[24].set_pos(6420, 150)
-    server.bricks[25].set_pos(6480, 150)
-    server.bricks[26].set_pos(6510, 150)
+    server.bricks[20].set_pos(6090, 250,'solid')
+    server.bricks[21].set_pos(6120, 250)
+    server.bricks[22].set_pos(6150, 250)
+    server.bricks[23].set_pos(6180, 250)
+    server.bricks[24].set_pos(6420, 200)
+    server.bricks[25].set_pos(6480, 200)
+    server.bricks[26].set_pos(6510, 200)
 
 
     server.goomba[0].set_pos(1000, 200)
@@ -109,14 +112,15 @@ def collide(a,b):
     if ta < bb: return False
     if ba > tb: return False
 
-    if a.y > tb:
-        str = 'bottom'
-    elif abs(a.x - b.x) < 12 and a.y < b.y and not a.y > tb:
+
+    if abs(a.x - b.x) < 12 and a.y < b.y:
         str = 'top'
-    elif abs(a.y - b.y) < 72 and a.x < b.x and not a.y > tb:
+    elif abs(a.y - b.y) < 72 and a.x < b.x:
         str = 'right'
-    elif abs(a.y - b.y) < 70 and a.x > b.x and not a.y > tb:
+    elif abs(a.y - b.y) < 70 and a.x > b.x:
         str = 'left'
+    if a.y > tb or ba >= tb:
+        str = 'bottom'
 
     return True, str
 
@@ -245,7 +249,7 @@ def update():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
-        if abs(a.x - b.x) <= 95:
+        if abs(a.x - b.x) <= 110:
             if collide(a, b):
                 v, p = collide(a,b)
                 if v:
