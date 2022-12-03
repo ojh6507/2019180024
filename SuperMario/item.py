@@ -30,8 +30,7 @@ class MUSHROOM:
 
     def draw(self):
         self.image.clip_composite_draw(0, 0, 50, 50, 0, ' ', self.x, self.y-13, 25, 25)
-        # self.image.draw(self.x,self.y)
-        draw_rectangle(*self.get_bb())
+
     def update(self):
         self.pre_velcoity = self.y_velocity
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
@@ -82,8 +81,6 @@ class FLOWER:
 
     def draw(self):
         self.image.clip_composite_draw(0, 0, 50, 57, 0, ' ', self.x, self.y - 13, 25, 25 + 7)
-        # self.image.draw(self.x,self.y)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
       pass
